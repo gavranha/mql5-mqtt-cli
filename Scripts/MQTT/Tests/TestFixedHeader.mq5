@@ -55,7 +55,7 @@ bool TestFixedHeader_Connect()
 //---
    uchar fixed_header[];
 //---
-   GenFixedHeader(CONNECT, content_buffer, fixed_header);
+   SetFixedHeader(CONNECT, content_buffer, fixed_header);
 //---
    if(!ArrayCompare(expected, fixed_header) == 0)
      {
@@ -85,7 +85,7 @@ bool TestFixedHeader_Connect_RemainingLength1_Fail()
 //---
    uchar fixed_header[];
 //---
-   GenFixedHeader(CONNECT, content_buffer, fixed_header);
+   SetFixedHeader(CONNECT, content_buffer, fixed_header);
 //---
    if(!ArrayCompare(expected, fixed_header) == 0)
      {
@@ -113,7 +113,7 @@ bool TestFixedHeader_Publish()
 //---
    uchar fixed_header[];
 //---
-   GenFixedHeader(PUBLISH, content_buffer, fixed_header);
+   SetFixedHeader(PUBLISH, content_buffer, fixed_header);
 //---
    if(!ArrayCompare(expected, fixed_header) == 0)
      {
@@ -143,7 +143,7 @@ bool TestFixedHeader_Publish_RemainingLength1_Fail()
 //---
    uchar fixed_header[];
 //---
-   GenFixedHeader(PUBLISH, content_buffer, fixed_header);
+   SetFixedHeader(PUBLISH, content_buffer, fixed_header);
 //---
    if(!ArrayCompare(expected, fixed_header) == 0)
      {
@@ -170,7 +170,7 @@ bool TestFixedHeader_Puback()
 //---
    uchar fixed_header[];
 //---
-   GenFixedHeader(PUBACK, content_buffer, fixed_header);
+   SetFixedHeader(PUBACK, content_buffer, fixed_header);
 //---
    if(!ArrayCompare(expected, fixed_header) == 0)
      {
@@ -200,7 +200,7 @@ bool TestFixedHeader_Puback_RemainingLength1_Fail()
 //---
    uchar fixed_header[];
 //---
-   GenFixedHeader(PUBACK, content_buffer, fixed_header);
+   SetFixedHeader(PUBACK, content_buffer, fixed_header);
 //---
    if(!ArrayCompare(expected, fixed_header) == 0)
      {
@@ -225,7 +225,7 @@ bool TestFixedHeader_Pubrec()
 //---
    uchar fixed_header[];
 //---
-   GenFixedHeader(PUBREC, content_buffer, fixed_header);
+   SetFixedHeader(PUBREC, content_buffer, fixed_header);
 //---
    if(!ArrayCompare(expected, fixed_header) == 0)
      {
@@ -255,7 +255,7 @@ bool TestFixedHeader_Pubrec_RemainingLength1_Fail()
 //---
    uchar fixed_header[];
 //---
-   GenFixedHeader(PUBREC, content_buffer, fixed_header);
+   SetFixedHeader(PUBREC, content_buffer, fixed_header);
 //---
    if(!ArrayCompare(expected, fixed_header) == 0)
      {
@@ -280,7 +280,7 @@ bool TestFixedHeader_Pubrel()
 //---
    uchar fixed_header[];
 //---
-   GenFixedHeader(PUBREL, content_buffer, fixed_header);
+   SetFixedHeader(PUBREL, content_buffer, fixed_header);
 //---
    if(!ArrayCompare(expected, fixed_header) == 0)
      {
@@ -310,7 +310,7 @@ bool TestFixedHeader_Pubrel_RemainingLength1_Fail()
 //---
    uchar fixed_header[];
 //---
-   GenFixedHeader(PUBREL, content_buffer, fixed_header);
+   SetFixedHeader(PUBREL, content_buffer, fixed_header);
 //---
    if(!ArrayCompare(expected, fixed_header) == 0)
      {
@@ -335,7 +335,7 @@ bool TestFixedHeader_Pubcomp()
 //---
    uchar fixed_header[];
 //---
-   GenFixedHeader(PUBCOMP, content_buffer, fixed_header);
+   SetFixedHeader(PUBCOMP, content_buffer, fixed_header);
 //---
    if(!ArrayCompare(expected, fixed_header) == 0)
      {
@@ -365,7 +365,7 @@ bool TestFixedHeader_Pubcomp_RemainingLength1_Fail()
 //---
    uchar fixed_header[];
 //---
-   GenFixedHeader(PUBCOMP, content_buffer, fixed_header);
+   SetFixedHeader(PUBCOMP, content_buffer, fixed_header);
 //---
    if(!ArrayCompare(expected, fixed_header) == 0)
      {
@@ -390,7 +390,7 @@ bool TestFixedHeader_Subscribe()
 //---
    uchar fixed_header[];
 //---
-   GenFixedHeader(SUBSCRIBE, content_buffer, fixed_header);
+   SetFixedHeader(SUBSCRIBE, content_buffer, fixed_header);
 //---
    if(!ArrayCompare(expected, fixed_header) == 0)
      {
@@ -420,7 +420,7 @@ bool TestFixedHeader_Subscribe_RemainingLength1_Fail()
 //---
    uchar fixed_header[];
 //---
-   GenFixedHeader(SUBSCRIBE, content_buffer, fixed_header);
+   SetFixedHeader(SUBSCRIBE, content_buffer, fixed_header);
 //---
    if(!ArrayCompare(expected, fixed_header) == 0)
      {
@@ -445,7 +445,7 @@ bool TestFixedHeader_Unsubscribe()
 //---
    uchar fixed_header[];
 //---
-   GenFixedHeader(UNSUBSCRIBE, content_buffer, fixed_header);
+   SetFixedHeader(UNSUBSCRIBE, content_buffer, fixed_header);
 //---
    if(!ArrayCompare(expected, fixed_header) == 0)
      {
@@ -475,7 +475,7 @@ bool TestFixedHeader_Unsubscribe_RemainingLength1_Fail()
 //---
    uchar fixed_header[];
 //---
-   GenFixedHeader(UNSUBSCRIBE, content_buffer, fixed_header);
+   SetFixedHeader(UNSUBSCRIBE, content_buffer, fixed_header);
 //---
    if(!ArrayCompare(expected, fixed_header) == 0)
      {
@@ -500,7 +500,7 @@ bool TestFixedHeader_Pingreq()
 //---
    uchar fixed_header[];
 //---
-   GenFixedHeader(PINGREQ, content_buffer, fixed_header);
+   SetFixedHeader(PINGREQ, content_buffer, fixed_header);
 //---
    if(!ArrayCompare(expected, fixed_header) == 0)
      {
@@ -530,7 +530,7 @@ bool TestFixedHeader_Pingreq_RemainingLength1_Fail()
 //---
    uchar fixed_header[];
 //---
-   GenFixedHeader(PINGREQ, content_buffer, fixed_header);
+   SetFixedHeader(PINGREQ, content_buffer, fixed_header);
 //---
    if(!ArrayCompare(expected, fixed_header) == 0)
      {
@@ -558,7 +558,7 @@ bool TestFixedHeader_Disconnect()
 //---
    uchar fixed_header[];
 //---
-   GenFixedHeader(DISCONNECT, content_buffer, fixed_header);
+   SetFixedHeader(DISCONNECT, content_buffer, fixed_header);
 //---
    if(!ArrayCompare(expected, fixed_header) == 0)
      {
@@ -588,7 +588,7 @@ bool TestFixedHeader_Disconnect_RemainingLength1_Fail()
 //---
    uchar fixed_header[];
 //---
-   GenFixedHeader(DISCONNECT, content_buffer, fixed_header);
+   SetFixedHeader(DISCONNECT, content_buffer, fixed_header);
 //---
    if(!ArrayCompare(expected, fixed_header) == 0)
      {
@@ -613,7 +613,7 @@ bool TestFixedHeader_Auth()
 //---
    uchar fixed_header[];
 //---
-   GenFixedHeader(AUTH, content_buffer, fixed_header);
+   SetFixedHeader(AUTH, content_buffer, fixed_header);
 //---
    if(!ArrayCompare(expected, fixed_header) == 0)
      {
@@ -643,7 +643,7 @@ bool TestFixedHeader_Auth_RemainingLength1_Fail()
 //---
    uchar fixed_header[];
 //---
-   GenFixedHeader(AUTH, content_buffer, fixed_header);
+   SetFixedHeader(AUTH, content_buffer, fixed_header);
 //---
    if(!ArrayCompare(expected, fixed_header) == 0)
      {
