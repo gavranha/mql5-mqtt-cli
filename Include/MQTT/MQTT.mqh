@@ -140,30 +140,46 @@ uint DecodeVariableByteInteger(uint &buf[], uint idx)
   };
 
 //+------------------------------------------------------------------+
-//MQTT_PROPERTY_PAYLOAD_FORMAT_INDICATOR          = Byte                  
-//MQTT_PROPERTY_REQUEST_PROBLEM_INFORMATION       = Byte                  
-//MQTT_PROPERTY_REQUEST_RESPONSE_INFORMATION      = Byte                  
-//MQTT_PROPERTY_MAXIMUM_QOS                       = Byte                 
-//MQTT_PROPERTY_RETAIN_AVAILABLE                  = Byte                 
-//MQTT_PROPERTY_WILDCARD_SUBSCRIPTION_AVAILABLE   = Byte                  
-//MQTT_PROPERTY_SUBSCRIPTION_IDENTIFIER_AVAILABLE = Byte                  
-//MQTT_PROPERTY_SHARED_SUBSCRIPTION_AVAILABLE     = Byte 
-//MQTT_PROPERTY_SERVER_KEEP_ALIVE                 = TwoByteInteger      
-//MQTT_PROPERTY_RECEIVE_MAXIMUM                   = TwoByteInteger     
-//MQTT_PROPERTY_TOPIC_ALIAS_MAXIMUM               = TwoByteInteger     
-//MQTT_PROPERTY_TOPIC_ALIAS                       = TwoByteInteger     
-//MQTT_PROPERTY_MESSAGE_EXPIRY_INTERVAL           = FourByteInteger     
-//MQTT_PROPERTY_SESSION_EXPIRY_INTERVAL           = FourByteInteger    
-//MQTT_PROPERTY_MAXIMUM_PACKET_SIZE               = FourByteInteger    
-//MQTT_PROPERTY_WILL_DELAY_INTERVAL               = FourByteInteger    
-//MQTT_PROPERTY_CORRELATION_DATA                  = BinaryData           
-//MQTT_PROPERTY_AUTHENTICATION_DATA               = BinaryData          
+//|          Encode UTF-8 String                                     |
+//+------------------------------------------------------------------+
+void EncodeUTF8String(string str, uint &dest_buf[])
+  {
+   ArrayResize(dest_buf, StringLen(str) + 2);
+   
+   dest_buf[0] = (char)StringLen(str) >> 8; // MSB
+   dest_buf[1] = (char)StringLen(str) % 256; // LSB
+   
+   uchar char_array[];
+   StringToCharArray(str, char_array, 0, StringLen(str));
+   ArrayCopy(dest_buf, char_array, 2);
+   
+   ZeroMemory(char_array);
+  }
+//+------------------------------------------------------------------+
+//MQTT_PROPERTY_PAYLOAD_FORMAT_INDICATOR          = Byte
+//MQTT_PROPERTY_REQUEST_PROBLEM_INFORMATION       = Byte
+//MQTT_PROPERTY_REQUEST_RESPONSE_INFORMATION      = Byte
+//MQTT_PROPERTY_MAXIMUM_QOS                       = Byte
+//MQTT_PROPERTY_RETAIN_AVAILABLE                  = Byte
+//MQTT_PROPERTY_WILDCARD_SUBSCRIPTION_AVAILABLE   = Byte
+//MQTT_PROPERTY_SUBSCRIPTION_IDENTIFIER_AVAILABLE = Byte
+//MQTT_PROPERTY_SHARED_SUBSCRIPTION_AVAILABLE     = Byte
+//MQTT_PROPERTY_SERVER_KEEP_ALIVE                 = TwoByteInteger
+//MQTT_PROPERTY_RECEIVE_MAXIMUM                   = TwoByteInteger
+//MQTT_PROPERTY_TOPIC_ALIAS_MAXIMUM               = TwoByteInteger
+//MQTT_PROPERTY_TOPIC_ALIAS                       = TwoByteInteger
+//MQTT_PROPERTY_MESSAGE_EXPIRY_INTERVAL           = FourByteInteger
+//MQTT_PROPERTY_SESSION_EXPIRY_INTERVAL           = FourByteInteger
+//MQTT_PROPERTY_MAXIMUM_PACKET_SIZE               = FourByteInteger
+//MQTT_PROPERTY_WILL_DELAY_INTERVAL               = FourByteInteger
+//MQTT_PROPERTY_CORRELATION_DATA                  = BinaryData
+//MQTT_PROPERTY_AUTHENTICATION_DATA               = BinaryData
 //MQTT_PROPERTY_SUBSCRIPTION_IDENTIFIER           = VariableByteInteger
-//MQTT_PROPERTY_CONTENT_TYPE                      = UTF-8EncodedString  
-//MQTT_PROPERTY_RESPONSE_TOPIC                    = UTF-8EncodedString  
-//MQTT_PROPERTY_ASSIGNED_CLIENT_IDENTIFIER        = UTF-8EncodedString  
-//MQTT_PROPERTY_AUTHENTICATION_METHOD             = UTF-8EncodedString 
-//MQTT_PROPERTY_RESPONSE_INFORMATION              = UTF-8EncodedString  
-//MQTT_PROPERTY_SERVER_REFERENCE                  = UTF-8EncodedString 
+//MQTT_PROPERTY_CONTENT_TYPE                      = UTF-8EncodedString
+//MQTT_PROPERTY_RESPONSE_TOPIC                    = UTF-8EncodedString
+//MQTT_PROPERTY_ASSIGNED_CLIENT_IDENTIFIER        = UTF-8EncodedString
+//MQTT_PROPERTY_AUTHENTICATION_METHOD             = UTF-8EncodedString
+//MQTT_PROPERTY_RESPONSE_INFORMATION              = UTF-8EncodedString
+//MQTT_PROPERTY_SERVER_REFERENCE                  = UTF-8EncodedString
 //MQTT_PROPERTY_REASON_STRING                     = UTF-8EncodedString
-//MQTT_PROPERTY_USER_PROPERTY                     = UTF-8EncodedStringStringPair   
+//MQTT_PROPERTY_USER_PROPERTY                     = UTF-8EncodedStringStringPair
