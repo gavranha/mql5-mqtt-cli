@@ -115,11 +115,8 @@ public:
 CPktPublish::CPktPublish(uchar &buf[])
   {
    ArrayFree(ByteArray);
-   ArrayResize(ByteArray, buf.Size() + 2, UCHAR_MAX);
-   SetFixedHeader(CONNECT, buf, ByteArray);
-   SetProtocolName(ByteArray);
-   SetProtocolVersion(ByteArray);
-   InitConnectFlags();
+   ArrayResize(ByteArray, buf.Size(), 0);
+   SetFixedHeader(PUBLISH, buf, ByteArray);
   }
 
 //+------------------------------------------------------------------+

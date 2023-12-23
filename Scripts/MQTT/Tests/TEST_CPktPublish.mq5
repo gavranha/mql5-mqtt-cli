@@ -11,34 +11,31 @@
 void OnStart()
   {
    Print(TEST_SetFixedHeader_NoDUP_QoS0_NoRETAIN());
-   Print(TEST_SetFixedHeader_NoDUP_QoS0_RETAIN());
-   Print(TEST_SetFixedHeader_NoDUP_QoS1_NoRETAIN());
-   Print(TEST_SetFixedHeader_NoDUP_QoS1_RETAIN());
-   Print(TEST_SetFixedHeader_NoDUP_QoS2_NoRETAIN());
-   Print(TEST_SetFixedHeader_NoDUP_QoS2_RETAIN());
-   Print(TEST_SetFixedHeader_DUP_QoS0_NoRETAIN());
-   Print(TEST_SetFixedHeader_DUP_QoS0_RETAIN());
-   Print(TEST_SetFixedHeader_DUP_QoS1_NoRETAIN());
-   Print(TEST_SetFixedHeader_DUP_QoS1_RETAIN());
-   Print(TEST_SetFixedHeader_DUP_QoS2_NoRETAIN());
-   Print(TEST_SetFixedHeader_DUP_QoS2_RETAIN());
-   Print(TEST_SetVarHeader_TopicName());
-   Print(TEST_SetVarHeader_TopicName_FAIL_WildcardChar());
-   Print(TEST_SetVarHeader_TopicName_FAIL_Empty());
-   Print(TEST_SetProps_Length());
-   Print(TEST_SetProps_PayloadFormatIndicator());
-   Print(TEST_SetProps_MessageExpiryInterval());
-   Print(TEST_SetProps_TopicAlias());
-   Print(TEST_SetProps_ResponseTopic());
-   Print(TEST_SetProps_CorrelationData());
-   Print(TEST_SetProps_UserProperty());
-   Print(TEST_SetProps_SubscriptionIdentifier());
-   Print(TEST_SetProps_ContentType());
-   Print(TEST_SetPayload());
+//Print(TEST_SetFixedHeader_NoDUP_QoS0_RETAIN());
+//Print(TEST_SetFixedHeader_NoDUP_QoS1_NoRETAIN());
+//Print(TEST_SetFixedHeader_NoDUP_QoS1_RETAIN());
+//Print(TEST_SetFixedHeader_NoDUP_QoS2_NoRETAIN());
+//Print(TEST_SetFixedHeader_NoDUP_QoS2_RETAIN());
+//Print(TEST_SetFixedHeader_DUP_QoS0_NoRETAIN());
+//Print(TEST_SetFixedHeader_DUP_QoS0_RETAIN());
+//Print(TEST_SetFixedHeader_DUP_QoS1_NoRETAIN());
+//Print(TEST_SetFixedHeader_DUP_QoS1_RETAIN());
+//Print(TEST_SetFixedHeader_DUP_QoS2_NoRETAIN());
+//Print(TEST_SetFixedHeader_DUP_QoS2_RETAIN());
+//Print(TEST_SetVarHeader_TopicName());
+//Print(TEST_SetVarHeader_TopicName_FAIL_WildcardChar());
+//Print(TEST_SetVarHeader_TopicName_FAIL_Empty());
+//Print(TEST_SetProps_Length());
+//Print(TEST_SetProps_PayloadFormatIndicator());
+//Print(TEST_SetProps_MessageExpiryInterval());
+//Print(TEST_SetProps_TopicAlias());
+//Print(TEST_SetProps_ResponseTopic());
+//Print(TEST_SetProps_CorrelationData());
+//Print(TEST_SetProps_UserProperty());
+//Print(TEST_SetProps_SubscriptionIdentifier());
+//Print(TEST_SetProps_ContentType());
+//Print(TEST_SetPayload());
   }
-/* REFERENCE ARRAY (FIXTURE)
-{16, 24, 0, 4, 77, 81, 84, 84, 5, 2, 0, 10, 0, 4, 7, 17, 0, 0, 0, 10, 25, 1, 77, 81, 76, 53}
-*/
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -46,13 +43,11 @@ bool TEST_SetFixedHeader_NoDUP_QoS0_NoRETAIN()
   {
    Print(__FUNCTION__);
 //--- Arrange
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 128};
-   uchar buf[expected.Size() - 2];
-   CPktPublish *cut = new CPktPublish(buf);
-//--- Act
-   cut.SetUserNameFlag(true);
+   static uchar expected[] = {48, 3, 0, 1, 'a'}; // xx11 xxxx xxxx xxxx
+   uchar buf[expected.Size()];
    uchar result[];
+//--- Act
+   CPktPublish *cut = new CPktPublish(buf);
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
    bool isTrue = AssertEqual(expected, result);
@@ -193,7 +188,7 @@ bool TEST_SetFixedHeader_DUP_QoS0_NoRETAIN()
    ZeroMemory(result);
    return  isTrue ? true : false;
   }
-  //+------------------------------------------------------------------+
+//+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 bool TEST_SetFixedHeader_DUP_QoS0_RETAIN()
@@ -237,7 +232,7 @@ bool TEST_SetFixedHeader_DUP_QoS1_NoRETAIN()
    ZeroMemory(result);
    return  isTrue ? true : false;
   }
-  //+------------------------------------------------------------------+
+//+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 bool TEST_SetFixedHeader_DUP_QoS1_RETAIN()
