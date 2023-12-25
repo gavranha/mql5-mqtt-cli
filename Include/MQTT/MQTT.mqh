@@ -144,17 +144,26 @@ uint DecodeVariableByteInteger(uint &buf[], uint idx)
 //+------------------------------------------------------------------+
 void EncodeUTF8String(string str, uint &dest_buf[])
   {
-   ArrayResize(dest_buf, StringLen(str) + 2);
-   dest_buf[0] = (char)StringLen(str) >> 8; // MSB
-   dest_buf[1] = (char)StringLen(str) % 256; // LSB
-   ushort char_array[];
-// StringToCharArray(str, char_array, 0, StringLen(str));
-// To convert a string to a Unicode array, we use the StringToShortArray() function 
-// and to convert to an ASCII array - the StringToCharArray() function:
-// https://www.mql5.com/en/articles/585
-   StringToShortArray(str, char_array, 0, StringLen(str));// to Unicode?
-   ArrayCopy(dest_buf, char_array, 2);
-   ZeroMemory(char_array);
+   if(str.Length() > 0)
+     {
+      ArrayResize(dest_buf, StringLen(str) + 2);
+      dest_buf[0] = (char)StringLen(str) >> 8; // MSB
+      dest_buf[1] = (char)StringLen(str) % 256; // LSB
+      ushort char_array[];
+      // StringToCharArray(str, char_array, 0, StringLen(str));
+      // To convert a string to a Unicode array, we use the StringToShortArray() function
+      // and to convert to an ASCII array - the StringToCharArray() function:
+      // https://www.mql5.com/en/articles/585
+      StringToShortArray(str, char_array, 0, StringLen(str));// to Unicode
+      ArrayCopy(dest_buf, char_array, 2);
+      ZeroMemory(char_array);
+     }
+   else
+     {
+     // differences between ArrayResise, ArrayFree, and ZeroMemory
+     // 
+      ArrayFree(dest_buf);
+     }
   }
 //+------------------------------------------------------------------+
 //MQTT_PROPERTY_PAYLOAD_FORMAT_INDICATOR          = Byte

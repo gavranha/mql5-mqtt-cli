@@ -11,10 +11,10 @@
 void OnStart()
   {
    Print(TEST_EncodeUTF8String_Disalowed_CodePoint());
-//Print(TEST_EncodeUTF8String_EmptyString());
-//Print(TEST_EncodeUTF8String_ASCII());
-//Print(TEST_EncodeUTF8String_OneChar());
-//Print(TEST_DecodeVariableByteInteger());
+   Print(TEST_EncodeUTF8String_EmptyString());
+   Print(TEST_EncodeUTF8String_ASCII());
+   Print(TEST_EncodeUTF8String_OneChar());
+   Print(TEST_DecodeVariableByteInteger());
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
