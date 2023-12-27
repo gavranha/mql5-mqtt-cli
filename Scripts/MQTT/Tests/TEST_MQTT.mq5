@@ -10,7 +10,7 @@
 //+------------------------------------------------------------------+
 void OnStart()
   {
-   Print(TEST_EncodeUTF8String_Disalowed_CodePoint());
+   Print(TEST_EncodeUTF8String_Disallowed_CodePoint_0x01_Ret_Empty_Array());
    Print(TEST_EncodeUTF8String_EmptyString());
    Print(TEST_EncodeUTF8String_ASCII());
    Print(TEST_EncodeUTF8String_OneChar());
@@ -19,20 +19,17 @@ void OnStart()
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_EncodeUTF8String_Disalowed_CodePoint()
+bool TEST_EncodeUTF8String_Disallowed_CodePoint_0x01_Ret_Empty_Array()
   {
    Print(__FUNCTION__);
 // arrange
    uint expected[] = {};
    uint result[] = {};
    ArrayResize(result, expected.Size());
-   uchar char_array_with_null[] = {'a', 0x00, 'b'}; //{a, NULL, b}
-//char_array_with_null[0] = 'a';
-//char_array_with_null[1] = B'00000000';
-//char_array_with_null[2] = 'b';
-   string string_with_disallowed_code_point = CharArrayToString(char_array_with_null);
+   uchar charArrayWith_0x01[3] = {'a', 0x01, 'b'}; //{a, NULL, b}
+   string badString = CharArrayToString(charArrayWith_0x01);
 // act
-   EncodeUTF8String(string_with_disallowed_code_point, result);
+   EncodeUTF8String(badString, result);
 // assert
    bool isTrue = AssertEqual(expected, result);
    ArrayPrint(result);
