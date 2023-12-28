@@ -30,6 +30,16 @@ enum ENUM_PKT_TYPE
    AUTH        =  0x0F, // Authentication exchange
   };
 //+------------------------------------------------------------------+
+//|             PUBLISH - FIXED HEADER - PUBLISH FLAGS               |
+//+------------------------------------------------------------------+
+enum ENUM_PUBLISH_FLAGS
+  {
+   RETAIN_FLAG      = 0x01,
+   QoS_1_FLAG       = 0x02,
+   QoS_2_FLAG       = 0x04,
+   DUP_FLAG         = 0x08
+  };
+//+------------------------------------------------------------------+
 //|             CONNECT - VARIABLE HEADER - CONNECT FLAGS            |
 //+------------------------------------------------------------------+
 /*
