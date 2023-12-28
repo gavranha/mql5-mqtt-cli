@@ -52,7 +52,7 @@ bool TEST_SetUserNameFlag()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return  isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -74,7 +74,7 @@ bool TEST_SetUserNameFlag_FAIL()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return  isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -96,7 +96,7 @@ bool TEST_SetPasswordFlag()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return  isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -118,7 +118,7 @@ bool TEST_SetPasswordFlag_FAIL()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return  isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -140,7 +140,7 @@ bool TEST_SetWillRetain()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return  isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -162,7 +162,7 @@ bool TEST_SetWillRetain_FAIL()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return  isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -184,7 +184,7 @@ bool TEST_SetWillQoS2()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return  isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -206,7 +206,7 @@ bool TEST_SetWillQoS2_FAIL()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return  isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -228,7 +228,7 @@ bool TEST_SetWillQoS1()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return  isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -250,7 +250,7 @@ bool TEST_SetWillQoS1_FAIL()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return  isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -272,7 +272,7 @@ bool TEST_SetWillFlag()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return  isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -294,7 +294,7 @@ bool TEST_SetWillFlag_FAIL()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return  isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -318,7 +318,7 @@ bool TEST_SetCleanStart_KeepAlive_ClientIdentifier()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return  isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -340,7 +340,7 @@ bool TEST_SetClientIdentifier()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return  isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -362,7 +362,7 @@ bool TEST_SetClientIdentifierLength()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return  isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -385,7 +385,7 @@ bool TEST_SetCleanStart_and_SetKeepAlive()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return  isTrue;
   }
 //+------------------------------------------------------------------+
 bool TEST_SetKeepAlive()
@@ -405,7 +405,7 @@ bool TEST_SetKeepAlive()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return  isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -427,7 +427,7 @@ bool TEST_SetCleanStart()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return  isTrue;
   }
 
 //+------------------------------------------------------------------+
