@@ -11,20 +11,20 @@
 void OnStart()
   {
    Print(TEST_SetFixedHeader_NoDUP_QoS0_NoRETAIN());
-//Print(TEST_SetFixedHeader_NoDUP_QoS0_RETAIN());
-//Print(TEST_SetFixedHeader_NoDUP_QoS1_NoRETAIN());
-//Print(TEST_SetFixedHeader_NoDUP_QoS1_RETAIN());
-//Print(TEST_SetFixedHeader_NoDUP_QoS2_NoRETAIN());
-//Print(TEST_SetFixedHeader_NoDUP_QoS2_RETAIN());
-//Print(TEST_SetFixedHeader_DUP_QoS0_NoRETAIN());
-//Print(TEST_SetFixedHeader_DUP_QoS0_RETAIN());
-//Print(TEST_SetFixedHeader_DUP_QoS1_NoRETAIN());
-//Print(TEST_SetFixedHeader_DUP_QoS1_RETAIN());
-//Print(TEST_SetFixedHeader_DUP_QoS2_NoRETAIN());
-//Print(TEST_SetFixedHeader_DUP_QoS2_RETAIN());
-//Print(TEST_SetVarHeader_TopicName());
-//Print(TEST_SetVarHeader_TopicName_FAIL_WildcardChar());
-//Print(TEST_SetVarHeader_TopicName_FAIL_Empty());
+   Print(TEST_SetFixedHeader_NoDUP_QoS0_RETAIN());
+   Print(TEST_SetFixedHeader_NoDUP_QoS1_NoRETAIN());
+   Print(TEST_SetFixedHeader_NoDUP_QoS1_RETAIN());
+   Print(TEST_SetFixedHeader_NoDUP_QoS2_NoRETAIN());
+   Print(TEST_SetFixedHeader_NoDUP_QoS2_RETAIN());
+   Print(TEST_SetFixedHeader_DUP_QoS0_NoRETAIN());
+   Print(TEST_SetFixedHeader_DUP_QoS0_RETAIN());
+   Print(TEST_SetFixedHeader_DUP_QoS1_NoRETAIN());
+   Print(TEST_SetFixedHeader_DUP_QoS1_RETAIN());
+   Print(TEST_SetFixedHeader_DUP_QoS2_NoRETAIN());
+   Print(TEST_SetFixedHeader_DUP_QoS2_RETAIN());
+   Print(TEST_SetVarHeader_TopicName());
+   Print(TEST_SetVarHeader_TopicName_FAIL_WildcardChar());
+   Print(TEST_SetVarHeader_TopicName_FAIL_Empty());
 //Print(TEST_SetProps_Length());
 //Print(TEST_SetProps_PayloadFormatIndicator());
 //Print(TEST_SetProps_MessageExpiryInterval());
@@ -43,8 +43,8 @@ bool TEST_SetFixedHeader_NoDUP_QoS0_NoRETAIN()
   {
    Print(__FUNCTION__);
 //--- Arrange
-   static uchar expected[] = {48, 3, 0, 1, 'a'}; // xx11 xxxx xxxx xxxx
-   uchar buf[expected.Size()];
+   static uchar expected[] = {48, 0};
+   uchar buf[] = {};
    uchar result[];
 //--- Act
    CPktPublish *cut = new CPktPublish(buf);
@@ -63,16 +63,15 @@ bool TEST_SetFixedHeader_NoDUP_QoS0_RETAIN()
   {
    Print(__FUNCTION__);
 //--- Arrange
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 64};// last element should be 128 - FAIL()
-   uchar buf[expected.Size() - 2];
-   CPktPublish *cut = new CPktPublish(buf);
+   static uchar expected[] = {49, 0};
+   uchar buf[] = {};
 //--- Act
-   cut.SetUserNameFlag(true);
+   CPktPublish *cut = new CPktPublish(buf);
+   cut.SetRetain(true);
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
-   bool isTrue = AssertNotEqual(expected, result);
+   bool isTrue = AssertEqual(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
@@ -85,12 +84,11 @@ bool TEST_SetFixedHeader_NoDUP_QoS1_NoRETAIN()
   {
    Print(__FUNCTION__);
 //--- Arrange
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 64};
-   uchar buf[expected.Size() - 2];
-   CPktPublish *cut = new CPktPublish(buf);
+   static uchar expected[] = {50, 0};
+   uchar buf[] = {};
 //--- Act
-   cut.SetPasswordFlag(true);
+   CPktPublish *cut = new CPktPublish(buf);
+   cut.SetQoS_1(true);
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
@@ -107,16 +105,16 @@ bool TEST_SetFixedHeader_NoDUP_QoS1_RETAIN()
   {
    Print(__FUNCTION__);
 //--- Arrange
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 32};// last element should be 64 - FAIL()
-   uchar buf[expected.Size() - 2];
-   CPktPublish *cut = new CPktPublish(buf);
+   static uchar expected[] = {51, 0};
+   uchar buf[] = {};
 //--- Act
-   cut.SetPasswordFlag(true);
+   CPktPublish *cut = new CPktPublish(buf);
+   cut.SetQoS_1(true);
+   cut.SetRetain(true);
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
-   bool isTrue = AssertNotEqual(expected, result);
+   bool isTrue = AssertEqual(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
@@ -129,12 +127,11 @@ bool TEST_SetFixedHeader_NoDUP_QoS2_NoRETAIN()
   {
    Print(__FUNCTION__);
 //--- Arrange
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 32};
-   uchar buf[expected.Size() - 2];
-   CPktPublish *cut = new CPktPublish(buf);
+   static uchar expected[] = {52, 0};
+   uchar buf[] = {};
 //--- Act
-   cut.SetWillRetain(true);
+   CPktPublish *cut = new CPktPublish(buf);
+   cut.SetQoS_2(true);
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
@@ -151,16 +148,16 @@ bool TEST_SetFixedHeader_NoDUP_QoS2_RETAIN()
   {
    Print(__FUNCTION__);
 //--- Arrange
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 16};
-   uchar buf[expected.Size() - 2];
-   CPktPublish *cut = new CPktPublish(buf);
+   static uchar expected[] = {53, 0};
+   uchar buf[] = {};
 //--- Act
-   cut.SetWillRetain(true);
+   CPktPublish *cut = new CPktPublish(buf);
+   cut.SetQoS_2(true);
+   cut.SetRetain(true);
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
-   bool isTrue = AssertNotEqual(expected, result);
+   bool isTrue = AssertEqual(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
@@ -173,12 +170,11 @@ bool TEST_SetFixedHeader_DUP_QoS0_NoRETAIN()
   {
    Print(__FUNCTION__);
 //--- Arrange
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 16};
-   uchar buf[expected.Size() - 2];
-   CPktPublish *cut = new CPktPublish(buf);
+   static uchar expected[] = {56, 0};
+   uchar buf[] = {};
 //--- Act
-   cut.SetWillQoS_2(true);
+   CPktPublish *cut = new CPktPublish(buf);
+   cut.SetDup(true);
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
@@ -195,12 +191,12 @@ bool TEST_SetFixedHeader_DUP_QoS0_RETAIN()
   {
    Print(__FUNCTION__);
 //--- Arrange
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 16};
-   uchar buf[expected.Size() - 2];
-   CPktPublish *cut = new CPktPublish(buf);
+   static uchar expected[] = {57, 0};
+   uchar buf[] = {};
 //--- Act
-   cut.SetWillQoS_2(true);
+   CPktPublish *cut = new CPktPublish(buf);
+   cut.SetDup(true);
+   cut.SetRetain(true);
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
@@ -217,16 +213,16 @@ bool TEST_SetFixedHeader_DUP_QoS1_NoRETAIN()
   {
    Print(__FUNCTION__);
 //--- Arrange
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 8}; // last element should be 16 - FAIL()
-   uchar buf[expected.Size() - 2];
-   CPktPublish *cut = new CPktPublish(buf);
+   static uchar expected[] = {58, 0};
+   uchar buf[] = {};
 //--- Act
-   cut.SetWillQoS_2(true);
+   CPktPublish *cut = new CPktPublish(buf);
+   cut.SetDup(true);
+   cut.SetQoS_1(true);
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
-   bool isTrue = AssertNotEqual(expected, result);
+   bool isTrue = AssertEqual(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
@@ -239,16 +235,17 @@ bool TEST_SetFixedHeader_DUP_QoS1_RETAIN()
   {
    Print(__FUNCTION__);
 //--- Arrange
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 8}; // last element should be 16 - FAIL()
-   uchar buf[expected.Size() - 2];
-   CPktPublish *cut = new CPktPublish(buf);
+   static uchar expected[] = {59, 0};
+   uchar buf[] = {};
 //--- Act
-   cut.SetWillQoS_2(true);
+   CPktPublish *cut = new CPktPublish(buf);
+   cut.SetDup(true);
+   cut.SetQoS_1(true);
+   cut.SetRetain(true);
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
-   bool isTrue = AssertNotEqual(expected, result);
+   bool isTrue = AssertEqual(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
@@ -261,12 +258,12 @@ bool TEST_SetFixedHeader_DUP_QoS2_NoRETAIN()
   {
    Print(__FUNCTION__);
 //--- Arrange
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 8};
-   uchar buf[expected.Size() - 2];
+   static uchar expected[] = {60, 0};
+   uchar buf[] = {};
 //--- Act
    CPktPublish *cut = new CPktPublish(buf);
-   cut.SetWillQoS_1(true);
+   cut.SetDup(true);
+   cut.SetQoS_2(true);
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
@@ -283,12 +280,13 @@ bool TEST_SetFixedHeader_DUP_QoS2_RETAIN()
   {
    Print(__FUNCTION__);
 //--- Arrange
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 8};
-   uchar buf[expected.Size() - 2];
+   static uchar expected[] = {61, 0};
+   uchar buf[] = {};
 //--- Act
    CPktPublish *cut = new CPktPublish(buf);
-   cut.SetWillQoS_1(true);
+   cut.SetDup(true);
+   cut.SetQoS_2(true);
+   cut.SetRetain(true);
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
@@ -310,7 +308,7 @@ bool TEST_SetVarHeader_TopicName()
    uchar buf[expected.Size() - 2];
    CPktPublish *cut = new CPktPublish(buf);
 //--- Act
-   cut.SetWillQoS_1(true);
+//cut.SetWillQoS_1(true);
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
@@ -332,7 +330,7 @@ bool TEST_SetVarHeader_TopicName_FAIL_WildcardChar()
    uchar buf[expected.Size() - 2];
    CPktPublish *cut = new CPktPublish(buf);
 //--- Act
-   cut.SetWillFlag(true);
+//cut.SetWillFlag(true);
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
@@ -354,7 +352,7 @@ bool TEST_SetVarHeader_TopicName_FAIL_Empty()
    uchar buf[expected.Size() - 2];
    CPktPublish *cut = new CPktPublish(buf);
 //--- Act
-   cut.SetWillFlag(true);
+//cut.SetWillFlag(true);
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
@@ -376,9 +374,9 @@ bool TEST_SetProps_Length()
    uchar buf[expected.Size() - 2];
    CPktPublish *cut = new CPktPublish(buf);
 //--- Act
-   cut.SetCleanStart(true);
-   cut.SetKeepAlive(10);//10 sec
-   cut.SetClientIdentifier("MQL5");
+//cut.SetCleanStart(true);
+//cut.SetKeepAlive(10);//10 sec
+//cut.SetClientIdentifier("MQL5");
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
@@ -400,7 +398,7 @@ bool TEST_SetProps_PayloadFormatIndicator()
    uchar buf[expected.Size() - 2];
    CPktPublish *cut = new CPktPublish(buf);
 //--- Act
-   cut.SetClientIdentifier("MQL5");
+//cut.SetClientIdentifier("MQL5");
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
@@ -422,7 +420,7 @@ bool TEST_SetProps_MessageExpiryInterval()
    uchar buf[expected.Size() - 2];
    CPktPublish *cut = new CPktPublish(buf);
 //--- Act
-   cut.SetClientIdentifierLength("MQL5");
+//cut.SetClientIdentifierLength("MQL5");
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
@@ -444,8 +442,8 @@ bool TEST_SetProps_TopicAlias()
    uchar buf[expected.Size() - 2];
    CPktPublish *cut = new CPktPublish(buf);
 //--- Act
-   cut.SetCleanStart(true);
-   cut.SetKeepAlive(10); //10 secs
+//cut.SetCleanStart(true);
+//cut.SetKeepAlive(10); //10 secs
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
@@ -465,7 +463,7 @@ bool TEST_SetProps_ResponseTopic()
    uchar buf[expected.Size() - 2];
    CPktPublish *cut = new CPktPublish(buf);
 //--- Act
-   cut.SetKeepAlive(10); //10 secs
+//cut.SetKeepAlive(10); //10 secs
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
@@ -487,7 +485,7 @@ bool TEST_SetProps_CorrelationData()
    uchar buf[expected.Size() - 2];
 //--- Act
    CPktPublish *cut = new CPktPublish(buf);
-   cut.SetCleanStart(true);
+//cut.SetCleanStart(true);
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
@@ -509,7 +507,7 @@ bool TEST_SetProps_UserProperty()
    uchar buf[expected.Size() - 2];
 //--- Act
    CPktPublish *cut = new CPktPublish(buf);
-   cut.SetCleanStart(true);
+//cut.SetCleanStart(true);
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
@@ -531,7 +529,7 @@ bool TEST_SetProps_SubscriptionIdentifier()
    uchar buf[expected.Size() - 2];
 //--- Act
    CPktPublish *cut = new CPktPublish(buf);
-   cut.SetCleanStart(true);
+//cut.SetCleanStart(true);
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
@@ -553,7 +551,7 @@ bool TEST_SetProps_ContentType()
    uchar buf[expected.Size() - 2];
 //--- Act
    CPktPublish *cut = new CPktPublish(buf);
-   cut.SetCleanStart(true);
+//cut.SetCleanStart(true);
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
@@ -575,7 +573,7 @@ bool TEST_SetPayload()
    uchar buf[expected.Size() - 2];
 //--- Act
    CPktPublish *cut = new CPktPublish(buf);
-   cut.SetCleanStart(true);
+//cut.SetCleanStart(true);
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
