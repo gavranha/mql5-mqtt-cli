@@ -54,7 +54,7 @@ bool TEST_SetFixedHeader_NoDUP_QoS0_NoRETAIN()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -76,7 +76,7 @@ bool TEST_SetFixedHeader_NoDUP_QoS0_RETAIN()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -98,7 +98,7 @@ bool TEST_SetFixedHeader_NoDUP_QoS1_NoRETAIN()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -120,7 +120,7 @@ bool TEST_SetFixedHeader_NoDUP_QoS1_RETAIN()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -142,7 +142,7 @@ bool TEST_SetFixedHeader_NoDUP_QoS2_NoRETAIN()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -164,7 +164,7 @@ bool TEST_SetFixedHeader_NoDUP_QoS2_RETAIN()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -186,7 +186,7 @@ bool TEST_SetFixedHeader_DUP_QoS0_NoRETAIN()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -208,7 +208,7 @@ bool TEST_SetFixedHeader_DUP_QoS0_RETAIN()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -230,7 +230,7 @@ bool TEST_SetFixedHeader_DUP_QoS1_NoRETAIN()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -252,7 +252,7 @@ bool TEST_SetFixedHeader_DUP_QoS1_RETAIN()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -274,7 +274,7 @@ bool TEST_SetFixedHeader_DUP_QoS2_NoRETAIN()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -296,7 +296,7 @@ bool TEST_SetFixedHeader_DUP_QoS2_RETAIN()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -318,7 +318,7 @@ bool TEST_SetVarHeader_TopicName()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -340,7 +340,7 @@ bool TEST_SetVarHeader_TopicName_FAIL_WildcardChar()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -362,7 +362,7 @@ bool TEST_SetVarHeader_TopicName_FAIL_Empty()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -386,7 +386,7 @@ bool TEST_SetProps_Length()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -408,7 +408,7 @@ bool TEST_SetProps_PayloadFormatIndicator()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -430,7 +430,7 @@ bool TEST_SetProps_MessageExpiryInterval()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -453,7 +453,7 @@ bool TEST_SetProps_TopicAlias()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 bool TEST_SetProps_ResponseTopic()
@@ -473,7 +473,7 @@ bool TEST_SetProps_ResponseTopic()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -495,7 +495,7 @@ bool TEST_SetProps_CorrelationData()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -517,7 +517,7 @@ bool TEST_SetProps_UserProperty()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -539,7 +539,7 @@ bool TEST_SetProps_SubscriptionIdentifier()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -561,7 +561,7 @@ bool TEST_SetProps_ContentType()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -583,7 +583,7 @@ bool TEST_SetPayload()
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue ? true : false;
+   return isTrue;
   }
 
 //+------------------------------------------------------------------+
