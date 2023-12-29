@@ -94,10 +94,21 @@ void SetProtocolName(uchar& dest_buf[])
 //+------------------------------------------------------------------+
 //|                     SetFixedHeader                               |
 //+------------------------------------------------------------------+
-void SetFixedHeader(ENUM_PKT_TYPE pkt_type, uchar& buf[], uchar& dest_buf[])
+void SetFixedHeader(ENUM_PKT_TYPE pkt_type,
+                    uchar& buf[], uchar& dest_buf[], uchar publish_flags = 0)
   {
-   dest_buf[0] = (uchar)pkt_type << 4;
-   dest_buf[1] = EncodeVariableByteInteger(buf);
+   switch(pkt_type)
+     {
+      case PUBLISH:
+         dest_buf[0] = (uchar)pkt_type << 4;
+         dest_buf[0] |= publish_flags;
+         dest_buf[1] = EncodeVariableByteInteger(buf);
+         break;
+      default:
+         dest_buf[0] = (uchar)pkt_type << 4;
+         dest_buf[1] = EncodeVariableByteInteger(buf);
+         break;
+     }
   }
 //+------------------------------------------------------------------+
 //|                    EncodeVariableByteInteger                            |
