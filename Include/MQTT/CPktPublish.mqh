@@ -21,8 +21,8 @@ class CPktPublish : public IControlPacket
 private:
    bool              IsControlPacket() {return true;}
 protected:
-   void              InitFixedHeader() {ByteArray[0] = PUBLISH << 4;}
    uchar             m_publish_flags;
+   uchar             m_buf[];
 public:
                      CPktPublish();
                      CPktPublish(uchar &buf[]);
@@ -39,11 +39,12 @@ public:
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-CPktPublish::CPktPublish(uchar &buf[])
+CPktPublish::CPktPublish(uchar& buf[])
   {
    ArrayFree(ByteArray);
    ArrayResize(ByteArray, buf.Size() + 2, 0);
-   InitFixedHeader();
+   ArrayCopy(m_buf, buf);
+   SetFixedHeader(PUBLISH, buf, ByteArray, m_publish_flags);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -51,7 +52,7 @@ CPktPublish::CPktPublish(uchar &buf[])
 void CPktPublish::SetDup(const bool dup)
   {
    dup ? m_publish_flags |= DUP_FLAG : m_publish_flags &= ~DUP_FLAG;
-   ByteArray[0] |= m_publish_flags;
+   SetFixedHeader(PUBLISH, m_buf, ByteArray, m_publish_flags);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -59,7 +60,7 @@ void CPktPublish::SetDup(const bool dup)
 void CPktPublish::SetQoS_2(const bool QoS_2)
   {
    QoS_2 ? m_publish_flags |= QoS_2_FLAG : m_publish_flags &= ~QoS_2_FLAG;
-   ByteArray[0] |= m_publish_flags;
+   SetFixedHeader(PUBLISH, m_buf, ByteArray, m_publish_flags);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -67,15 +68,15 @@ void CPktPublish::SetQoS_2(const bool QoS_2)
 void CPktPublish::SetQoS_1(const bool QoS_1)
   {
    QoS_1 ? m_publish_flags |= QoS_1_FLAG : m_publish_flags &= ~QoS_1_FLAG;
-   ByteArray[0] |= m_publish_flags;
+   SetFixedHeader(PUBLISH, m_buf, ByteArray, m_publish_flags);
   }
 //+------------------------------------------------------------------+
-//|                                                                  |
+//|               CPktPublish::SetRetain                             |
 //+------------------------------------------------------------------+
 void CPktPublish::SetRetain(const bool retain)
   {
    retain ? m_publish_flags |= RETAIN_FLAG : m_publish_flags &= ~RETAIN_FLAG;
-   ByteArray[0] |= m_publish_flags;
+   SetFixedHeader(PUBLISH, m_buf, ByteArray, m_publish_flags);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
