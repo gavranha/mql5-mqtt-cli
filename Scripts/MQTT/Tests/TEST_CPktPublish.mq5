@@ -362,7 +362,7 @@ bool TEST_SetTopicName_WildcardChar_PlusSign()
    return isTrue;
   }
 //+------------------------------------------------------------------+
-//|                                                                  |
+//|           TEST_SetTopicName_WildcardChar_NumberSign              |
 //+------------------------------------------------------------------+
 bool TEST_SetTopicName_WildcardChar_NumberSign()
   {

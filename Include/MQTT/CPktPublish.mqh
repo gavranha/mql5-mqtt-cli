@@ -37,7 +37,7 @@ public:
    //--- member for getting the byte array
    uchar             ByteArray[];
    //--- methods for setting Topic Name, Packet ID
-   void              SetTopicName(const string topicName);
+   void              SetTopicName(const string topic_name);
   };
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -50,11 +50,11 @@ CPktPublish::CPktPublish(uchar& payload[])
    SetFixedHeader(PUBLISH, payload, ByteArray, m_publish_flags);
   }
 //+------------------------------------------------------------------+
-//|            CPktPublish::CheckForWildcardChar                     |
+//|            CPktPublish::HasWildcardChar                          |
 //+------------------------------------------------------------------+
 bool CPktPublish::HasWildcardChar(const string str)
   {
-   if(StringFind(str, "#") > 0 || StringFind(str, "+") > 0)
+   if(StringFind(str, "#") > -1 || StringFind(str, "+") > -1)
      {
       printf("Wildcard char not allowed in Topic Names");
       return true;
@@ -64,17 +64,17 @@ bool CPktPublish::HasWildcardChar(const string str)
 //+------------------------------------------------------------------+
 //|            CPktPublish::SetTopicName                             |
 //+------------------------------------------------------------------+
-void CPktPublish::SetTopicName(const string topicName)
+void CPktPublish::SetTopicName(const string topic_name)
   {
-   if(HasWildcardChar(topicName) || StringLen(topicName) == 0)
+   if(HasWildcardChar(topic_name) || StringLen(topic_name) == 0)
      {
       ArrayFree(ByteArray);
       return;
      }
-   ushort encodedString[];
-   EncodeUTF8String(topicName, encodedString);
-   ArrayCopy(ByteArray, encodedString, 2);
-   ByteArray[1] = EncodeVariableByteInteger(encodedString);
+   ushort encoded_string[];
+   EncodeUTF8String(topic_name, encoded_string);
+   ArrayCopy(ByteArray, encoded_string, 2);
+   ByteArray[1] = EncodeVariableByteInteger(encoded_string);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
