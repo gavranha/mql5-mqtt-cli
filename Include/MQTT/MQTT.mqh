@@ -110,9 +110,6 @@ void SetFixedHeader(ENUM_PKT_TYPE pkt_type,
          break;
      }
   }
-//+------------------------------------------------------------------+
-//|                    EncodeVariableByteInteger                            |
-//+------------------------------------------------------------------+
 /*
 Position: starts at byte 2.
 The Remaining Length is a Variable Byte Integer that represents the number of bytes remaining within the
@@ -121,7 +118,30 @@ does not include the bytes used to encode the Remaining Length. The packet size 
 bytes in an MQTT Control Packet, this is equal to the length of the Fixed Header plus the Remaining
 Length.
 */
-uchar EncodeVariableByteInteger(uchar &buf[])
+//+------------------------------------------------------------------+
+//|                    EncodeVariableByteInteger                     |
+//+------------------------------------------------------------------+
+uchar EncodeVariableByteInteger(ushort& buf[])
+  {
+   uint x;
+   x = ArraySize(buf);
+   uint rem_len;
+   do
+     {
+      rem_len = x % 128;
+      x = (x / 128);
+      if(x > 0)
+        {
+         rem_len = rem_len | 128;
+        }
+     }
+   while(x > 0);
+   return rem_len;
+  };
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+uchar EncodeVariableByteInteger(uchar& buf[])
   {
    uint x;
    x = ArraySize(buf);
@@ -163,15 +183,20 @@ uint DecodeVariableByteInteger(uint &buf[], uint idx)
 //|        Disallowed Unicode Code Points in UTF-8 Strings           |
 //+------------------------------------------------------------------+
 /*
-A UTF-8 Encoded String MUST NOT include an encoding of the null character U+0000. [MQTT-1.5.4-2]
+In particular, the character data MUST NOT include encodings of code points
+between U+D800 and U+DFFF
+
+A UTF-8 Encoded String MUST NOT include an encoding of
+the null character U+0000. [MQTT-1.5.4-2]
+
 The data SHOULD NOT include encodings of the Unicode [Unicode] code points listed below.
 
 U+0001..U+001F control characters
 
 U+007F..U+009F control characters
 
-Code points defined in the Unicode specification [Unicode] to be non-characters (for example
-U+0FFFF)
+Code points defined in the Unicode specification [Unicode] to be
+non-characters (for example U+0FFFF)
 
 A UTF-8 encoded sequence 0xEF 0xBB 0xBF is always interpreted as U+FEFF ("ZERO WIDTH NO-
 BREAK SPACE") wherever it appears in a string and MUST NOT be skipped over or stripped off by a
@@ -179,35 +204,43 @@ packet receiver [MQTT-1.5.4-3]
 */
 //---
 //https://www.mql5.com/en/book/common/strings/strings_codepages
-bool IsDisallowedCodePoint(ushort aChar) // if we use uchar the third clause is always false
+bool IsDisallowedCodePoint(ushort codePoint) // if we use uchar the third clause is always false
   {
-   if(aChar >= 0x00 && aChar <= 0x0F)// C0 - Control Characters
+// Surrogates (https://unicode.org/faq/utf_bom.html#utf16-2)
+   if(codePoint >= 0xD800 && codePoint <= 0xDFFF)
      {
       return true;
      }
-   if(aChar >= 0x7F && aChar <= 0x9F)// C0 - Control Characters
+// C0 - Control Characters (https://en.wikipedia.org/wiki/C0_and_C1_control_codes#C0_controls)
+   if(codePoint > 0x00 && codePoint <= 0x1F)// note > not >= because of NULL
      {
       return true;
      }
-   if(aChar == 0xFFF0 || aChar == 0xFFFF)// Specials - non-characters
+// C0 - Control Characters
+   if(codePoint >= 0x7F && codePoint <= 0x9F)
+     {
+      return true;
+     }
+// Specials - non-characters
+   if(codePoint == 0xFFF0 || codePoint == 0xFFFF)
      {
       return true;
      }
    return false;
   };
 //+------------------------------------------------------------------+
-//|          Encode UTF-8 String                                     |
+//|                    Encode UTF-8 String                           |
 //+------------------------------------------------------------------+
-void EncodeUTF8String(string str, uint &dest_buf[])
+void EncodeUTF8String(string str, ushort& dest_buf[])
   {
    uint strLen = StringLen(str);
-// check for Disallowed Unicode Code Points on string str
+// check for Disallowed Unicode Code Points
    uint iterPos = 0;
    while(iterPos < strLen)
      {
       Print("Checking disallowed code points");
-      ushort aChar = StringGetCharacter(str, iterPos);
-      if(IsDisallowedCodePoint(aChar))
+      ushort codePoint = StringGetCharacter(str, iterPos);
+      if(IsDisallowedCodePoint(codePoint))
         {
          printf("Found disallowed code point at position %d", iterPos);
          ArrayFree(dest_buf);
@@ -219,14 +252,13 @@ void EncodeUTF8String(string str, uint &dest_buf[])
    if(strLen == 0)
      {
       Print("Cleaning buffer: string empty");
-      // differences between ArrayResise, ArrayFree, and ZeroMemory
-      ArrayFree(dest_buf);
+      // differences between ArrayFree and ZeroMemory
+      ZeroMemory(dest_buf);
       return;
      }
 // we have no disallowed code points
 // and the string is not empty: encode it.
    printf("Encoding %d bytes ", strLen);
-//
    ArrayResize(dest_buf, strLen + 2);
    dest_buf[0] = (char)strLen >> 8; // MSB
    dest_buf[1] = (char)strLen % 256; // LSB

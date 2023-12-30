@@ -22,9 +22,11 @@ void OnStart()
    Print(TEST_SetFixedHeader_DUP_QoS1_RETAIN());
    Print(TEST_SetFixedHeader_DUP_QoS2_NoRETAIN());
    Print(TEST_SetFixedHeader_DUP_QoS2_RETAIN());
-   Print(TEST_SetVarHeader_TopicName());
-   Print(TEST_SetVarHeader_TopicName_FAIL_WildcardChar());
-   Print(TEST_SetVarHeader_TopicName_FAIL_Empty());
+   Print(TEST_SetVarHeader_TopicName_OneChar());
+   Print(TEST_SetVarHeader_TopicName_TwoChar());
+   Print(TEST_SetVarHeader_TopicName_WildcardChar_NumberSign());
+   Print(TEST_SetVarHeader_TopicName_WildcardChar_PlusSign());
+   Print(TEST_SetVarHeader_TopicName_Empty());
 //Print(TEST_SetProps_Length());
 //Print(TEST_SetProps_PayloadFormatIndicator());
 //Print(TEST_SetProps_MessageExpiryInterval());
@@ -299,20 +301,19 @@ bool TEST_SetFixedHeader_DUP_QoS2_RETAIN()
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_SetVarHeader_TopicName()
+bool TEST_SetVarHeader_TopicName_TwoChar()
   {
    Print(__FUNCTION__);
 //--- Arrange
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 4};// last element should be 8 - FAIL()
-   uchar buf[expected.Size() - 2];
-   CPktPublish *cut = new CPktPublish(buf);
+   static uchar expected[] = {48, 4, 0, 2, 'a', 'b'};
+   uchar payload[] = {};
 //--- Act
-//cut.SetWillQoS_1(true);
+   CPktPublish *cut = new CPktPublish(payload);
+   cut.SetTopicName("ab");
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
-   bool isTrue = AssertNotEqual(expected, result);
+   bool isTrue = AssertEqual(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
@@ -321,20 +322,19 @@ bool TEST_SetVarHeader_TopicName()
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_SetVarHeader_TopicName_FAIL_WildcardChar()
+bool TEST_SetVarHeader_TopicName_OneChar()
   {
    Print(__FUNCTION__);
 //--- Arrange
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 4};
-   uchar buf[expected.Size() - 2];
-   CPktPublish *cut = new CPktPublish(buf);
+   static uchar expected[] = {48, 3, 0, 1, 'a'};
+   uchar payload[] = {};
 //--- Act
-//cut.SetWillFlag(true);
+   CPktPublish *cut = new CPktPublish(payload);
+   cut.SetTopicName("a");
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
-   bool isTrue = Assert(expected, result);
+   bool isTrue = AssertEqual(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
@@ -343,20 +343,62 @@ bool TEST_SetVarHeader_TopicName_FAIL_WildcardChar()
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_SetVarHeader_TopicName_FAIL_Empty()
+bool TEST_SetVarHeader_TopicName_WildcardChar_PlusSign()
   {
    Print(__FUNCTION__);
 //--- Arrange
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 2};//last element should be 4 instead of 2 - FAIL()
-   uchar buf[expected.Size() - 2];
-   CPktPublish *cut = new CPktPublish(buf);
+   static uchar expected[] = {};
+   uchar payload[] = {};
 //--- Act
-//cut.SetWillFlag(true);
+   CPktPublish *cut = new CPktPublish(payload);
+   cut.SetTopicName("a+");
    uchar result[];
    ArrayCopy(result, cut.ByteArray);
 //--- Assert
-   bool isTrue = AssertNotEqual(expected, result);
+   bool isTrue = AssertEqual(expected, result);
+//--- cleanup
+   delete cut;
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_SetVarHeader_TopicName_WildcardChar_NumberSign()
+  {
+   Print(__FUNCTION__);
+//--- Arrange
+   static uchar expected[] = {};
+   uchar payload[] = {};
+//--- Act
+   CPktPublish *cut = new CPktPublish(payload);
+   cut.SetTopicName("a#");
+   uchar result[];
+   ArrayCopy(result, cut.ByteArray);
+//--- Assert
+   bool isTrue = AssertEqual(expected, result);
+//--- cleanup
+   delete cut;
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+//All Topic Names and Topic Filters MUST be at least one character long [MQTT-4.7.3-1]
+bool TEST_SetVarHeader_TopicName_Empty()
+  {
+   Print(__FUNCTION__);
+//--- Arrange
+   static uchar expected[] = {};
+   uchar payload[] = {};
+//--- Act
+   CPktPublish *cut = new CPktPublish(payload);
+   cut.SetTopicName("");
+   uchar result[];
+   ArrayCopy(result, cut.ByteArray);
+//--- Assert
+   bool isTrue = AssertEqual(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
