@@ -205,26 +205,14 @@ packet receiver [MQTT-1.5.4-3]
 //---
 //+------------------------------------------------------------------+
 //|              IsDisallowedCodePoint                               |
+//|   https://unicode.org/faq/utf_bom.html#utf16-2                   |
 //+------------------------------------------------------------------+
 bool IsDisallowedCodePoint(ushort code_point)
   {
-// Surrogates (https://unicode.org/faq/utf_bom.html#utf16-2)
-   if(code_point >= 0xD800 && code_point <= 0xDFFF)
-     {
-      return true;
-     }
-// C0 - Control Characters (https://en.wikipedia.org/wiki/C0_and_C1_control_codes#C0_controls)
-   if(code_point > 0x00 && code_point <= 0x1F)
-     {
-      return true;
-     }
-// C0 - Control Characters
-   if(code_point >= 0x7F && code_point <= 0x9F)
-     {
-      return true;
-     }
-// Specials - non-characters
-   if(code_point == 0xFFF0 || code_point == 0xFFFF)
+   if((code_point >= 0xD800 && code_point <= 0xDFFF) // Surrogates
+      || (code_point > 0x00 && code_point <= 0x1F) // C0 - Control Characters
+      || (code_point >= 0x7F && code_point <= 0x9F) // C0 - Control Characters
+      || (code_point == 0xFFF0 || code_point == 0xFFFF)) // Specials - non-characters
      {
       return true;
      }
@@ -242,7 +230,7 @@ void EncodeUTF8String(string str, ushort& dest_buf[])
      {
       Print("Checking disallowed code points");
       ushort code_point = StringGetCharacter(str, iter_pos);
-      if(HasDisallowedCodePoint(code_point))
+      if(IsDisallowedCodePoint(code_point))
         {
          printf("Found disallowed code point at position %d", iter_pos);
          ArrayFree(dest_buf);
