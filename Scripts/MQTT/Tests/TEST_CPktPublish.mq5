@@ -22,11 +22,11 @@ void OnStart()
    Print(TEST_SetFixedHeader_DUP_QoS1_RETAIN());
    Print(TEST_SetFixedHeader_DUP_QoS2_NoRETAIN());
    Print(TEST_SetFixedHeader_DUP_QoS2_RETAIN());
-   Print(TEST_SetVarHeader_TopicName_OneChar());
-   Print(TEST_SetVarHeader_TopicName_TwoChar());
-   Print(TEST_SetVarHeader_TopicName_WildcardChar_NumberSign());
-   Print(TEST_SetVarHeader_TopicName_WildcardChar_PlusSign());
-   Print(TEST_SetVarHeader_TopicName_Empty());
+   Print(TEST_SetTopicName_OneChar());
+   Print(TEST_SetTopicName_TwoChar());
+   Print(TEST_SetTopicName_WildcardChar_NumberSign());
+   Print(TEST_SetTopicName_WildcardChar_PlusSign());
+   Print(TEST_SetTopicName_Empty());
 //Print(TEST_SetProps_Length());
 //Print(TEST_SetProps_PayloadFormatIndicator());
 //Print(TEST_SetProps_MessageExpiryInterval());
@@ -301,7 +301,7 @@ bool TEST_SetFixedHeader_DUP_QoS2_RETAIN()
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_SetVarHeader_TopicName_TwoChar()
+bool TEST_SetTopicName_TwoChar()
   {
    Print(__FUNCTION__);
 //--- Arrange
@@ -322,7 +322,7 @@ bool TEST_SetVarHeader_TopicName_TwoChar()
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_SetVarHeader_TopicName_OneChar()
+bool TEST_SetTopicName_OneChar()
   {
    Print(__FUNCTION__);
 //--- Arrange
@@ -343,7 +343,7 @@ bool TEST_SetVarHeader_TopicName_OneChar()
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_SetVarHeader_TopicName_WildcardChar_PlusSign()
+bool TEST_SetTopicName_WildcardChar_PlusSign()
   {
    Print(__FUNCTION__);
 //--- Arrange
@@ -364,7 +364,7 @@ bool TEST_SetVarHeader_TopicName_WildcardChar_PlusSign()
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_SetVarHeader_TopicName_WildcardChar_NumberSign()
+bool TEST_SetTopicName_WildcardChar_NumberSign()
   {
    Print(__FUNCTION__);
 //--- Arrange
@@ -386,7 +386,7 @@ bool TEST_SetVarHeader_TopicName_WildcardChar_NumberSign()
 //|                                                                  |
 //+------------------------------------------------------------------+
 //All Topic Names and Topic Filters MUST be at least one character long [MQTT-4.7.3-1]
-bool TEST_SetVarHeader_TopicName_Empty()
+bool TEST_SetTopicName_Empty()
   {
    Print(__FUNCTION__);
 //--- Arrange

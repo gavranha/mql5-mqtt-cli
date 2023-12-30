@@ -203,26 +203,28 @@ BREAK SPACE") wherever it appears in a string and MUST NOT be skipped over or st
 packet receiver [MQTT-1.5.4-3]
 */
 //---
-//https://www.mql5.com/en/book/common/strings/strings_codepages
-bool IsDisallowedCodePoint(ushort codePoint) // if we use uchar the third clause is always false
+//+------------------------------------------------------------------+
+//|              IsDisallowedCodePoint                               |
+//+------------------------------------------------------------------+
+bool IsDisallowedCodePoint(ushort code_point)
   {
 // Surrogates (https://unicode.org/faq/utf_bom.html#utf16-2)
-   if(codePoint >= 0xD800 && codePoint <= 0xDFFF)
+   if(code_point >= 0xD800 && code_point <= 0xDFFF)
      {
       return true;
      }
 // C0 - Control Characters (https://en.wikipedia.org/wiki/C0_and_C1_control_codes#C0_controls)
-   if(codePoint > 0x00 && codePoint <= 0x1F)// note > not >= because of NULL
+   if(code_point > 0x00 && code_point <= 0x1F)
      {
       return true;
      }
 // C0 - Control Characters
-   if(codePoint >= 0x7F && codePoint <= 0x9F)
+   if(code_point >= 0x7F && code_point <= 0x9F)
      {
       return true;
      }
 // Specials - non-characters
-   if(codePoint == 0xFFF0 || codePoint == 0xFFFF)
+   if(code_point == 0xFFF0 || code_point == 0xFFFF)
      {
       return true;
      }
@@ -233,41 +235,35 @@ bool IsDisallowedCodePoint(ushort codePoint) // if we use uchar the third clause
 //+------------------------------------------------------------------+
 void EncodeUTF8String(string str, ushort& dest_buf[])
   {
-   uint strLen = StringLen(str);
+   uint str_len = StringLen(str);
 // check for Disallowed Unicode Code Points
-   uint iterPos = 0;
-   while(iterPos < strLen)
+   uint iter_pos = 0;
+   while(iter_pos < str_len)
      {
       Print("Checking disallowed code points");
-      ushort codePoint = StringGetCharacter(str, iterPos);
-      if(IsDisallowedCodePoint(codePoint))
+      ushort code_point = StringGetCharacter(str, iter_pos);
+      if(HasDisallowedCodePoint(code_point))
         {
-         printf("Found disallowed code point at position %d", iterPos);
+         printf("Found disallowed code point at position %d", iter_pos);
          ArrayFree(dest_buf);
          return;
         }
-      printf("Iter position %d", iterPos);
-      iterPos++;
+      printf("Iter position %d", iter_pos);
+      iter_pos++;
      }
-   if(strLen == 0)
+   if(str_len == 0)
      {
       Print("Cleaning buffer: string empty");
-      // differences between ArrayFree and ZeroMemory
       ZeroMemory(dest_buf);
       return;
      }
-// we have no disallowed code points
-// and the string is not empty: encode it.
-   printf("Encoding %d bytes ", strLen);
-   ArrayResize(dest_buf, strLen + 2);
-   dest_buf[0] = (char)strLen >> 8; // MSB
-   dest_buf[1] = (char)strLen % 256; // LSB
+// we have no disallowed code points and the string is not empty: encode it.
+   printf("Encoding %d bytes ", str_len);
+   ArrayResize(dest_buf, str_len + 2);
+   dest_buf[0] = (char)str_len >> 8; // MSB
+   dest_buf[1] = (char)str_len % 256; // LSB
    ushort char_array[];
-// StringToCharArray(str, char_array, 0, StringLen(str));
-// To convert a string to a Unicode array, we use the StringToShortArray() function
-// and to convert to an ASCII array - the StringToCharArray() function:
-// https://www.mql5.com/en/articles/585
-   StringToShortArray(str, char_array, 0, strLen);// to Unicode
+   StringToShortArray(str, char_array, 0, str_len);// to Unicode
    ArrayCopy(dest_buf, char_array, 2);
    ZeroMemory(char_array);
   }
