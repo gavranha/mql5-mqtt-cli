@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
 //|                                                         MQTT.mqh |
 //|            ********* WORK IN PROGRESS **********                 |
-//| **** PART OF ARTICLE https://www.mql5.com/en/articles/13651 **** |
+//| **** PART OF ARTICLE https://www.mql5.com/en/articles/13998 **** |
 //+------------------------------------------------------------------+
 #include "Defines.mqh"
 //+------------------------------------------------------------------+
@@ -68,9 +68,9 @@ If the Will Flag is set to 1, the value of Will QoS can be 0 (0x00), 1 (0x01), o
 */
 enum ENUM_QOS_LEVEL
   {
-   AT_MOST_ONCE   = 0x00,
-   AT_LEAST_ONCE  = 0x01,
-   EXACTLY_ONCE   = 0x02
+   QoS_AT_MOST_ONCE   = 0x00,
+   QoS_AT_LEAST_ONCE  = 0x02,
+   QoS_EXACTLY_ONCE   = 0x04
   };
 //+------------------------------------------------------------------+
 //|                   SetProtocolVersion                             |
@@ -136,7 +136,7 @@ uchar EncodeVariableByteInteger(ushort& buf[])
         }
      }
    while(x > 0);
-   return rem_len;
+   return (uchar)rem_len;
   };
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -254,6 +254,38 @@ void EncodeUTF8String(string str, ushort& dest_buf[])
    StringToShortArray(str, char_array, 0, str_len);// to Unicode
    ArrayCopy(dest_buf, char_array, 2);
    ZeroMemory(char_array);
+  }
+//+------------------------------------------------------------------+
+//|                 GetQoSLevel                                      |
+//+------------------------------------------------------------------+
+uchar GetQoSLevel(uchar& buf[])
+  {
+   if((buf[0] & QoS_AT_LEAST_ONCE) == 2)
+     {
+      return 1;
+     }
+   if((buf[0] & QoS_EXACTLY_ONCE) == 4)
+     {
+      return 2;
+     }
+   return 0;
+  }
+//+------------------------------------------------------------------+
+//|            SetPacketID                                           |
+//+------------------------------------------------------------------+
+void SetPacketID(uchar& buf[], int start_idx)
+  {
+// MathRand - Before the first call of the function, it's necessary to call
+// MathSrand to set the generator of pseudorandom numbers to the initial state.
+   MathSrand((int)TimeLocal());
+   int packet_id = MathRand();
+   if(ArrayResize(buf, buf.Size() + 2) < 0)
+     {
+      printf("ERROR: failed to resize array at %s", __FUNCTION__);
+      return;
+     }
+   buf[start_idx] = (uchar)packet_id >> 8; // MSB
+   buf[start_idx + 1] = (uchar)packet_id % 256; //LSB
   }
 //+------------------------------------------------------------------+
 //MQTT_PROPERTY_PAYLOAD_FORMAT_INDICATOR          = Byte

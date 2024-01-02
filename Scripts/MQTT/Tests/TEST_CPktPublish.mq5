@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
 //|                                             TEST_CPktPublish.mq5 |
 //|            ********* WORK IN PROGRESS **********                 |
-//| **** PART OF ARTICLE https://www.mql5.com/en/articles/13388 **** |
+//| **** PART OF ARTICLE https://www.mql5.com/en/articles/13998 **** |
 //+------------------------------------------------------------------+
 #include <MQTT\CPktPublish.mqh>
 
@@ -27,16 +27,112 @@ void OnStart()
    Print(TEST_SetTopicName_WildcardChar_NumberSign());
    Print(TEST_SetTopicName_WildcardChar_PlusSign());
    Print(TEST_SetTopicName_Empty());
-//Print(TEST_SetProps_Length());
-//Print(TEST_SetProps_PayloadFormatIndicator());
-//Print(TEST_SetProps_MessageExpiryInterval());
-//Print(TEST_SetProps_TopicAlias());
-//Print(TEST_SetProps_ResponseTopic());
-//Print(TEST_SetProps_CorrelationData());
-//Print(TEST_SetProps_UserProperty());
-//Print(TEST_SetProps_SubscriptionIdentifier());
-//Print(TEST_SetProps_ContentType());
-//Print(TEST_SetPayload());
+   Print(TEST_SetPacketID_QoS1_TopicName1Char());
+   Print(TEST_SetPacketID_QoS1_TopicName5Char());
+   Print(TEST_SetPacketID_QoS2_TopicName1Char());
+   Print(TEST_SetPacketID_QoS2_TopicName5Char());
+   Print(TEST_SetProps_Length());
+   Print(TEST_SetProps_PayloadFormatIndicator());
+   Print(TEST_SetProps_MessageExpiryInterval());
+   Print(TEST_SetProps_TopicAlias());
+   Print(TEST_SetProps_ResponseTopic());
+   Print(TEST_SetProps_CorrelationData());
+   Print(TEST_SetProps_UserProperty());
+   Print(TEST_SetProps_SubscriptionIdentifier());
+   Print(TEST_SetProps_ContentType());
+   Print(TEST_SetPayload());
+  }
+//+------------------------------------------------------------------+
+//|            TEST_SetPacketID_QoS2_TopicName1Char                  |
+//+------------------------------------------------------------------+
+bool TEST_SetPacketID_QoS2_TopicName5Char()
+  {
+   Print(__FUNCTION__);
+// Arrange
+   uchar payload[] = {};
+   uchar result[]; // expected {52, 9, 0, 1, 'a', 'b', 'c', 'd', 'e', pktID MSB, pktID LSB}
+// Act
+   CPktPublish *cut = new CPktPublish(payload);
+// FIX: if we call SetQoS first this test breaks
+   cut.SetTopicName("abcde");
+   cut.SetQoS_2(true);
+   ArrayCopy(result, cut.ByteArray);
+// Assert
+   ArrayPrint(result);
+   bool is_true = result[9] > 0 || result[10] > 0;
+// cleanup
+   delete cut;
+   ZeroMemory(result);
+   return is_true;
+  }
+//+------------------------------------------------------------------+
+//|            TEST_SetPacketID_QoS2_TopicName1Char                  |
+//+------------------------------------------------------------------+
+bool TEST_SetPacketID_QoS2_TopicName1Char()
+  {
+   Print(__FUNCTION__);
+// Arrange
+   uchar payload[] = {};
+   uchar result[]; // expected {52, 5, 0, 1, 'a', pktID MSB, pktID LSB}
+// Act
+   CPktPublish *cut = new CPktPublish(payload);
+// FIX: if we call SetQoS first this test breaks
+   cut.SetTopicName("a");
+   cut.SetQoS_2(true);
+   ArrayCopy(result, cut.ByteArray);
+// Assert
+   ArrayPrint(result);
+   bool is_true = result[5] > 0 || result[6] > 0;
+// cleanup
+   delete cut;
+   ZeroMemory(result);
+   return is_true;
+  }
+//+------------------------------------------------------------------+
+//|            TEST_SetPacketID_QoS1_TopicName5Char                  |
+//+------------------------------------------------------------------+
+bool TEST_SetPacketID_QoS1_TopicName5Char()
+  {
+   Print(__FUNCTION__);
+// Arrange
+   uchar payload[] = {};
+   uchar result[]; // expected {50, 9, 0, 1, 'a', 'b', 'c', 'd', 'e', pktID MSB, pktID LSB}
+// Act
+   CPktPublish *cut = new CPktPublish(payload);
+// FIX: if we call SetQoS first this test breaks
+   cut.SetTopicName("abcde");
+   cut.SetQoS_1(true);
+   ArrayCopy(result, cut.ByteArray);
+// Assert
+   ArrayPrint(result);
+   bool is_true = result[9] > 0 || result[10] > 0;
+// cleanup
+   delete cut;
+   ZeroMemory(result);
+   return is_true;
+  }
+//+------------------------------------------------------------------+
+//|            TEST_SetPacketID_QoS1_TopicName1Char                  |
+//+------------------------------------------------------------------+
+bool TEST_SetPacketID_QoS1_TopicName1Char()
+  {
+   Print(__FUNCTION__);
+// Arrange
+   uchar payload[] = {};
+   uchar result[]; // expected {50, 5, 0, 1, 'a', pktID MSB, pktID LSB}
+// Act
+   CPktPublish *cut = new CPktPublish(payload);
+// FIX: if we call SetQoS first this test breaks
+   cut.SetTopicName("a");
+   cut.SetQoS_1(true);
+   ArrayCopy(result, cut.ByteArray);
+// Assert
+   ArrayPrint(result);
+   bool is_true = result[5] > 0 || result[6] > 0;
+// cleanup
+   delete cut;
+   ZeroMemory(result);
+   return is_true;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |

@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
 //|                                                   PktPublish.mqh |
 //|            ********* WORK IN PROGRESS **********                 |
-//| **** PART OF ARTICLE https://www.mql5.com/en/articles/13388 **** |
+//| **** PART OF ARTICLE https://www.mql5.com/en/articles/13998 **** |
 //+------------------------------------------------------------------+
 #include "IControlPacket.mqh"
 //+------------------------------------------------------------------+
@@ -36,8 +36,9 @@ public:
 
    //--- member for getting the byte array
    uchar             ByteArray[];
-   //--- methods for setting Topic Name, Packet ID
+   //--- methods for setting Topic Name and Properties
    void              SetTopicName(const string topic_name);
+
   };
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -74,6 +75,9 @@ void CPktPublish::SetTopicName(const string topic_name)
    ushort encoded_string[];
    EncodeUTF8String(topic_name, encoded_string);
    ArrayCopy(ByteArray, encoded_string, 2);
+// TODO: this function must be the last to be called
+// when the packet is already built so we have the
+// remaining length
    ByteArray[1] = EncodeVariableByteInteger(encoded_string);
   }
 //+------------------------------------------------------------------+
@@ -85,12 +89,13 @@ void CPktPublish::SetDup(const bool dup)
    SetFixedHeader(PUBLISH, m_buf, ByteArray, m_publish_flags);
   }
 //+------------------------------------------------------------------+
-//|                                                                  |
+//|            CPktPublish::SetQoS_2                                 |
 //+------------------------------------------------------------------+
 void CPktPublish::SetQoS_2(const bool QoS_2)
   {
    QoS_2 ? m_publish_flags |= QoS_2_FLAG : m_publish_flags &= ~QoS_2_FLAG;
    SetFixedHeader(PUBLISH, m_buf, ByteArray, m_publish_flags);
+   SetPacketID(ByteArray, ByteArray.Size());
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -99,6 +104,7 @@ void CPktPublish::SetQoS_1(const bool QoS_1)
   {
    QoS_1 ? m_publish_flags |= QoS_1_FLAG : m_publish_flags &= ~QoS_1_FLAG;
    SetFixedHeader(PUBLISH, m_buf, ByteArray, m_publish_flags);
+   SetPacketID(ByteArray, ByteArray.Size());
   }
 //+------------------------------------------------------------------+
 //|               CPktPublish::SetRetain                             |
