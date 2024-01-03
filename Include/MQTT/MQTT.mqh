@@ -75,14 +75,14 @@ enum ENUM_QOS_LEVEL
 //+------------------------------------------------------------------+
 //|                   SetProtocolVersion                             |
 //+------------------------------------------------------------------+
-void SetProtocolVersion(uchar& dest_buf[])
+void SetProtocolVersion(uint& dest_buf[])
   {
    dest_buf[8] = MQTT_PROTOCOL_VERSION;
   }
 //+------------------------------------------------------------------+
 //|                     SetProtocolName                              |
 //+------------------------------------------------------------------+
-void SetProtocolName(uchar& dest_buf[])
+void SetProtocolName(uint& dest_buf[])
   {
    dest_buf[2] = MQTT_PROTOCOL_NAME_LENGTH_MSB;
    dest_buf[3] = MQTT_PROTOCOL_NAME_LENGTH_LSB;
@@ -95,7 +95,7 @@ void SetProtocolName(uchar& dest_buf[])
 //|                     SetFixedHeader                               |
 //+------------------------------------------------------------------+
 void SetFixedHeader(ENUM_PKT_TYPE pkt_type,
-                    uchar& buf[], uchar& dest_buf[], uchar publish_flags = 0)
+                    uchar& buf[], uint& dest_buf[], uchar publish_flags = 0)
   {
    switch(pkt_type)
      {
@@ -273,7 +273,7 @@ uchar GetQoSLevel(uchar& buf[])
 //+------------------------------------------------------------------+
 //|            SetPacketID                                           |
 //+------------------------------------------------------------------+
-void SetPacketID(uchar& buf[], int start_idx)
+void SetPacketID(uint& buf[], int start_idx)
   {
 // MathRand - Before the first call of the function, it's necessary to call
 // MathSrand to set the generator of pseudorandom numbers to the initial state.
@@ -284,8 +284,8 @@ void SetPacketID(uchar& buf[], int start_idx)
       printf("ERROR: failed to resize array at %s", __FUNCTION__);
       return;
      }
-   buf[start_idx] = (uchar)packet_id >> 8; // MSB
-   buf[start_idx + 1] = (uchar)packet_id % 256; //LSB
+   buf[start_idx] = packet_id >> 8; // MSB
+   buf[start_idx + 1] = packet_id % 256; //LSB
   }
 //+------------------------------------------------------------------+
 //MQTT_PROPERTY_PAYLOAD_FORMAT_INDICATOR          = Byte

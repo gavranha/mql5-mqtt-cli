@@ -85,9 +85,9 @@ class CPktConnect : public IControlPacket
 private:
    bool              IsControlPacket() {return true;}
 protected:
-   void              InitConnectFlags() {ByteArray[9] = 0;}
-   void              InitKeepAlive() {ByteArray[10] = 0; ByteArray[11] = 0;}
-   void              InitPropertiesLength() {ByteArray[12] = 0;}
+   void              InitConnectFlags() {m_byte_array[9] = 0;}
+   void              InitKeepAlive() {m_byte_array[10] = 0; m_byte_array[11] = 0;}
+   void              InitPropertiesLength() {m_byte_array[12] = 0;}
    uchar             m_connect_flags;
 
 public:
@@ -107,18 +107,18 @@ public:
    void              SetClientIdentifier(string clientId);
 
    //--- member for getting the byte array
-   uchar             ByteArray[];
+   uint              m_byte_array[];
   };
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 CPktConnect::CPktConnect(uchar &buf[])
   {
-   ArrayFree(ByteArray);
-   ArrayResize(ByteArray, buf.Size() + 2, UCHAR_MAX);
-   SetFixedHeader(CONNECT, buf, ByteArray);
-   SetProtocolName(ByteArray);
-   SetProtocolVersion(ByteArray);
+   ArrayFree(m_byte_array);
+   ArrayResize(m_byte_array, buf.Size() + 2, UCHAR_MAX);
+   SetFixedHeader(CONNECT, buf, m_byte_array);
+   SetProtocolName(m_byte_array);
+   SetProtocolVersion(m_byte_array);
    InitConnectFlags();
   }
 
@@ -128,8 +128,11 @@ CPktConnect::CPktConnect(uchar &buf[])
 void CPktConnect::SetClientIdentifier(string clientId)
   {
    SetClientIdentifierLength(clientId);
-   StringToCharArray(clientId, ByteArray,
-                     ByteArray.Size() - StringLen(clientId), StringLen(clientId));
+   uchar tmp[];
+   ArrayResize(tmp, StringLen(clientId));
+   StringToCharArray(clientId, tmp,
+                     m_byte_array.Size() - StringLen(clientId), StringLen(clientId));
+   ArrayCopy(m_byte_array, tmp, m_byte_array.Size() - StringLen(clientId));
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -138,8 +141,8 @@ void CPktConnect::SetClientIdentifierLength(string clientId)
   {
    clientIdLen.msb = (char)StringLen(clientId) >> 8;
    clientIdLen.lsb = (char)(StringLen(clientId) % 256);
-   ByteArray[12] = clientIdLen.msb;
-   ByteArray[13] = clientIdLen.lsb;
+   m_byte_array[12] = clientIdLen.msb;
+   m_byte_array[13] = clientIdLen.lsb;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -148,8 +151,8 @@ void CPktConnect::SetKeepAlive(ushort seconds) // MQTT max is 65,535 sec
   {
    keepAlive.msb = (uchar)(seconds >> 8) & 255;
    keepAlive.lsb = (uchar)seconds & 255;
-   ByteArray[10] = keepAlive.msb;
-   ByteArray[11] = keepAlive.lsb;
+   m_byte_array[10] = keepAlive.msb;
+   m_byte_array[11] = keepAlive.lsb;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -157,7 +160,7 @@ void CPktConnect::SetKeepAlive(ushort seconds) // MQTT max is 65,535 sec
 void CPktConnect::SetPasswordFlag(const bool passwordFlag)
   {
    passwordFlag ? m_connect_flags |= PASSWORD_FLAG : m_connect_flags &= ~PASSWORD_FLAG;
-   ArrayFill(ByteArray, ArraySize(ByteArray) - 1, 1, m_connect_flags);
+   ArrayFill(m_byte_array, ArraySize(m_byte_array) - 1, 1, m_connect_flags);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -165,7 +168,7 @@ void CPktConnect::SetPasswordFlag(const bool passwordFlag)
 void CPktConnect::SetUserNameFlag(const bool userNameFlag)
   {
    userNameFlag ? m_connect_flags |= USER_NAME_FLAG : m_connect_flags &= (uchar) ~USER_NAME_FLAG;
-   ArrayFill(ByteArray, ArraySize(ByteArray) - 1, 1, m_connect_flags);
+   ArrayFill(m_byte_array, ArraySize(m_byte_array) - 1, 1, m_connect_flags);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -173,7 +176,7 @@ void CPktConnect::SetUserNameFlag(const bool userNameFlag)
 void CPktConnect::SetWillRetain(const bool willRetain)
   {
    willRetain ? m_connect_flags |= WILL_RETAIN : m_connect_flags &= ~WILL_RETAIN;
-   ArrayFill(ByteArray, ArraySize(ByteArray) - 1, 1, m_connect_flags);
+   ArrayFill(m_byte_array, ArraySize(m_byte_array) - 1, 1, m_connect_flags);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -181,7 +184,7 @@ void CPktConnect::SetWillRetain(const bool willRetain)
 void CPktConnect::SetWillQoS_2(const bool willQoS_2)
   {
    willQoS_2 ? m_connect_flags |= WILL_QOS_2 : m_connect_flags &= ~WILL_QOS_2;
-   ArrayFill(ByteArray, ArraySize(ByteArray) - 1, 1, m_connect_flags);
+   ArrayFill(m_byte_array, ArraySize(m_byte_array) - 1, 1, m_connect_flags);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -189,7 +192,7 @@ void CPktConnect::SetWillQoS_2(const bool willQoS_2)
 void CPktConnect::SetWillQoS_1(const bool willQoS_1)
   {
    willQoS_1 ? m_connect_flags |= WILL_QOS_1 : m_connect_flags &= ~WILL_QOS_1;
-   ArrayFill(ByteArray, ArraySize(ByteArray) - 1, 1, m_connect_flags);
+   ArrayFill(m_byte_array, ArraySize(m_byte_array) - 1, 1, m_connect_flags);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -197,7 +200,7 @@ void CPktConnect::SetWillQoS_1(const bool willQoS_1)
 void CPktConnect::SetWillFlag(const bool willFlag)
   {
    willFlag ? m_connect_flags |= WILL_FLAG : m_connect_flags &= ~WILL_FLAG;
-   ArrayFill(ByteArray, ArraySize(ByteArray) - 1, 1, m_connect_flags);
+   ArrayFill(m_byte_array, ArraySize(m_byte_array) - 1, 1, m_connect_flags);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -205,7 +208,7 @@ void CPktConnect::SetWillFlag(const bool willFlag)
 void CPktConnect::SetCleanStart(const bool cleanStart)
   {
    cleanStart ? m_connect_flags |= CLEAN_START : m_connect_flags &= ~CLEAN_START;
-   ArrayFill(ByteArray, ArraySize(ByteArray) - 1, 1, m_connect_flags);
+   ArrayFill(m_byte_array, ArraySize(m_byte_array) - 1, 1, m_connect_flags);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |

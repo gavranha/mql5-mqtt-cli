@@ -35,7 +35,7 @@ public:
    void              SetDup(const bool dup);
 
    //--- member for getting the byte array
-   uchar             ByteArray[];
+   uint              m_byte_array[];
    //--- methods for setting Topic Name and Properties
    void              SetTopicName(const string topic_name);
 
@@ -45,10 +45,10 @@ public:
 //+------------------------------------------------------------------+
 CPktPublish::CPktPublish(uchar& payload[])
   {
-   ArrayFree(ByteArray);
-   ArrayResize(ByteArray, payload.Size() + 2, 0);
+   ArrayFree(m_byte_array);
+   ArrayResize(m_byte_array, payload.Size() + 2, 0);
    ArrayCopy(m_buf, payload);
-   SetFixedHeader(PUBLISH, payload, ByteArray, m_publish_flags);
+   SetFixedHeader(PUBLISH, payload, m_byte_array, m_publish_flags);
   }
 //+------------------------------------------------------------------+
 //|            CPktPublish::HasWildcardChar                          |
@@ -69,16 +69,16 @@ void CPktPublish::SetTopicName(const string topic_name)
   {
    if(HasWildcardChar(topic_name) || StringLen(topic_name) == 0)
      {
-      ArrayFree(ByteArray);
+      ArrayFree(m_byte_array);
       return;
      }
    ushort encoded_string[];
    EncodeUTF8String(topic_name, encoded_string);
-   ArrayCopy(ByteArray, encoded_string, 2);
+   ArrayCopy(m_byte_array, encoded_string, 2);
 // TODO: this function must be the last to be called
 // when the packet is already built so we have the
 // remaining length
-   ByteArray[1] = EncodeVariableByteInteger(encoded_string);
+   m_byte_array[1] = EncodeVariableByteInteger(encoded_string);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -86,7 +86,7 @@ void CPktPublish::SetTopicName(const string topic_name)
 void CPktPublish::SetDup(const bool dup)
   {
    dup ? m_publish_flags |= DUP_FLAG : m_publish_flags &= ~DUP_FLAG;
-   SetFixedHeader(PUBLISH, m_buf, ByteArray, m_publish_flags);
+   SetFixedHeader(PUBLISH, m_buf, m_byte_array, m_publish_flags);
   }
 //+------------------------------------------------------------------+
 //|            CPktPublish::SetQoS_2                                 |
@@ -94,8 +94,8 @@ void CPktPublish::SetDup(const bool dup)
 void CPktPublish::SetQoS_2(const bool QoS_2)
   {
    QoS_2 ? m_publish_flags |= QoS_2_FLAG : m_publish_flags &= ~QoS_2_FLAG;
-   SetFixedHeader(PUBLISH, m_buf, ByteArray, m_publish_flags);
-   SetPacketID(ByteArray, ByteArray.Size());
+   SetFixedHeader(PUBLISH, m_buf, m_byte_array, m_publish_flags);
+   SetPacketID(m_byte_array, m_byte_array.Size());
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -103,8 +103,8 @@ void CPktPublish::SetQoS_2(const bool QoS_2)
 void CPktPublish::SetQoS_1(const bool QoS_1)
   {
    QoS_1 ? m_publish_flags |= QoS_1_FLAG : m_publish_flags &= ~QoS_1_FLAG;
-   SetFixedHeader(PUBLISH, m_buf, ByteArray, m_publish_flags);
-   SetPacketID(ByteArray, ByteArray.Size());
+   SetFixedHeader(PUBLISH, m_buf, m_byte_array, m_publish_flags);
+   SetPacketID(m_byte_array, m_byte_array.Size());
   }
 //+------------------------------------------------------------------+
 //|               CPktPublish::SetRetain                             |
@@ -112,7 +112,7 @@ void CPktPublish::SetQoS_1(const bool QoS_1)
 void CPktPublish::SetRetain(const bool retain)
   {
    retain ? m_publish_flags |= RETAIN_FLAG : m_publish_flags &= ~RETAIN_FLAG;
-   SetFixedHeader(PUBLISH, m_buf, ByteArray, m_publish_flags);
+   SetFixedHeader(PUBLISH, m_buf, m_byte_array, m_publish_flags);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |

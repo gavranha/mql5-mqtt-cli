@@ -4,6 +4,7 @@
 //| **** PART OF ARTICLE https://www.mql5.com/en/articles/13388 **** |
 //+------------------------------------------------------------------+
 #include <MQTT\CPktConnect.mqh>
+#include "TestUtil.mqh"
 
 //+------------------------------------------------------------------+
 //|           Tests for CPktConnect class                            |
@@ -46,7 +47,7 @@ bool TEST_SetUserNameFlag()
 //--- Act
    cut.SetUserNameFlag(true);
    uchar result[];
-   ArrayCopy(result, cut.ByteArray);
+   ArrayCopy(result, cut.m_byte_array);
 //--- Assert
    bool isTrue = AssertEqual(expected, result);
 //--- cleanup
@@ -68,7 +69,7 @@ bool TEST_SetUserNameFlag_FAIL()
 //--- Act
    cut.SetUserNameFlag(true);
    uchar result[];
-   ArrayCopy(result, cut.ByteArray);
+   ArrayCopy(result, cut.m_byte_array);
 //--- Assert
    bool isTrue = AssertNotEqual(expected, result);
 //--- cleanup
@@ -90,7 +91,7 @@ bool TEST_SetPasswordFlag()
 //--- Act
    cut.SetPasswordFlag(true);
    uchar result[];
-   ArrayCopy(result, cut.ByteArray);
+   ArrayCopy(result, cut.m_byte_array);
 //--- Assert
    bool isTrue = AssertEqual(expected, result);
 //--- cleanup
@@ -112,7 +113,7 @@ bool TEST_SetPasswordFlag_FAIL()
 //--- Act
    cut.SetPasswordFlag(true);
    uchar result[];
-   ArrayCopy(result, cut.ByteArray);
+   ArrayCopy(result, cut.m_byte_array);
 //--- Assert
    bool isTrue = AssertNotEqual(expected, result);
 //--- cleanup
@@ -134,7 +135,7 @@ bool TEST_SetWillRetain()
 //--- Act
    cut.SetWillRetain(true);
    uchar result[];
-   ArrayCopy(result, cut.ByteArray);
+   ArrayCopy(result, cut.m_byte_array);
 //--- Assert
    bool isTrue = AssertEqual(expected, result);
 //--- cleanup
@@ -156,7 +157,7 @@ bool TEST_SetWillRetain_FAIL()
 //--- Act
    cut.SetWillRetain(true);
    uchar result[];
-   ArrayCopy(result, cut.ByteArray);
+   ArrayCopy(result, cut.m_byte_array);
 //--- Assert
    bool isTrue = AssertNotEqual(expected, result);
 //--- cleanup
@@ -178,7 +179,7 @@ bool TEST_SetWillQoS2()
 //--- Act
    cut.SetWillQoS_2(true);
    uchar result[];
-   ArrayCopy(result, cut.ByteArray);
+   ArrayCopy(result, cut.m_byte_array);
 //--- Assert
    bool isTrue = AssertEqual(expected, result);
 //--- cleanup
@@ -200,7 +201,7 @@ bool TEST_SetWillQoS2_FAIL()
 //--- Act
    cut.SetWillQoS_2(true);
    uchar result[];
-   ArrayCopy(result, cut.ByteArray);
+   ArrayCopy(result, cut.m_byte_array);
 //--- Assert
    bool isTrue = AssertNotEqual(expected, result);
 //--- cleanup
@@ -222,7 +223,7 @@ bool TEST_SetWillQoS1()
    CPktConnect *cut = new CPktConnect(buf);
    cut.SetWillQoS_1(true);
    uchar result[];
-   ArrayCopy(result, cut.ByteArray);
+   ArrayCopy(result, cut.m_byte_array);
 //--- Assert
    bool isTrue = AssertEqual(expected, result);
 //--- cleanup
@@ -244,7 +245,7 @@ bool TEST_SetWillQoS1_FAIL()
 //--- Act
    cut.SetWillQoS_1(true);
    uchar result[];
-   ArrayCopy(result, cut.ByteArray);
+   ArrayCopy(result, cut.m_byte_array);
 //--- Assert
    bool isTrue = AssertNotEqual(expected, result);
 //--- cleanup
@@ -266,7 +267,7 @@ bool TEST_SetWillFlag()
 //--- Act
    cut.SetWillFlag(true);
    uchar result[];
-   ArrayCopy(result, cut.ByteArray);
+   ArrayCopy(result, cut.m_byte_array);
 //--- Assert
    bool isTrue = Assert(expected, result);
 //--- cleanup
@@ -288,7 +289,7 @@ bool TEST_SetWillFlag_FAIL()
 //--- Act
    cut.SetWillFlag(true);
    uchar result[];
-   ArrayCopy(result, cut.ByteArray);
+   ArrayCopy(result, cut.m_byte_array);
 //--- Assert
    bool isTrue = AssertNotEqual(expected, result);
 //--- cleanup
@@ -312,7 +313,7 @@ bool TEST_SetCleanStart_KeepAlive_ClientIdentifier()
    cut.SetKeepAlive(10);//10 sec
    cut.SetClientIdentifier("MQL5");
    uchar result[];
-   ArrayCopy(result, cut.ByteArray);
+   ArrayCopy(result, cut.m_byte_array);
 //--- Assert
    bool isTrue = Assert(expected, result);
 //--- cleanup
@@ -334,7 +335,7 @@ bool TEST_SetClientIdentifier()
 //--- Act
    cut.SetClientIdentifier("MQL5");
    uchar result[];
-   ArrayCopy(result, cut.ByteArray);
+   ArrayCopy(result, cut.m_byte_array);
 //--- Assert
    bool isTrue = Assert(expected, result);
 //--- cleanup
@@ -356,7 +357,7 @@ bool TEST_SetClientIdentifierLength()
 //--- Act
    cut.SetClientIdentifierLength("MQL5");
    uchar result[];
-   ArrayCopy(result, cut.ByteArray);
+   ArrayCopy(result, cut.m_byte_array);
 //--- Assert
    bool isTrue = Assert(expected, result);
 //--- cleanup
@@ -379,7 +380,7 @@ bool TEST_SetCleanStart_and_SetKeepAlive()
    cut.SetCleanStart(true);
    cut.SetKeepAlive(10); //10 secs
    uchar result[];
-   ArrayCopy(result, cut.ByteArray);
+   ArrayCopy(result, cut.m_byte_array);
 //--- Assert
    bool isTrue = Assert(expected, result);
 //--- cleanup
@@ -399,7 +400,7 @@ bool TEST_SetKeepAlive()
 //--- Act
    cut.SetKeepAlive(10); //10 secs
    uchar result[];
-   ArrayCopy(result, cut.ByteArray);
+   ArrayCopy(result, cut.m_byte_array);
 //--- Assert
    bool isTrue = Assert(expected, result);
 //--- cleanup
@@ -421,61 +422,12 @@ bool TEST_SetCleanStart()
    CPktConnect *cut = new CPktConnect(buf);
    cut.SetCleanStart(true);
    uchar result[];
-   ArrayCopy(result, cut.ByteArray);
+   ArrayCopy(result, cut.m_byte_array);
 //--- Assert
    bool isTrue = Assert(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
    return  isTrue;
-  }
-
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool AssertNotEqual(uchar & expected[], uchar & result[])
-  {
-   if(!ArrayCompare(expected, result) == 0)
-     {
-      for(uint i = 0; i < expected.Size(); i++)
-        {
-         printf("expected\t%d\t\t%d result", expected[i], result[i]);
-        }
-      printf("expected size %d <=> %d result size", expected.Size(), result.Size());
-      return true;
-     }
-   return false;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool AssertEqual(uchar & expected[], uchar & result[])
-  {
-   if(!ArrayCompare(expected, result) == 0)
-     {
-      for(uint i = 0; i < expected.Size(); i++)
-        {
-         printf("expected\t%d\t\t%d result", expected[i], result[i]);
-        }
-      printf("expected size %d <=> %d result size", expected.Size(), result.Size());
-      return false;
-     }
-   return true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool Assert(uchar& expected[], uchar& result[])
-  {
-   if(!ArrayCompare(expected, result) == 0)
-     {
-      for(uint i = 0; i < expected.Size(); i++)
-        {
-         printf("expected\t%d\t\t%d result", expected[i], result[i]);
-        }
-      printf("expected size %d <=> %d result size", expected.Size(), result.Size());
-      return false;
-     }
-   return true;
   }
 //+------------------------------------------------------------------+
