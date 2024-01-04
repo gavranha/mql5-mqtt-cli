@@ -94,6 +94,7 @@ void SetProtocolName(uint& dest_buf[])
 //+------------------------------------------------------------------+
 //|                     SetFixedHeader                               |
 //+------------------------------------------------------------------+
+// ((retain ? 1 : 0) | qos << 1 | (dup ? 1 : 0) << 3 | type << 4));
 void SetFixedHeader(ENUM_PKT_TYPE pkt_type,
                     uchar& buf[], uint& dest_buf[], uchar publish_flags = 0)
   {
