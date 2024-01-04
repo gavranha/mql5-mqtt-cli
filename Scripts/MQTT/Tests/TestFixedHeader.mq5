@@ -1,7 +1,5 @@
 //+------------------------------------------------------------------+
 //|                                              TestFixedHeader.mq5 |
-//|                                                         JS Lopes |
-//|                                                     any@mail.net |
 //|            ********* WORK IN PROGRESS **********                 |
 //| **** PART OF ARTICLE https://www.mql5.com/en/articles/12857 **** |
 //+------------------------------------------------------------------+
@@ -49,11 +47,11 @@ bool TestFixedHeader_Connect()
   {
    uchar content_buffer[]; //empty
 //---
-   uchar expected[2];
+   uint expected[2];
    expected[0] = 1; //pkt type
    expected[1] = 0; //remaining length
 //---
-   uchar fixed_header[];
+   uint fixed_header[];
 //---
    SetFixedHeader(CONNECT, content_buffer, fixed_header);
 //---
@@ -79,11 +77,11 @@ bool TestFixedHeader_Connect_RemainingLength1_Fail()
    ArrayResize(content_buffer, 1);
    content_buffer[0] = 1;
 //---
-   uchar expected[2];
+   uint expected[2];
    expected[0] = 1; //pkt type
    expected[1] = 0; //remaining length should be 1
 //---
-   uchar fixed_header[];
+   uint fixed_header[];
 //---
    SetFixedHeader(CONNECT, content_buffer, fixed_header);
 //---
@@ -107,11 +105,11 @@ bool TestFixedHeader_Publish()
   {
    uchar content_buffer[]; //empty
 //---
-   uchar expected[2];
+   uint expected[2];
    expected[0] = 3; //pkt type
    expected[1] = 0; //remaining length
 //---
-   uchar fixed_header[];
+   uint fixed_header[];
 //---
    SetFixedHeader(PUBLISH, content_buffer, fixed_header);
 //---
@@ -137,11 +135,11 @@ bool TestFixedHeader_Publish_RemainingLength1_Fail()
    ArrayResize(content_buffer, 1);
    content_buffer[0] = 1;
 //---
-   uchar expected[2];
+   uint expected[2];
    expected[0] = 3; //pkt type
    expected[1] = 0; //remaining length should be 1
 //---
-   uchar fixed_header[];
+   uint fixed_header[];
 //---
    SetFixedHeader(PUBLISH, content_buffer, fixed_header);
 //---
@@ -164,11 +162,11 @@ bool TestFixedHeader_Puback()
   {
    uchar content_buffer[]; //empty
 //---
-   uchar expected[2];
+   uint expected[2];
    expected[0] = 4; //pkt type
    expected[1] = 0; //remaining length
 //---
-   uchar fixed_header[];
+   uint fixed_header[];
 //---
    SetFixedHeader(PUBACK, content_buffer, fixed_header);
 //---
@@ -194,11 +192,11 @@ bool TestFixedHeader_Puback_RemainingLength1_Fail()
    ArrayResize(content_buffer, 1);
    content_buffer[0] = 1;
 //---
-   uchar expected[2];
+   uint expected[2];
    expected[0] = 4; //pkt type
    expected[1] = 0; //remaining length should be 1
 //---
-   uchar fixed_header[];
+   uint fixed_header[];
 //---
    SetFixedHeader(PUBACK, content_buffer, fixed_header);
 //---
@@ -219,11 +217,11 @@ bool TestFixedHeader_Pubrec()
   {
    uchar content_buffer[]; //empty
 //---
-   uchar expected[2];
+   uint expected[2];
    expected[0] = 5; //pkt type
    expected[1] = 0; //remaining length
 //---
-   uchar fixed_header[];
+   uint fixed_header[];
 //---
    SetFixedHeader(PUBREC, content_buffer, fixed_header);
 //---
@@ -249,11 +247,11 @@ bool TestFixedHeader_Pubrec_RemainingLength1_Fail()
    ArrayResize(content_buffer, 1);
    content_buffer[0] = 1;
 //---
-   uchar expected[2];
+   uint expected[2];
    expected[0] = 5; //pkt type
    expected[1] = 0; //remaining length should be 1
 //---
-   uchar fixed_header[];
+   uint fixed_header[];
 //---
    SetFixedHeader(PUBREC, content_buffer, fixed_header);
 //---
@@ -274,11 +272,11 @@ bool TestFixedHeader_Pubrel()
   {
    uchar content_buffer[]; //empty
 //---
-   uchar expected[2];
+   uint expected[2];
    expected[0] = 6; //pkt type
    expected[1] = 0; //remaining length
 //---
-   uchar fixed_header[];
+   uint fixed_header[];
 //---
    SetFixedHeader(PUBREL, content_buffer, fixed_header);
 //---
@@ -304,11 +302,11 @@ bool TestFixedHeader_Pubrel_RemainingLength1_Fail()
    ArrayResize(content_buffer, 1);
    content_buffer[0] = 1;
 //---
-   uchar expected[2];
+   uint expected[2];
    expected[0] = 6; //pkt type
    expected[1] = 0; //remaining length should be 1
 //---
-   uchar fixed_header[];
+   uint fixed_header[];
 //---
    SetFixedHeader(PUBREL, content_buffer, fixed_header);
 //---
@@ -329,11 +327,11 @@ bool TestFixedHeader_Pubcomp()
   {
    uchar content_buffer[]; //empty
 //---
-   uchar expected[2];
+   uint expected[2];
    expected[0] = 7; //pkt type
    expected[1] = 0; //remaining length
 //---
-   uchar fixed_header[];
+   uint fixed_header[];
 //---
    SetFixedHeader(PUBCOMP, content_buffer, fixed_header);
 //---
@@ -359,11 +357,11 @@ bool TestFixedHeader_Pubcomp_RemainingLength1_Fail()
    ArrayResize(content_buffer, 1);
    content_buffer[0] = 1;
 //---
-   uchar expected[2];
+   uint expected[2];
    expected[0] = 7; //pkt type
    expected[1] = 0; //remaining length should be 1
 //---
-   uchar fixed_header[];
+   uint fixed_header[];
 //---
    SetFixedHeader(PUBCOMP, content_buffer, fixed_header);
 //---
@@ -384,11 +382,11 @@ bool TestFixedHeader_Subscribe()
   {
    uchar content_buffer[]; //empty
 //---
-   uchar expected[2];
+   uint expected[2];
    expected[0] = 8; //pkt type
    expected[1] = 0; //remaining length
 //---
-   uchar fixed_header[];
+   uint fixed_header[];
 //---
    SetFixedHeader(SUBSCRIBE, content_buffer, fixed_header);
 //---
@@ -414,11 +412,11 @@ bool TestFixedHeader_Subscribe_RemainingLength1_Fail()
    ArrayResize(content_buffer, 1);
    content_buffer[0] = 1;
 //---
-   uchar expected[2];
+   uint expected[2];
    expected[0] = 8; //pkt type
    expected[1] = 0; //remaining length should be 1
 //---
-   uchar fixed_header[];
+   uint fixed_header[];
 //---
    SetFixedHeader(SUBSCRIBE, content_buffer, fixed_header);
 //---
@@ -439,11 +437,11 @@ bool TestFixedHeader_Unsubscribe()
   {
    uchar content_buffer[]; //empty
 //---
-   uchar expected[2];
+   uint expected[2];
    expected[0] = 10; //pkt type
    expected[1] = 0; //remaining length
 //---
-   uchar fixed_header[];
+   uint fixed_header[];
 //---
    SetFixedHeader(UNSUBSCRIBE, content_buffer, fixed_header);
 //---
@@ -469,11 +467,11 @@ bool TestFixedHeader_Unsubscribe_RemainingLength1_Fail()
    ArrayResize(content_buffer, 1);
    content_buffer[0] = 1;
 //---
-   uchar expected[2];
+   uint expected[2];
    expected[0] = 10; //pkt type
    expected[1] = 0; //remaining length should be 1
 //---
-   uchar fixed_header[];
+   uint fixed_header[];
 //---
    SetFixedHeader(UNSUBSCRIBE, content_buffer, fixed_header);
 //---
@@ -494,11 +492,11 @@ bool TestFixedHeader_Pingreq()
   {
    uchar content_buffer[]; //empty
 //---
-   uchar expected[2];
+   uint expected[2];
    expected[0] = 12; //pkt type
    expected[1] = 0; //remaining length
 //---
-   uchar fixed_header[];
+   uint fixed_header[];
 //---
    SetFixedHeader(PINGREQ, content_buffer, fixed_header);
 //---
@@ -524,11 +522,11 @@ bool TestFixedHeader_Pingreq_RemainingLength1_Fail()
    ArrayResize(content_buffer, 1);
    content_buffer[0] = 1;
 //---
-   uchar expected[2];
+   uint expected[2];
    expected[0] = 12; //pkt type
    expected[1] = 0; //remaining length should be 1
 //---
-   uchar fixed_header[];
+   uint fixed_header[];
 //---
    SetFixedHeader(PINGREQ, content_buffer, fixed_header);
 //---
@@ -552,11 +550,11 @@ bool TestFixedHeader_Disconnect()
   {
    uchar content_buffer[]; //empty
 //---
-   uchar expected[2];
+   uint expected[2];
    expected[0] = 14; //pkt type
    expected[1] = 0; //remaining length
 //---
-   uchar fixed_header[];
+   uint fixed_header[];
 //---
    SetFixedHeader(DISCONNECT, content_buffer, fixed_header);
 //---
@@ -582,11 +580,11 @@ bool TestFixedHeader_Disconnect_RemainingLength1_Fail()
    ArrayResize(content_buffer, 1);
    content_buffer[0] = 1;
 //---
-   uchar expected[2];
+   uint expected[2];
    expected[0] = 14; //pkt type
    expected[1] = 0; //remaining length should be 1
 //---
-   uchar fixed_header[];
+   uint fixed_header[];
 //---
    SetFixedHeader(DISCONNECT, content_buffer, fixed_header);
 //---
@@ -607,11 +605,11 @@ bool TestFixedHeader_Auth()
   {
    uchar content_buffer[]; //empty
 //---
-   uchar expected[2];
+   uint expected[2];
    expected[0] = 15; //pkt type
    expected[1] = 0; //remaining length
 //---
-   uchar fixed_header[];
+   uint fixed_header[];
 //---
    SetFixedHeader(AUTH, content_buffer, fixed_header);
 //---
@@ -637,11 +635,11 @@ bool TestFixedHeader_Auth_RemainingLength1_Fail()
    ArrayResize(content_buffer, 1);
    content_buffer[0] = 1;
 //---
-   uchar expected[2];
+   uint expected[2];
    expected[0] = 15; //pkt type
    expected[1] = 0; //remaining length should be 1
 //---
-   uchar fixed_header[];
+   uint fixed_header[];
 //---
    SetFixedHeader(AUTH, content_buffer, fixed_header);
 //---
