@@ -128,7 +128,7 @@ The encoded value MUST use the minimum number of bytes necessary to represent th
 Size of Variable Byte Integer
 Digits  From                               To
 1       0 (0x00)                           127 (0x7F)
-2       128 (0x80, 0x01)                   16,383 (0xFF, 0x7F)
+2       128 (0x80, 0x01)                   16,383 (0xFF, 0x7F) => (255,127)
 3       16,384 (0x80, 0x80, 0x01)          2,097,151 (0xFF, 0xFF, 0x7F)
 4       2,097,152 (0x80, 0x80, 0x80, 0x01) 268,435,455 (0xFF, 0xFF, 0xFF, 0x7F)
 */
