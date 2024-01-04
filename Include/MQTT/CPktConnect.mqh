@@ -89,6 +89,7 @@ protected:
    void              InitKeepAlive() {m_byte_array[10] = 0; m_byte_array[11] = 0;}
    void              InitPropertiesLength() {m_byte_array[12] = 0;}
    uchar             m_connect_flags;
+   void              SetFixHeader(uint rem_length, uint &dest_buf[]);
 
 public:
                      CPktConnect();
@@ -121,7 +122,15 @@ CPktConnect::CPktConnect(uchar &buf[])
    SetProtocolVersion(m_byte_array);
    InitConnectFlags();
   }
-
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CPktConnect::SetFixHeader(uint rem_length, uint &dest_buf[])
+  {
+   ArrayResize(dest_buf, 2, 4);
+   dest_buf[0] = CONNECT << 4;
+   dest_buf[1] = EncodeVariableByteInteger(rem_length);
+  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
