@@ -122,6 +122,34 @@ Length.
 //+------------------------------------------------------------------+
 //|                    EncodeVariableByteInteger                     |
 //+------------------------------------------------------------------+
+/*
+The maximum number of bytes in the Variable Byte Integer field is four.
+The encoded value MUST use the minimum number of bytes necessary to represent the value
+Size of Variable Byte Integer
+Digits  From                               To
+1       0 (0x00)                           127 (0x7F)
+2       128 (0x80, 0x01)                   16,383 (0xFF, 0x7F)
+3       16,384 (0x80, 0x80, 0x01)          2,097,151 (0xFF, 0xFF, 0x7F)
+4       2,097,152 (0x80, 0x80, 0x80, 0x01) 268,435,455 (0xFF, 0xFF, 0xFF, 0x7F)
+*/
+uchar EncodeVariableByteInteger(uint x)
+  {
+   uchar encoded_byte;
+   do
+     {
+      encoded_byte = (uchar)x % 128;
+      x = (x / 128);
+      if(x > 0)
+        {
+         encoded_byte = encoded_byte | 128;
+        }
+     }
+   while(x > 0);
+   return encoded_byte;
+  };
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 uchar EncodeVariableByteInteger(ushort& buf[])
   {
    uint x;
