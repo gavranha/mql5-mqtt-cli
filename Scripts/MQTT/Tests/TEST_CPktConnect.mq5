@@ -11,28 +11,72 @@
 //+------------------------------------------------------------------+
 void OnStart()
   {
-   Print(TEST_SetUserNameFlag());
-   Print(TEST_SetUserNameFlag_FAIL());
-   Print(TEST_SetPasswordFlag());
-   Print(TEST_SetPasswordFlag_FAIL());
-   Print(TEST_SetWillRetain());
-   Print(TEST_SetWillRetain_FAIL());
-   Print(TEST_SetWillQoS2());
-   Print(TEST_SetWillQoS2_FAIL());
-   Print(TEST_SetWillQoS1());
-   Print(TEST_SetWillQoS1_FAIL());
-   Print(TEST_SetWillFlag());
-   Print(TEST_SetWillFlag_FAIL());
-   Print(TEST_SetCleanStart_KeepAlive_ClientIdentifier());
-   Print(TEST_SetClientIdentifier());
-   Print(TEST_SetClientIdentifierLength());
-   Print(TEST_SetCleanStart_and_SetKeepAlive());
-   Print(TEST_SetKeepAlive());
-   Print(TEST_SetCleanStart());
+   TestProtMethods *t = new TestProtMethods();
+   Print(t.TEST_SetFixHeader_RemLength_1digit());
+   Print(t.TEST_SetFixHeader_RemLength_2digits());
+   delete(t);
+//Print(TEST_SetUserNameFlag());
+//Print(TEST_SetUserNameFlag_FAIL());
+//Print(TEST_SetPasswordFlag());
+//Print(TEST_SetPasswordFlag_FAIL());
+//Print(TEST_SetWillRetain());
+//Print(TEST_SetWillRetain_FAIL());
+//Print(TEST_SetWillQoS2());
+//Print(TEST_SetWillQoS2_FAIL());
+//Print(TEST_SetWillQoS1());
+//Print(TEST_SetWillQoS1_FAIL());
+//Print(TEST_SetWillFlag());
+//Print(TEST_SetWillFlag_FAIL());
+//Print(TEST_SetCleanStart_KeepAlive_ClientIdentifier());
+//Print(TEST_SetClientIdentifier());
+//Print(TEST_SetClientIdentifierLength());
+//Print(TEST_SetCleanStart_and_SetKeepAlive());
+//Print(TEST_SetKeepAlive());
+//Print(TEST_SetCleanStart());
   }
-/* REFERENCE ARRAY (FIXTURE)
-{16, 24, 0, 4, 77, 81, 84, 84, 5, 2, 0, 10, 0, 4, 7, 17, 0, 0, 0, 10, 25, 1, 77, 81, 76, 53}
-*/
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+class TestProtMethods: public CPktConnect
+  {
+public:
+                     TestProtMethods() {};
+                    ~TestProtMethods() {};
+   bool              TEST_SetFixHeader_RemLength_1digit();
+   bool              TEST_SetFixHeader_RemLength_2digits();
+  };
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TestProtMethods::TEST_SetFixHeader_RemLength_2digits()
+  {
+   Print(__FUNCTION__);
+   uint expected[] = {16, 0xFF, 0x7F};
+   uchar buf[10];
+   CPktConnect *cut = new CPktConnect(buf);
+   uint result[];
+   this.SetFixHeader(16383, result);
+   bool is_true = AssertEqual(expected, result);
+   ZeroMemory(result);
+   delete cut;
+   return is_true;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TestProtMethods::TEST_SetFixHeader_RemLength_1digit()
+  {
+   Print(__FUNCTION__);
+   uint expected[] = {16, 127};
+   uchar buf[10];
+   CPktConnect *cut = new CPktConnect(buf);
+   uint result[];
+   this.SetFixHeader(127, result);
+   bool is_true = AssertEqual(expected, result);
+   ZeroMemory(result);
+   delete cut;
+   return is_true;
+  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -49,11 +93,11 @@ bool TEST_SetUserNameFlag()
    uchar result[];
    ArrayCopy(result, cut.m_byte_array);
 //--- Assert
-   bool isTrue = AssertEqual(expected, result);
+   bool is_true = AssertEqual(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue;
+   return  is_true;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -71,11 +115,11 @@ bool TEST_SetUserNameFlag_FAIL()
    uchar result[];
    ArrayCopy(result, cut.m_byte_array);
 //--- Assert
-   bool isTrue = AssertNotEqual(expected, result);
+   bool is_true = AssertNotEqual(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue;
+   return  is_true;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -93,11 +137,11 @@ bool TEST_SetPasswordFlag()
    uchar result[];
    ArrayCopy(result, cut.m_byte_array);
 //--- Assert
-   bool isTrue = AssertEqual(expected, result);
+   bool is_true = AssertEqual(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue;
+   return  is_true;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -115,11 +159,11 @@ bool TEST_SetPasswordFlag_FAIL()
    uchar result[];
    ArrayCopy(result, cut.m_byte_array);
 //--- Assert
-   bool isTrue = AssertNotEqual(expected, result);
+   bool is_true = AssertNotEqual(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue;
+   return  is_true;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -137,11 +181,11 @@ bool TEST_SetWillRetain()
    uchar result[];
    ArrayCopy(result, cut.m_byte_array);
 //--- Assert
-   bool isTrue = AssertEqual(expected, result);
+   bool is_true = AssertEqual(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue;
+   return  is_true;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -159,11 +203,11 @@ bool TEST_SetWillRetain_FAIL()
    uchar result[];
    ArrayCopy(result, cut.m_byte_array);
 //--- Assert
-   bool isTrue = AssertNotEqual(expected, result);
+   bool is_true = AssertNotEqual(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue;
+   return  is_true;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -181,11 +225,11 @@ bool TEST_SetWillQoS2()
    uchar result[];
    ArrayCopy(result, cut.m_byte_array);
 //--- Assert
-   bool isTrue = AssertEqual(expected, result);
+   bool is_true = AssertEqual(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue;
+   return  is_true;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -203,11 +247,11 @@ bool TEST_SetWillQoS2_FAIL()
    uchar result[];
    ArrayCopy(result, cut.m_byte_array);
 //--- Assert
-   bool isTrue = AssertNotEqual(expected, result);
+   bool is_true = AssertNotEqual(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue;
+   return  is_true;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -225,11 +269,11 @@ bool TEST_SetWillQoS1()
    uchar result[];
    ArrayCopy(result, cut.m_byte_array);
 //--- Assert
-   bool isTrue = AssertEqual(expected, result);
+   bool is_true = AssertEqual(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue;
+   return  is_true;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -247,11 +291,11 @@ bool TEST_SetWillQoS1_FAIL()
    uchar result[];
    ArrayCopy(result, cut.m_byte_array);
 //--- Assert
-   bool isTrue = AssertNotEqual(expected, result);
+   bool is_true = AssertNotEqual(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue;
+   return  is_true;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -269,11 +313,11 @@ bool TEST_SetWillFlag()
    uchar result[];
    ArrayCopy(result, cut.m_byte_array);
 //--- Assert
-   bool isTrue = Assert(expected, result);
+   bool is_true = Assert(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue;
+   return  is_true;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -291,11 +335,11 @@ bool TEST_SetWillFlag_FAIL()
    uchar result[];
    ArrayCopy(result, cut.m_byte_array);
 //--- Assert
-   bool isTrue = AssertNotEqual(expected, result);
+   bool is_true = AssertNotEqual(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue;
+   return  is_true;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -315,11 +359,11 @@ bool TEST_SetCleanStart_KeepAlive_ClientIdentifier()
    uchar result[];
    ArrayCopy(result, cut.m_byte_array);
 //--- Assert
-   bool isTrue = Assert(expected, result);
+   bool is_true = Assert(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue;
+   return  is_true;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -337,11 +381,11 @@ bool TEST_SetClientIdentifier()
    uchar result[];
    ArrayCopy(result, cut.m_byte_array);
 //--- Assert
-   bool isTrue = Assert(expected, result);
+   bool is_true = Assert(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue;
+   return  is_true;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -359,11 +403,11 @@ bool TEST_SetClientIdentifierLength()
    uchar result[];
    ArrayCopy(result, cut.m_byte_array);
 //--- Assert
-   bool isTrue = Assert(expected, result);
+   bool is_true = Assert(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue;
+   return  is_true;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -382,11 +426,11 @@ bool TEST_SetCleanStart_and_SetKeepAlive()
    uchar result[];
    ArrayCopy(result, cut.m_byte_array);
 //--- Assert
-   bool isTrue = Assert(expected, result);
+   bool is_true = Assert(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue;
+   return  is_true;
   }
 //+------------------------------------------------------------------+
 bool TEST_SetKeepAlive()
@@ -402,11 +446,11 @@ bool TEST_SetKeepAlive()
    uchar result[];
    ArrayCopy(result, cut.m_byte_array);
 //--- Assert
-   bool isTrue = Assert(expected, result);
+   bool is_true = Assert(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue;
+   return  is_true;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -424,10 +468,10 @@ bool TEST_SetCleanStart()
    uchar result[];
    ArrayCopy(result, cut.m_byte_array);
 //--- Assert
-   bool isTrue = Assert(expected, result);
+   bool is_true = Assert(expected, result);
 //--- cleanup
    delete cut;
    ZeroMemory(result);
-   return  isTrue;
+   return  is_true;
   }
 //+------------------------------------------------------------------+
