@@ -34,7 +34,7 @@ bool TEST_SetPacketID_TopicName5Char()
    Print(__FUNCTION__);
 // arrange
 //ushort buf[] = {50, 7, 0, 1, 'a', 'b', 'c', 'd', 'e'}; // fixed array cannot be resized
-   ushort buf[] = {};
+   uint buf[] = {};
    ArrayResize(buf, 9);
    buf[0] = 50;
    buf[1] = 7;
@@ -59,7 +59,7 @@ bool TEST_SetPacketID_TopicName1Char()
    Print(__FUNCTION__);
 // arrange
 //ushort buf[] = {50, 3, 0, 1, 'a'};
-   ushort buf[] = {};
+   uint buf[] = {};
    ArrayResize(buf, 5);
    buf[0] = 50;
    buf[1] = 3;
