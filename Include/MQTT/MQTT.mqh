@@ -132,20 +132,25 @@ Digits  From                               To
 3       16,384 (0x80, 0x80, 0x01)          2,097,151 (0xFF, 0xFF, 0x7F)
 4       2,097,152 (0x80, 0x80, 0x80, 0x01) 268,435,455 (0xFF, 0xFF, 0xFF, 0x7F)
 */
-uchar EncodeVariableByteInteger(uint x)
+void EncodeVariableByteInteger(uint value, uint &dest_buf[])
   {
-   uchar encoded_byte;
+   ArrayResize(dest_buf, 1, 4);
+   uint num_bytes = 0;
+   uint idx = 0;
    do
      {
-      encoded_byte = (uchar)x % 128;
-      x = (x / 128);
-      if(x > 0)
+      uchar digit = (uchar)value % 128;
+      value = value / 128;
+      if(value > 0)
         {
-         encoded_byte = encoded_byte | 128;
+         ArrayResize(dest_buf, dest_buf.Size() + 1, 4);
+         digit |= 128;
         }
+      dest_buf[idx] = digit;
+      idx++;
+      num_bytes++;
      }
-   while(x > 0);
-   return encoded_byte;
+   while(value > 0 && num_bytes < 4);
   };
 //+------------------------------------------------------------------+
 //|                                                                  |
