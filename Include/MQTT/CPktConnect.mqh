@@ -90,6 +90,7 @@ protected:
    void              InitPropertiesLength() {m_byte_array[12] = 0;}
    uchar             m_connect_flags;
    void              SetFixHeader(uint rem_length, uint &dest_buf[]);
+   uint              m_fixed_header[];
 
 public:
                      CPktConnect();
@@ -127,9 +128,11 @@ CPktConnect::CPktConnect(uchar &buf[])
 //+------------------------------------------------------------------+
 void CPktConnect::SetFixHeader(uint rem_length, uint &dest_buf[])
   {
-   ArrayResize(dest_buf, 2, 4);
-   dest_buf[0] = CONNECT << 4;
-   dest_buf[1] = EncodeVariableByteInteger(rem_length);
+// validate(rem_length);
+   EncodeVariableByteInteger(rem_length, dest_buf);
+   ArrayResize(m_fixed_header, dest_buf.Size() + 1);
+   m_fixed_header[0] = CONNECT << 4;
+   ArrayCopy(m_fixed_header, dest_buf, 1);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
