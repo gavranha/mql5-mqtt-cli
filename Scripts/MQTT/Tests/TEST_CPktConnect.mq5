@@ -12,8 +12,10 @@
 void OnStart()
   {
    TestProtMethods *t = new TestProtMethods();
-   Print(t.TEST_SetFixHeader_RemLength_1digit());
+   Print(t.TEST_SetFixHeader_RemLength_4digits());
+   Print(t.TEST_SetFixHeader_RemLength_3digits());
    Print(t.TEST_SetFixHeader_RemLength_2digits());
+   Print(t.TEST_SetFixHeader_RemLength_1digit());
    delete(t);
 //Print(TEST_SetUserNameFlag());
 //Print(TEST_SetUserNameFlag_FAIL());
@@ -44,7 +46,45 @@ public:
                     ~TestProtMethods() {};
    bool              TEST_SetFixHeader_RemLength_1digit();
    bool              TEST_SetFixHeader_RemLength_2digits();
+   bool              TEST_SetFixHeader_RemLength_3digits();
+   bool              TEST_SetFixHeader_RemLength_4digits();
   };
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TestProtMethods::TEST_SetFixHeader_RemLength_4digits()
+  {
+   Print(__FUNCTION__);
+   uint expected[] = {16, 0xFF, 0xFF, 0xFF, 0x7F};
+   uchar buf[10];
+   CPktConnect *cut = new CPktConnect(buf);
+   uint buf1[];
+   this.SetFixHeader(268435455, buf1);
+   uint result[];
+   ArrayCopy(result, this.m_fixed_header);
+   bool is_true = AssertEqual(expected, result);
+   ZeroMemory(result);
+   delete cut;
+   return is_true;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TestProtMethods::TEST_SetFixHeader_RemLength_3digits()
+  {
+   Print(__FUNCTION__);
+   uint expected[] = {16, 0xFF, 0xFF, 0x7F};
+   uchar buf[10];
+   CPktConnect *cut = new CPktConnect(buf);
+   uint buf1[];
+   this.SetFixHeader(2097151, buf1);
+   uint result[];
+   ArrayCopy(result, this.m_fixed_header);
+   bool is_true = AssertEqual(expected, result);
+   ZeroMemory(result);
+   delete cut;
+   return is_true;
+  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -54,8 +94,10 @@ bool TestProtMethods::TEST_SetFixHeader_RemLength_2digits()
    uint expected[] = {16, 0xFF, 0x7F};
    uchar buf[10];
    CPktConnect *cut = new CPktConnect(buf);
+   uint buf1[];
+   this.SetFixHeader(16383, buf1);
    uint result[];
-   this.SetFixHeader(16383, result);
+   ArrayCopy(result, this.m_fixed_header);
    bool is_true = AssertEqual(expected, result);
    ZeroMemory(result);
    delete cut;
@@ -67,11 +109,13 @@ bool TestProtMethods::TEST_SetFixHeader_RemLength_2digits()
 bool TestProtMethods::TEST_SetFixHeader_RemLength_1digit()
   {
    Print(__FUNCTION__);
-   uint expected[] = {16, 127};
+   uint expected[] = {16, 0x7F};
    uchar buf[10];
    CPktConnect *cut = new CPktConnect(buf);
+   uint buf1[];
+   this.SetFixHeader(127, buf1);
    uint result[];
-   this.SetFixHeader(127, result);
+   ArrayCopy(result, this.m_fixed_header);
    bool is_true = AssertEqual(expected, result);
    ZeroMemory(result);
    delete cut;
