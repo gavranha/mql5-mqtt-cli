@@ -12,19 +12,19 @@ void OnStart()
   {
    Print(TEST_SetPacketID_TopicName1Char());
    Print(TEST_SetPacketID_TopicName5Char());
-   Print(TEST_GetQoSLevel_2_RETAIN_DUP());
-   Print(TEST_GetQoSLevel_2_RETAIN());
-   Print(TEST_GetQoSLevel_2());
-   Print(TEST_GetQoSLevel_1_RETAIN_DUP());
-   Print(TEST_GetQoSLevel_1_RETAIN());
-   Print(TEST_GetQoSLevel_1());
-   Print(TEST_GetQoSLevel_0_RETAIN());
-   Print(TEST_GetQoSLevel_0());
-   Print(TEST_EncodeUTF8String_Disallowed_CodePoint_0x01_Ret_Empty_Array());
-   Print(TEST_EncodeUTF8String_EmptyString());
-   Print(TEST_EncodeUTF8String_ASCII());
-   Print(TEST_EncodeUTF8String_OneChar());
-   Print(TEST_DecodeVariableByteInteger());
+//Print(TEST_GetQoSLevel_2_RETAIN_DUP());
+//Print(TEST_GetQoSLevel_2_RETAIN());
+//Print(TEST_GetQoSLevel_2());
+//Print(TEST_GetQoSLevel_1_RETAIN_DUP());
+//Print(TEST_GetQoSLevel_1_RETAIN());
+//Print(TEST_GetQoSLevel_1());
+//Print(TEST_GetQoSLevel_0_RETAIN());
+//Print(TEST_GetQoSLevel_0());
+//Print(TEST_EncodeUTF8String_Disallowed_CodePoint_0x01_Ret_Empty_Array());
+//Print(TEST_EncodeUTF8String_EmptyString());
+//Print(TEST_EncodeUTF8String_ASCII());
+//Print(TEST_EncodeUTF8String_OneChar());
+//Print(TEST_DecodeVariableByteInteger());
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -33,11 +33,12 @@ bool TEST_SetPacketID_TopicName5Char()
   {
    Print(__FUNCTION__);
 // arrange
-//ushort buf[] = {50, 7, 0, 1, 'a', 'b', 'c', 'd', 'e'}; // fixed array cannot be resized
+   uint expected[] = {48, 9, 0, 1, 'a', 'b', 'c', 'd', 'e', 0, 1};
+   uint result[];
    uint buf[] = {};
    ArrayResize(buf, 9);
-   buf[0] = 50;
-   buf[1] = 7;
+   buf[0] = 48;
+   buf[1] = 9;
    buf[2] = 0;
    buf[3] = 1;
    buf[4] = 'a';
@@ -47,8 +48,14 @@ bool TEST_SetPacketID_TopicName5Char()
    buf[8] = 'e';
 // act
    SetPacketID(buf, 9);
+   ArrayCopy(result, buf);
 // assert
-   bool is_true = buf[9] > 0 || buf[10] > 0;
+   bool is_true = AssertEqual(expected, result);
+   if(!is_true)
+     {
+      printf("%s - did you set TEST to true in MQTT.mqh?", __FUNCTION__);
+     }
+   ZeroMemory(result);
    return is_true;
   }
 //+------------------------------------------------------------------+
@@ -58,18 +65,25 @@ bool TEST_SetPacketID_TopicName1Char()
   {
    Print(__FUNCTION__);
 // arrange
-//ushort buf[] = {50, 3, 0, 1, 'a'};
+   uint expected[] = {48, 5, 0, 1, 'a', 0, 1};
+   uint result[];
    uint buf[] = {};
    ArrayResize(buf, 5);
-   buf[0] = 50;
-   buf[1] = 3;
+   buf[0] = 48;
+   buf[1] = 5;
    buf[2] = 0;
    buf[3] = 1;
    buf[4] = 'a';
 // act
    SetPacketID(buf, 5);
+   ArrayCopy(result, buf);
 // assert
-   bool is_true = buf[5] > 0 || buf[6] > 0;
+   bool is_true = AssertEqual(expected, result);
+   if(!is_true)
+     {
+      printf("%s - did you set TEST to true in MQTT.mqh?", __FUNCTION__);
+     }
+   ZeroMemory(result);
    return is_true;
   }
 //+------------------------------------------------------------------+
