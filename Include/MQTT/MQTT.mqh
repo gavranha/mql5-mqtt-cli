@@ -307,6 +307,7 @@ uchar GetQoSLevel(uchar& buf[])
 //+------------------------------------------------------------------+
 //|            SetPacketID                                           |
 //+------------------------------------------------------------------+
+#define TEST true
 void SetPacketID(uint& buf[], int start_idx)
   {
 // MathRand - Before the first call of the function, it's necessary to call
@@ -320,6 +321,14 @@ void SetPacketID(uint& buf[], int start_idx)
      }
    buf[start_idx] = packet_id >> 8; // MSB
    buf[start_idx + 1] = packet_id % 256; //LSB
+//--- if testing, set packet ID to 1
+   if(TEST)
+     {
+      Print("=======================TEST======================");
+      buf[start_idx] = 0; // MSB
+      buf[start_idx + 1] = 1; //LSB
+      Print("=======================TEST======================");
+     }
   }
 //+------------------------------------------------------------------+
 //MQTT_PROPERTY_PAYLOAD_FORMAT_INDICATOR          = Byte
