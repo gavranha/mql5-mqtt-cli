@@ -11,37 +11,73 @@
 //+------------------------------------------------------------------+
 void OnStart()
   {
-   //Print(TEST_SetFixedHeader_NoDUP_QoS0_NoRETAIN());
-   //Print(TEST_SetFixedHeader_NoDUP_QoS0_RETAIN());
-   //Print(TEST_SetFixedHeader_NoDUP_QoS1_NoRETAIN());
-   //Print(TEST_SetFixedHeader_NoDUP_QoS1_RETAIN());
-   //Print(TEST_SetFixedHeader_NoDUP_QoS2_NoRETAIN());
-   //Print(TEST_SetFixedHeader_NoDUP_QoS2_RETAIN());
-   //Print(TEST_SetFixedHeader_DUP_QoS0_NoRETAIN());
-   //Print(TEST_SetFixedHeader_DUP_QoS0_RETAIN());
-   //Print(TEST_SetFixedHeader_DUP_QoS1_NoRETAIN());
-   //Print(TEST_SetFixedHeader_DUP_QoS1_RETAIN());
-   //Print(TEST_SetFixedHeader_DUP_QoS2_NoRETAIN());
-   //Print(TEST_SetFixedHeader_DUP_QoS2_RETAIN());
-   //Print(TEST_SetTopicName_OneChar());
-   //Print(TEST_SetTopicName_TwoChar());
-   //Print(TEST_SetTopicName_WildcardChar_NumberSign());
-   //Print(TEST_SetTopicName_WildcardChar_PlusSign());
-   //Print(TEST_SetTopicName_Empty());
-   //Print(TEST_SetPacketID_QoS1_TopicName1Char());
-   //Print(TEST_SetPacketID_QoS1_TopicName5Char());
-   //Print(TEST_SetPacketID_QoS2_TopicName1Char());
-   //Print(TEST_SetPacketID_QoS2_TopicName5Char());
-   Print(TEST_SetProps_Length());
-   //Print(TEST_SetProps_PayloadFormatIndicator());
-   //Print(TEST_SetProps_MessageExpiryInterval());
-   //Print(TEST_SetProps_TopicAlias());
-   //Print(TEST_SetProps_ResponseTopic());
-   //Print(TEST_SetProps_CorrelationData());
-   //Print(TEST_SetProps_UserProperty());
-   //Print(TEST_SetProps_SubscriptionIdentifier());
-   //Print(TEST_SetProps_ContentType());
-   //Print(TEST_SetPayload());
+//Print(TEST_SetTopicName_OneChar());
+//Print(TEST_SetTopicName_TwoChar());
+//Print(TEST_SetTopicName_WildcardChar_NumberSign());
+//Print(TEST_SetTopicName_WildcardChar_PlusSign());
+//Print(TEST_SetTopicName_Empty());
+   Print(TEST_Build());
+//--- TEST PROTECTED METHODS
+   TestProtMethods *t = new TestProtMethods();
+//Print(t.TEST_FixHead());
+   delete(t);
+//--- END TEST PROTECTED METHODS
+//Print(TEST_SetFixedHeader_NoDUP_QoS0_NoRETAIN());
+//Print(TEST_SetFixedHeader_NoDUP_QoS0_RETAIN());
+//Print(TEST_SetFixedHeader_NoDUP_QoS1_NoRETAIN());
+//Print(TEST_SetFixedHeader_NoDUP_QoS1_RETAIN());
+//Print(TEST_SetFixedHeader_NoDUP_QoS2_NoRETAIN());
+//Print(TEST_SetFixedHeader_NoDUP_QoS2_RETAIN());
+//Print(TEST_SetFixedHeader_DUP_QoS0_NoRETAIN());
+//Print(TEST_SetFixedHeader_DUP_QoS0_RETAIN());
+//Print(TEST_SetFixedHeader_DUP_QoS1_NoRETAIN());
+//Print(TEST_SetFixedHeader_DUP_QoS1_RETAIN());
+//Print(TEST_SetFixedHeader_DUP_QoS2_NoRETAIN());
+//Print(TEST_SetFixedHeader_DUP_QoS2_RETAIN());
+//---
+//Print(TEST_SetPacketID_QoS1_TopicName1Char());
+//Print(TEST_SetPacketID_QoS1_TopicName5Char());
+//Print(TEST_SetPacketID_QoS2_TopicName1Char());
+//Print(TEST_SetPacketID_QoS2_TopicName5Char());
+//Print(TEST_SetProps_Length());
+//Print(TEST_SetProps_PayloadFormatIndicator());
+//Print(TEST_SetProps_MessageExpiryInterval());
+//Print(TEST_SetProps_TopicAlias());
+//Print(TEST_SetProps_ResponseTopic());
+//Print(TEST_SetProps_CorrelationData());
+//Print(TEST_SetProps_UserProperty());
+//Print(TEST_SetProps_SubscriptionIdentifier());
+//Print(TEST_SetProps_ContentType());
+//Print(TEST_SetPayload());
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+class TestProtMethods: public CPktPublish
+  {
+public:
+                     TestProtMethods() {};
+                    ~TestProtMethods() {};
+   //bool              TEST_SetFixHeader();
+
+  };
+//+------------------------------------------------------------------+
+//|   rem_length = var_header + payload                             |
+//|   var_header = topic_name + packet_id + props                    |
+//+------------------------------------------------------------------+
+bool TEST_Build(void)
+  {
+  Print(__FUNCTION__);
+   uint payload[];
+   uint expected[] = {48, 3, 1, 'a', 1}; //minimum valid fixed header
+   uint result[];
+   CPktPublish *cut = new CPktPublish(payload);
+   cut.SetTopicName("a");
+   cut.Build(result);
+   bool is_true = AssertEqual(expected, result);
+   ZeroMemory(result);
+   delete cut;
+   return is_true;
   }
 //+------------------------------------------------------------------+
 //|            TEST_SetPacketID_QoS2_TopicName1Char                  |
@@ -508,8 +544,8 @@ bool TEST_SetProps_Length()
   {
    Print(__FUNCTION__);
 //--- Arrange
-   uint expected[] =
-     {48, ?, 0, 4, 77, 81, 84, 84, 5, 2, 0, 10, 0, 4, 77, 81, 76, 53};
+   uchar expected[] =
+     {48, 16, 0, 4, 77, 81, 84, 84, 5, 2, 0, 10, 0, 4, 77, 81, 76, 53};
    uchar buf[expected.Size() - 2];
    CPktPublish *cut = new CPktPublish(buf);
 //--- Act

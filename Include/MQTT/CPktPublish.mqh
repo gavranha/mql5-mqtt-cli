@@ -22,11 +22,21 @@ private:
    bool              IsControlPacket() {return true;}
    bool              HasWildcardChar(const string str);
 protected:
-   uchar             m_publish_flags;
    uchar             m_buf[];
+   uint              m_fix_header[];
+   uchar             m_publish_flags;
+   uint              m_remaining_length;
+   ushort            m_topic_name[];
+   ushort            m_packet_id;
+   uint              m_props[];
+   uint              m_var_header[];
+   uint              m_payload[];
+   void              SetFixHeader(ENUM_PKT_TYPE, uint rem_length, uchar pub_flags = 0);
+
 public:
                      CPktPublish();
                      CPktPublish(uchar& payload[]);
+                     CPktPublish(uint& payload[]);
                     ~CPktPublish();
    //--- methods for setting Publish flags
    void              SetRetain(const bool retain);
@@ -38,8 +48,45 @@ public:
    uint              m_byte_array[];
    //--- methods for setting Topic Name and Properties
    void              SetTopicName(const string topic_name);
+   //--- method for building the final packet
+   void              Build(uint &result[]);
 
   };
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CPktPublish::SetFixHeader(ENUM_PKT_TYPE pkt_type, uint rem_length, uchar pub_flags = 0)
+  {
+   m_fix_header[0] = (uchar)pkt_type << 4;
+   m_fix_header[0] |= m_publish_flags;
+   uint aux[];
+   EncodeVariableByteInteger(rem_length, aux);
+   ArrayCopy(m_fix_header, aux, 1);
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CPktPublish::Build(uint &dest[])
+  {
+   ArrayResize(dest, 10);
+//ArrayCopy(dest, m_var_header, 2);
+//ArrayCopy(dest, m_payload, dest.Size() + 1);
+   SetFixHeader(PUBLISH, m_remaining_length, m_publish_flags);
+   ArrayCopy(dest, m_fix_header);
+   //ArrayResize(m_var_header, (m_topic_name.Size() + 2 + m_props.Size()));
+   //SetPacketID(m_var_header, m_topic_name.Size() + 1);
+   //ArrayCopy(dest, m_var_header, dest.Size() + 1);
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+CPktPublish::CPktPublish(uint &payload[])
+  {
+   ArrayFree(m_fix_header);
+   ArrayFree(m_var_header);
+   ArrayFree(m_payload);
+   ArrayResize(m_fix_header, payload.Size() + 2, 4);
+  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -69,16 +116,11 @@ void CPktPublish::SetTopicName(const string topic_name)
   {
    if(HasWildcardChar(topic_name) || StringLen(topic_name) == 0)
      {
-      ArrayFree(m_byte_array);
+      ArrayFree(m_topic_name);
       return;
      }
-   ushort encoded_string[];
-   EncodeUTF8String(topic_name, encoded_string);
-   ArrayCopy(m_byte_array, encoded_string, 2);
-// TODO: this function must be the last to be called
-// when the packet is already built so we have the
-// remaining length
-   m_byte_array[1] = EncodeVariableByteInteger(encoded_string);
+   EncodeUTF8String(topic_name, m_topic_name);
+   m_remaining_length += m_topic_name.Size();
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
