@@ -1,6 +1,19 @@
 //+------------------------------------------------------------------+
 //|                                                     TestUtil.mqh |
 //+------------------------------------------------------------------+
+bool AssertEqual(ushort & expected[], ushort & result[])
+  {
+   if(!ArrayCompare(expected, result) == 0)
+     {
+      for(uint i = 0; i < expected.Size(); i++)
+        {
+         printf("expected\t%d\t\t%d result", expected[i], result[i]);
+        }
+      printf("expected size %d <=> %d result size", expected.Size(), result.Size());
+      return false;
+     }
+   return true;
+  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
