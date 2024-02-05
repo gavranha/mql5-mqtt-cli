@@ -31,6 +31,7 @@ protected:
    uint              m_props[];
    uint              m_var_header[];
    uint              m_payload[];
+   uchar             m_tmp_properties_buf[];
    void              SetFixHeader(ENUM_PKT_TYPE, uint rem_length, uchar pub_flags = 0);
 
 public:
@@ -48,10 +49,25 @@ public:
    uint              m_byte_array[];
    //--- methods for setting Topic Name and Properties
    void              SetTopicName(const string topic_name);
+   void              SetPropMsgExpiryInterval(uint msg_expiry_interval);
    //--- method for building the final packet
    void              Build(uint &result[]);
 
   };
+//+------------------------------------------------------------------+
+//|                SetPropMsgExpiryInterval                          |
+//+------------------------------------------------------------------+
+void CPktPublish::SetPropMsgExpiryInterval(uint msg_expiry_interval)
+  {
+   ArrayResize(m_tmp_properties_buf, 5);
+   m_tmp_properties_buf[0] = MQTT_PROPERTY_MESSAGE_EXPIRY_INTERVAL;
+   uchar value[4];
+   value[0] = (uchar)msg_expiry_interval >> 24;
+   value[1] = (uchar)msg_expiry_interval >> 16;
+   value[2] = (uchar)msg_expiry_interval >> 8;
+   value[3] = (uchar)msg_expiry_interval;
+   ArrayCopy(m_tmp_properties_buf, value, 1);
+  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -73,9 +89,9 @@ void CPktPublish::Build(uint &dest[])
 //ArrayCopy(dest, m_payload, dest.Size() + 1);
    SetFixHeader(PUBLISH, m_remaining_length, m_publish_flags);
    ArrayCopy(dest, m_fix_header);
-   //ArrayResize(m_var_header, (m_topic_name.Size() + 2 + m_props.Size()));
-   //SetPacketID(m_var_header, m_topic_name.Size() + 1);
-   //ArrayCopy(dest, m_var_header, dest.Size() + 1);
+   ArrayResize(m_var_header, (m_topic_name.Size() + 2 + m_props.Size()));
+   SetPacketID(m_var_header, m_topic_name.Size() + 1);
+   ArrayCopy(dest, m_var_header, dest.Size() + 1);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |

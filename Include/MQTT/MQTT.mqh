@@ -111,6 +111,24 @@ void SetFixedHeader(ENUM_PKT_TYPE pkt_type,
          break;
      }
   }
+//+------------------------------------------------------------------+
+//|              EncodeFourByteInteger                               |
+//+------------------------------------------------------------------+
+/*
+Four Byte Integer data values are 32-bit unsigned integers in big-endian order: the high order byte
+precedes the successively lower order bytes. This means that a 32-bit word is presented on the network
+as Most Significant Byte (MSB), followed by the next most Significant Byte (MSB), followed by the next
+most Significant Byte (MSB), followed by Least Significant Byte (LSB).
+*/
+void EncodeFourByteInteger(uint val, uchar &dest_buf[])
+  {
+   ArrayResize(dest_buf, 4);
+   dest_buf[0] = (uchar)(val >> 24) & 0xff;
+   dest_buf[1] = (uchar)(val >> 16) & 0xff;
+   dest_buf[2] = (uchar)(val >> 8) & 0xff;
+   dest_buf[3] = (uchar)val & 0xff;
+  }
+
 /*
 Position: starts at byte 2.
 The Remaining Length is a Variable Byte Integer that represents the number of bytes remaining within the

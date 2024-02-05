@@ -4,14 +4,19 @@
 //| **** PART OF ARTICLE https://www.mql5.com/en/articles/13998 **** |
 //+------------------------------------------------------------------+
 #include <MQTT\MQTT.mqh>
+#include "TestUtil.mqh"
 
 //+------------------------------------------------------------------+
 //| Tests for MQTT.mqh header                                        |
 //+------------------------------------------------------------------+
 void OnStart()
   {
-   Print(TEST_SetPacketID_TopicName1Char());
-   Print(TEST_SetPacketID_TopicName5Char());
+   Print(TEST_EncodeFourByteInteger_OneByte());
+   Print(TEST_EncodeFourByteInteger_TwoBytes());
+   Print(TEST_EncodeFourByteInteger_ThreeBytes());
+   Print(TEST_EncodeFourByteInteger_FourBytes());
+//Print(TEST_SetPacketID_TopicName1Char());
+//Print(TEST_SetPacketID_TopicName5Char());
 //Print(TEST_GetQoSLevel_2_RETAIN_DUP());
 //Print(TEST_GetQoSLevel_2_RETAIN());
 //Print(TEST_GetQoSLevel_2());
@@ -29,352 +34,337 @@ void OnStart()
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_SetPacketID_TopicName5Char()
+/*
+Four Byte Integer data values are 32-bit unsigned integers in big-endian order: the high order byte
+precedes the successively lower order bytes. This means that a 32-bit word is presented on the network
+as Most Significant Byte (MSB), followed by the next most Significant Byte (MSB), followed by the next
+most Significant Byte (MSB), followed by Least Significant Byte (LSB).
+*/
+bool TEST_EncodeFourByteInteger_FourBytes()
   {
-   Print(__FUNCTION__);
-// arrange
-   uint expected[] = {48, 9, 0, 1, 'a', 'b', 'c', 'd', 'e', 0, 1};
-   uint result[];
-   uint buf[] = {};
-   ArrayResize(buf, 9);
-   buf[0] = 48;
-   buf[1] = 9;
-   buf[2] = 0;
-   buf[3] = 1;
-   buf[4] = 'a';
-   buf[5] = 'b';
-   buf[6] = 'c';
-   buf[7] = 'd';
-   buf[8] = 'e';
-// act
-   SetPacketID(buf, 9);
-   ArrayCopy(result, buf);
-// assert
-   bool is_true = AssertEqual(expected, result);
-   if(!is_true)
-     {
-      printf("%s - did you set TEST to true in MQTT.mqh?", __FUNCTION__);
-     }
+   uchar expected[] = {1, 0, 0, 0};
+   uchar result[];
+   EncodeFourByteInteger(16777216, result);
+   bool isTrue = AssertEqual(expected, result);
    ZeroMemory(result);
-   return is_true;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_SetPacketID_TopicName1Char()
+bool TEST_EncodeFourByteInteger_ThreeBytes()
   {
-   Print(__FUNCTION__);
-// arrange
-   uint expected[] = {48, 5, 0, 1, 'a', 0, 1};
-   uint result[];
-   uint buf[] = {};
-   ArrayResize(buf, 5);
-   buf[0] = 48;
-   buf[1] = 5;
-   buf[2] = 0;
-   buf[3] = 1;
-   buf[4] = 'a';
-// act
-   SetPacketID(buf, 5);
-   ArrayCopy(result, buf);
-// assert
-   bool is_true = AssertEqual(expected, result);
-   if(!is_true)
-     {
-      printf("%s - did you set TEST to true in MQTT.mqh?", __FUNCTION__);
-     }
+   uchar expected[] = {0, 1, 0, 0};
+   uchar result[];
+   EncodeFourByteInteger(65536, result);
+   bool isTrue = AssertEqual(expected, result);
    ZeroMemory(result);
-   return is_true;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_GetQoSLevel_2_RETAIN_DUP()
+bool TEST_EncodeFourByteInteger_TwoBytes()
   {
-   Print(__FUNCTION__);
-//-- arrange
-   uchar expected = 0x02;
-   uchar buf[] = {61, 3, 0, 1, 'a'};
-//-- act
-   uchar result = GetQoSLevel(buf);
-//-- assert
-   bool is_true = AssertEqual(expected, result);
-//-- cleanup
+   uchar expected[] = {0, 0, 1, 0};
+   uchar result[];
+   EncodeFourByteInteger(256, result);
+   bool isTrue = AssertEqual(expected, result);
    ZeroMemory(result);
-   return is_true;
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_GetQoSLevel_2_RETAIN()
+bool TEST_EncodeFourByteInteger_OneByte()
   {
-   Print(__FUNCTION__);
-//-- arrange
-   uchar expected = 0x02;
-   uchar buf[] = {53, 3, 0, 1, 'a'};
-//-- act
-   uchar result = GetQoSLevel(buf);
-//-- assert
-   bool is_true = AssertEqual(expected, result);
-//-- cleanup
+   uchar expected[] = {0, 0, 0, 1};
+   uchar result[];
+   EncodeFourByteInteger(1, result);
+   bool isTrue = AssertEqual(expected, result);
    ZeroMemory(result);
-   return is_true;
+   return isTrue;
   }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+//bool TEST_SetPacketID_TopicName5Char()
+//  {
+//   Print(__FUNCTION__);
+//// arrange
+//   uint expected[] = {48, 9, 0, 1, 'a', 'b', 'c', 'd', 'e', 0, 1};
+//   uint result[];
+//   uint buf[] = {};
+//   ArrayResize(buf, 9);
+//   buf[0] = 48;
+//   buf[1] = 9;
+//   buf[2] = 0;
+//   buf[3] = 1;
+//   buf[4] = 'a';
+//   buf[5] = 'b';
+//   buf[6] = 'c';
+//   buf[7] = 'd';
+//   buf[8] = 'e';
+//// act
+//   SetPacketID(buf, 9);
+//   ArrayCopy(result, buf);
+//// assert
+//   bool is_true = AssertEqual(expected, result);
+//   if(!is_true)
+//     {
+//      printf("%s - did you set TEST to true in MQTT.mqh?", __FUNCTION__);
+//     }
+//   ZeroMemory(result);
+//   return is_true;
+//  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+//bool TEST_SetPacketID_TopicName1Char()
+//  {
+//   Print(__FUNCTION__);
+//// arrange
+//   uint expected[] = {48, 5, 0, 1, 'a', 0, 1};
+//   uint result[];
+//   uint buf[] = {};
+//   ArrayResize(buf, 5);
+//   buf[0] = 48;
+//   buf[1] = 5;
+//   buf[2] = 0;
+//   buf[3] = 1;
+//   buf[4] = 'a';
+//// act
+//   SetPacketID(buf, 5);
+//   ArrayCopy(result, buf);
+//// assert
+//   bool is_true = AssertEqual(expected, result);
+//   if(!is_true)
+//     {
+//      printf("%s - did you set TEST to true in MQTT.mqh?", __FUNCTION__);
+//     }
+//   ZeroMemory(result);
+//   return is_true;
+//  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+//bool TEST_GetQoSLevel_2_RETAIN_DUP()
+//  {
+//   Print(__FUNCTION__);
+////-- arrange
+//   uchar expected = 0x02;
+//   uchar buf[] = {61, 3, 0, 1, 'a'};
+////-- act
+//   uchar result = GetQoSLevel(buf);
+////-- assert
+//   bool is_true = AssertEqual(expected, result);
+////-- cleanup
+//   ZeroMemory(result);
+//   return is_true;
+//  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+//bool TEST_GetQoSLevel_2_RETAIN()
+//  {
+//   Print(__FUNCTION__);
+////-- arrange
+//   uchar expected = 0x02;
+//   uchar buf[] = {53, 3, 0, 1, 'a'};
+////-- act
+//   uchar result = GetQoSLevel(buf);
+////-- assert
+//   bool is_true = AssertEqual(expected, result);
+////-- cleanup
+//   ZeroMemory(result);
+//   return is_true;
+//  }
 //+------------------------------------------------------------------+
 //|                   TEST_GetQoSLevel_2                             |
 //+------------------------------------------------------------------+
-bool TEST_GetQoSLevel_2()
-  {
-   Print(__FUNCTION__);
-//-- arrange
-   uchar expected = 0x02;
-   uchar buf[] = {52, 3, 0, 1, 'a'};
-//-- act
-   uchar result = GetQoSLevel(buf);
-//-- assert
-   bool is_true = AssertEqual(expected, result);
-//-- cleanup
-   ZeroMemory(result);
-   return is_true;
-  }
+//bool TEST_GetQoSLevel_2()
+//  {
+//   Print(__FUNCTION__);
+////-- arrange
+//   uchar expected = 0x02;
+//   uchar buf[] = {52, 3, 0, 1, 'a'};
+////-- act
+//   uchar result = GetQoSLevel(buf);
+////-- assert
+//   bool is_true = AssertEqual(expected, result);
+////-- cleanup
+//   ZeroMemory(result);
+//   return is_true;
+//  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_GetQoSLevel_1_RETAIN_DUP()
-  {
-   Print(__FUNCTION__);
-//-- arrange
-   uchar expected = 0x01;
-   uchar buf[] = {59, 3, 0, 1, 'a'};
-//-- act
-   uchar result = GetQoSLevel(buf);
-//-- assert
-   bool is_true = AssertEqual(expected, result);
-//-- cleanup
-   ZeroMemory(result);
-   return is_true;
-  }
+//bool TEST_GetQoSLevel_1_RETAIN_DUP()
+//  {
+//   Print(__FUNCTION__);
+////-- arrange
+//   uchar expected = 0x01;
+//   uchar buf[] = {59, 3, 0, 1, 'a'};
+////-- act
+//   uchar result = GetQoSLevel(buf);
+////-- assert
+//   bool is_true = AssertEqual(expected, result);
+////-- cleanup
+//   ZeroMemory(result);
+//   return is_true;
+//  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_GetQoSLevel_1_RETAIN()
-  {
-   Print(__FUNCTION__);
-//-- arrange
-   uchar expected = 0x01;
-   uchar buf[] = {51, 3, 0, 1, 'a'};
-//-- act
-   uchar result = GetQoSLevel(buf);
-//-- assert
-   bool is_true = AssertEqual(expected, result);
-//-- cleanup
-   ZeroMemory(result);
-   return is_true;
-  }
+//bool TEST_GetQoSLevel_1_RETAIN()
+//  {
+//   Print(__FUNCTION__);
+////-- arrange
+//   uchar expected = 0x01;
+//   uchar buf[] = {51, 3, 0, 1, 'a'};
+////-- act
+//   uchar result = GetQoSLevel(buf);
+////-- assert
+//   bool is_true = AssertEqual(expected, result);
+////-- cleanup
+//   ZeroMemory(result);
+//   return is_true;
+//  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_GetQoSLevel_1()
-  {
-   Print(__FUNCTION__);
-//-- arrange
-   uchar expected = 0x01;
-   uchar buf[] = {50, 3, 0, 1, 'a'};// No DUP, no RETAIN
-//-- act
-   uchar result = GetQoSLevel(buf);
-//-- assert
-   bool is_true = AssertEqual(expected, result);
-//-- cleanup
-   ZeroMemory(result);
-   return is_true;
-  }
+//bool TEST_GetQoSLevel_1()
+//  {
+//   Print(__FUNCTION__);
+////-- arrange
+//   uchar expected = 0x01;
+//   uchar buf[] = {50, 3, 0, 1, 'a'};// No DUP, no RETAIN
+////-- act
+//   uchar result = GetQoSLevel(buf);
+////-- assert
+//   bool is_true = AssertEqual(expected, result);
+////-- cleanup
+//   ZeroMemory(result);
+//   return is_true;
+//  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_GetQoSLevel_0_RETAIN()
-  {
-   Print(__FUNCTION__);
-//-- arrange
-   uchar expected = 0x00;
-   uchar buf[] = {49, 3, 0, 1, 'a'}; // // The DUP flag MUST be set to 0 for all QoS 0 messages
-//-- act
-   uchar result = GetQoSLevel(buf);
-//-- assert
-   bool is_true = AssertEqual(expected, result);
-//-- cleanup
-   ZeroMemory(result);
-   return is_true;
-  }
+//bool TEST_GetQoSLevel_0_RETAIN()
+//  {
+//   Print(__FUNCTION__);
+////-- arrange
+//   uchar expected = 0x00;
+//   uchar buf[] = {49, 3, 0, 1, 'a'}; // // The DUP flag MUST be set to 0 for all QoS 0 messages
+////-- act
+//   uchar result = GetQoSLevel(buf);
+////-- assert
+//   bool is_true = AssertEqual(expected, result);
+////-- cleanup
+//   ZeroMemory(result);
+//   return is_true;
+//  }
 //+------------------------------------------------------------------+
 //|                 TEST_GetQoSLevel_0                               |
 //+------------------------------------------------------------------+
 // The DUP flag MUST be set to 0 for all QoS 0 messages
-bool TEST_GetQoSLevel_0()
-  {
-   Print(__FUNCTION__);
-//-- arrange
-   uchar expected = 0x00;
-   uchar buf[] = {48, 3, 0, 1, 'a'};// No RETAIN
-//-- act
-   uchar result = GetQoSLevel(buf);
-//-- assert
-   bool is_true = AssertEqual(expected, result);
-//-- cleanup
-   ZeroMemory(result);
-   return is_true;
-  }
+//bool TEST_GetQoSLevel_0()
+//  {
+//   Print(__FUNCTION__);
+////-- arrange
+//   uchar expected = 0x00;
+//   uchar buf[] = {48, 3, 0, 1, 'a'};// No RETAIN
+////-- act
+//   uchar result = GetQoSLevel(buf);
+////-- assert
+//   bool is_true = AssertEqual(expected, result);
+////-- cleanup
+//   ZeroMemory(result);
+//   return is_true;
+//  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_EncodeUTF8String_Disallowed_CodePoint_0x01_Ret_Empty_Array()
-  {
-   Print(__FUNCTION__);
-// arrange
-   ushort expected[] = {};
-   ushort result[] = {};
-   ArrayResize(result, expected.Size());
-   uchar char_array_with_0x01[3] = {'a', 0x01, 'b'}; //{a, NULL, b}
-   string bad_string = CharArrayToString(char_array_with_0x01);
-// act
-   EncodeUTF8String(bad_string, result);
-// assert
-   bool is_true = AssertEqual(expected, result);
-   ArrayPrint(result);
-   ZeroMemory(result);
-   return is_true;
-  }
+//bool TEST_EncodeUTF8String_Disallowed_CodePoint_0x01_Ret_Empty_Array()
+//  {
+//   Print(__FUNCTION__);
+//// arrange
+//   ushort expected[] = {};
+//   ushort result[] = {};
+//   ArrayResize(result, expected.Size());
+//   uchar char_array_with_0x01[3] = {'a', 0x01, 'b'}; //{a, NULL, b}
+//   string bad_string = CharArrayToString(char_array_with_0x01);
+//// act
+//   EncodeUTF8String(bad_string, result);
+//// assert
+//   bool is_true = AssertEqual(expected, result);
+//   ArrayPrint(result);
+//   ZeroMemory(result);
+//   return is_true;
+//  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_EncodeUTF8String_EmptyString()
-  {
-   Print(__FUNCTION__);
-// arrange
-   ushort expected[] = {};
-   ushort result[] = {};
-   ArrayResize(result, expected.Size());
-// act
-   EncodeUTF8String("", result);
-// assert
-   bool is_true = AssertEqual(expected, result);
-   ArrayPrint(result);
-   ZeroMemory(result);
-   return is_true;
-  }
+//bool TEST_EncodeUTF8String_EmptyString()
+//  {
+//   Print(__FUNCTION__);
+//// arrange
+//   ushort expected[] = {};
+//   ushort result[] = {};
+//   ArrayResize(result, expected.Size());
+//// act
+//   EncodeUTF8String("", result);
+//// assert
+//   bool is_true = AssertEqual(expected, result);
+//   ArrayPrint(result);
+//   ZeroMemory(result);
+//   return is_true;
+//  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_EncodeUTF8String_ASCII()
-  {
-   Print(__FUNCTION__);
-// arrange
-   ushort expected[] = {0, 6, 'a', 'b', 'c', '1', '2', '3'};
-   ushort result[] = {};
-   ArrayResize(result, expected.Size());
-// act
-   EncodeUTF8String("abc123", result);
-// assert
-   bool is_true = AssertEqual(expected, result);
-   ArrayPrint(result);
-   ZeroMemory(result);
-   return is_true;
-  };
+//bool TEST_EncodeUTF8String_ASCII()
+//  {
+//   Print(__FUNCTION__);
+//// arrange
+//   ushort expected[] = {0, 6, 'a', 'b', 'c', '1', '2', '3'};
+//   ushort result[] = {};
+//   ArrayResize(result, expected.Size());
+//// act
+//   EncodeUTF8String("abc123", result);
+//// assert
+//   bool is_true = AssertEqual(expected, result);
+//   ArrayPrint(result);
+//   ZeroMemory(result);
+//   return is_true;
+//  };
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_EncodeUTF8String_OneChar()
-  {
-   Print(__FUNCTION__);
-// arrange
-   ushort expected[] = {0, 1, 'a'};
-   ushort result[] = {};
-   ArrayResize(result, expected.Size());
-// act
-   EncodeUTF8String("a", result);
-// assert
-   bool is_true = AssertEqual(expected, result);
-   ArrayPrint(result);
-   ZeroMemory(result);
-   return is_true;
-  };
+//bool TEST_EncodeUTF8String_OneChar()
+//  {
+//   Print(__FUNCTION__);
+//// arrange
+//   ushort expected[] = {0, 1, 'a'};
+//   ushort result[] = {};
+//   ArrayResize(result, expected.Size());
+//// act
+//   EncodeUTF8String("a", result);
+//// assert
+//   bool is_true = AssertEqual(expected, result);
+//   ArrayPrint(result);
+//   ZeroMemory(result);
+//   return is_true;
+//  };
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_DecodeVariableByteInteger()
-  {
-   Print(__FUNCTION__);
-   uint buf[] = {1, 127, 0, 0, 0};
-   uint expected = 127;
-   uint result = DecodeVariableByteInteger(buf, 1);
-   ZeroMemory(buf);
-   return AssertEqual(expected, result);
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool AssertEqual(ushort & expected[], ushort & result[])
-  {
-   if(!ArrayCompare(expected, result) == 0)
-     {
-      for(uint i = 0; i < expected.Size(); i++)
-        {
-         printf("expected\t%d\t\t%d result", expected[i], result[i]);
-        }
-      printf("expected size %d <=> %d result size", expected.Size(), result.Size());
-      return false;
-     }
-   return true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool AssertEqual(uint & expected[], uint & result[])
-  {
-   if(!ArrayCompare(expected, result) == 0)
-     {
-      for(uint i = 0; i < expected.Size(); i++)
-        {
-         printf("expected\t%d\t\t%d result", expected[i], result[i]);
-        }
-      printf("expected size %d <=> %d result size", expected.Size(), result.Size());
-      return false;
-     }
-   return true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool AssertEqual(uchar expected, uchar result)
-  {
-   if(expected != result)
-     {
-      printf("expected\t%d\t\t%d result", expected, result);
-      return false;
-     }
-   return true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool AssertEqual(ushort expected, ushort result)
-  {
-   if(expected != result)
-     {
-      printf("expected\t%d\t\t%d result", expected, result);
-      return false;
-     }
-   return true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool AssertEqual(uint expected, uint result)
-  {
-   if(expected != result)
-     {
-      printf("expected\t%d\t\t%d result", expected, result);
-      return false;
-     }
-   return true;
-  }
-//+------------------------------------------------------------------+
+//bool TEST_DecodeVariableByteInteger()
+//  {
+//   Print(__FUNCTION__);
+//   uint buf[] = {1, 127, 0, 0, 0};
+//   uint expected = 127;
+//   uint result = DecodeVariableByteInteger(buf, 1);
+//   ZeroMemory(buf);
+//   return AssertEqual(expected, result);
+//  }

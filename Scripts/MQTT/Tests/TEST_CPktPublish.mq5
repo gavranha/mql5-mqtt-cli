@@ -11,17 +11,19 @@
 //+------------------------------------------------------------------+
 void OnStart()
   {
+//--- TEST PROTECTED METHODS
+   TestProtMethods *t = new TestProtMethods();
+   Print(t.TEST_VarHead_SetProps_MessageExpiryInterval_OneByte());
+   Print(t.TEST_VarHead_SetProps_MessageExpiryInterval_TwoBytes());
+//Print(t.TEST_FixHead());
+   delete(t);
+//--- END TEST PROTECTED METHODS
 //Print(TEST_SetTopicName_OneChar());
 //Print(TEST_SetTopicName_TwoChar());
 //Print(TEST_SetTopicName_WildcardChar_NumberSign());
 //Print(TEST_SetTopicName_WildcardChar_PlusSign());
 //Print(TEST_SetTopicName_Empty());
-   Print(TEST_Build());
-//--- TEST PROTECTED METHODS
-   TestProtMethods *t = new TestProtMethods();
-//Print(t.TEST_FixHead());
-   delete(t);
-//--- END TEST PROTECTED METHODS
+//Print(TEST_Build());
 //Print(TEST_SetFixedHeader_NoDUP_QoS0_NoRETAIN());
 //Print(TEST_SetFixedHeader_NoDUP_QoS0_RETAIN());
 //Print(TEST_SetFixedHeader_NoDUP_QoS1_NoRETAIN());
@@ -41,7 +43,6 @@ void OnStart()
 //Print(TEST_SetPacketID_QoS2_TopicName5Char());
 //Print(TEST_SetProps_Length());
 //Print(TEST_SetProps_PayloadFormatIndicator());
-//Print(TEST_SetProps_MessageExpiryInterval());
 //Print(TEST_SetProps_TopicAlias());
 //Print(TEST_SetProps_ResponseTopic());
 //Print(TEST_SetProps_CorrelationData());
@@ -58,6 +59,8 @@ class TestProtMethods: public CPktPublish
 public:
                      TestProtMethods() {};
                     ~TestProtMethods() {};
+   bool              TEST_VarHead_SetProps_MessageExpiryInterval_OneByte();
+   bool              TEST_VarHead_SetProps_MessageExpiryInterval_TwoBytes();
    //bool              TEST_SetFixHeader();
 
   };
@@ -67,7 +70,7 @@ public:
 //+------------------------------------------------------------------+
 bool TEST_Build(void)
   {
-  Print(__FUNCTION__);
+   Print(__FUNCTION__);
    uint payload[];
    uint expected[] = {48, 3, 1, 'a', 1}; //minimum valid fixed header
    uint result[];
@@ -586,21 +589,33 @@ bool TEST_SetProps_PayloadFormatIndicator()
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_SetProps_MessageExpiryInterval()
+bool TestProtMethods::TEST_VarHead_SetProps_MessageExpiryInterval_TwoBytes()
   {
    Print(__FUNCTION__);
-//--- Arrange
-   static uchar expected[] =
-     {16, 12, 0, 4, 77, 81, 84, 84, 5, 0, 0, 0, 0, 4};
-   uchar buf[expected.Size() - 2];
-   CPktPublish *cut = new CPktPublish(buf);
-//--- Act
-//cut.SetClientIdentifierLength("MQL5");
+   static uchar expected[] = {2, 0, 0, 0, 255};// 2 = MQTT_PROPERTY_MESSAGE_EXPIRY_INTERVAL;
+   CPktPublish *cut = new CPktPublish();
+   cut.SetPropMsgExpiryInterval(255123);
    uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
-   bool isTrue = Assert(expected, result);
-//--- cleanup
+   ArrayCopy(result, cut.m_tmp_properties_buf);
+   ArrayPrint(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete cut;
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TestProtMethods::TEST_VarHead_SetProps_MessageExpiryInterval_OneByte()
+  {
+   Print(__FUNCTION__);
+   static uchar expected[] = {2, 0, 0, 0, 1};// 2 = MQTT_PROPERTY_MESSAGE_EXPIRY_INTERVAL;
+   CPktPublish *cut = new CPktPublish();
+   cut.SetPropMsgExpiryInterval(1);
+   uchar result[];
+   ArrayCopy(result, cut.m_tmp_properties_buf);
+   ArrayPrint(result);
+   bool isTrue = AssertEqual(expected, result);
    delete cut;
    ZeroMemory(result);
    return isTrue;
