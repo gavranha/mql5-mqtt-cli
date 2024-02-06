@@ -112,6 +112,20 @@ void SetFixedHeader(ENUM_PKT_TYPE pkt_type,
      }
   }
 //+------------------------------------------------------------------+
+//|              EncodeTwoByteInteger                                |
+//+------------------------------------------------------------------+
+/*
+Two Byte Integer data values are 16-bit unsigned integers in big-endian order: the high order byte
+precedes the lower order byte. This means that a 16-bit word is presented on the network as Most
+Significant Byte (MSB), followed by Least Significant Byte (LSB).
+*/
+void EncodeTwoByteInteger(uint val, uchar &dest_buf[])
+  {
+   ArrayResize(dest_buf, 2);
+   dest_buf[0] = (uchar)(val >> 8) & 0xff;
+   dest_buf[1] = (uchar)val & 0xff;
+  }
+//+------------------------------------------------------------------+
 //|              EncodeFourByteInteger                               |
 //+------------------------------------------------------------------+
 /*

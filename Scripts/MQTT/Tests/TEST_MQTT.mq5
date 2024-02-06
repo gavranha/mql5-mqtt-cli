@@ -11,6 +11,8 @@
 //+------------------------------------------------------------------+
 void OnStart()
   {
+   Print(TEST_EncodeTwoByteInteger_TwoBytes());
+   Print(TEST_EncodeTwoByteInteger_OneByte());
    Print(TEST_EncodeFourByteInteger_OneByte());
    Print(TEST_EncodeFourByteInteger_TwoBytes());
    Print(TEST_EncodeFourByteInteger_ThreeBytes());
@@ -33,14 +35,35 @@ void OnStart()
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-/*
-Four Byte Integer data values are 32-bit unsigned integers in big-endian order: the high order byte
-precedes the successively lower order bytes. This means that a 32-bit word is presented on the network
-as Most Significant Byte (MSB), followed by the next most Significant Byte (MSB), followed by the next
-most Significant Byte (MSB), followed by Least Significant Byte (LSB).
-*/
+bool TEST_EncodeTwoByteInteger_TwoBytes()
+  {
+   Print(__FUNCTION__);
+   uchar expected[] = {1, 0};
+   uchar result[];
+   EncodeTwoByteInteger(256, result);
+   bool isTrue = AssertEqual(expected, result);
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_EncodeTwoByteInteger_OneByte()
+  {
+   Print(__FUNCTION__);
+   uchar expected[] = {0, 1};
+   uchar result[];
+   EncodeTwoByteInteger(1, result);
+   bool isTrue = AssertEqual(expected, result);
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 bool TEST_EncodeFourByteInteger_FourBytes()
   {
+   Print(__FUNCTION__);
    uchar expected[] = {1, 0, 0, 0};
    uchar result[];
    EncodeFourByteInteger(16777216, result);
@@ -53,6 +76,7 @@ bool TEST_EncodeFourByteInteger_FourBytes()
 //+------------------------------------------------------------------+
 bool TEST_EncodeFourByteInteger_ThreeBytes()
   {
+   Print(__FUNCTION__);
    uchar expected[] = {0, 1, 0, 0};
    uchar result[];
    EncodeFourByteInteger(65536, result);
@@ -65,6 +89,7 @@ bool TEST_EncodeFourByteInteger_ThreeBytes()
 //+------------------------------------------------------------------+
 bool TEST_EncodeFourByteInteger_TwoBytes()
   {
+   Print(__FUNCTION__);
    uchar expected[] = {0, 0, 1, 0};
    uchar result[];
    EncodeFourByteInteger(256, result);
@@ -77,6 +102,7 @@ bool TEST_EncodeFourByteInteger_TwoBytes()
 //+------------------------------------------------------------------+
 bool TEST_EncodeFourByteInteger_OneByte()
   {
+   Print(__FUNCTION__);
    uchar expected[] = {0, 0, 0, 1};
    uchar result[];
    EncodeFourByteInteger(1, result);
