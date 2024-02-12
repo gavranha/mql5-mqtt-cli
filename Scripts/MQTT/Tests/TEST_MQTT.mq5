@@ -5,7 +5,6 @@
 //+------------------------------------------------------------------+
 #include <MQTT\MQTT.mqh>
 #include "TestUtil.mqh"
-
 //+------------------------------------------------------------------+
 //| Tests for MQTT.mqh header                                        |
 //+------------------------------------------------------------------+
@@ -118,7 +117,7 @@ bool TEST_SetPacketID_TopicName5Char()
    Print(__FUNCTION__);
    uint expected[] = {48, 9, 0, 1, 'a', 'b', 'c', 'd', 'e', 0, 1};
    uint result[];
-   uint buf[] = {};
+   uchar buf[] = {};
    ArrayResize(buf, 9);
    buf[0] = 48;
    buf[1] = 9;
@@ -147,7 +146,7 @@ bool TEST_SetPacketID_TopicName1Char()
    Print(__FUNCTION__);
    uint expected[] = {48, 5, 0, 1, 'a', 0, 1};
    uint result[];
-   uint buf[] = {};
+   uchar buf[] = {};
    ArrayResize(buf, 5);
    buf[0] = 48;
    buf[1] = 5;
@@ -275,8 +274,8 @@ bool TEST_GetQoSLevel_0()
 bool TEST_EncodeUTF8String_Disallowed_CodePoint_0x01_Ret_Empty_Array()
   {
    Print(__FUNCTION__);
-   ushort expected[] = {};
-   ushort result[] = {};
+   uchar expected[] = {};
+   uchar result[] = {};
    ArrayResize(result, expected.Size());
    uchar char_array_with_0x01[3] = {'a', 0x01, 'b'}; //{a, NULL, b}
    string bad_string = CharArrayToString(char_array_with_0x01);
@@ -292,8 +291,8 @@ bool TEST_EncodeUTF8String_Disallowed_CodePoint_0x01_Ret_Empty_Array()
 bool TEST_EncodeUTF8String_EmptyString()
   {
    Print(__FUNCTION__);
-   ushort expected[] = {};
-   ushort result[] = {};
+   uchar expected[] = {};
+   uchar result[] = {};
    ArrayResize(result, expected.Size());
    EncodeUTF8String("", result);
    bool is_true = AssertEqual(expected, result);
@@ -307,8 +306,8 @@ bool TEST_EncodeUTF8String_EmptyString()
 bool TEST_EncodeUTF8String_ASCII()
   {
    Print(__FUNCTION__);
-   ushort expected[] = {0, 6, 'a', 'b', 'c', '1', '2', '3'};
-   ushort result[] = {};
+   uchar expected[] = {0, 6, 'a', 'b', 'c', '1', '2', '3'};
+   uchar result[] = {};
    ArrayResize(result, expected.Size());
    EncodeUTF8String("abc123", result);
    bool is_true = AssertEqual(expected, result);
@@ -322,8 +321,8 @@ bool TEST_EncodeUTF8String_ASCII()
 bool TEST_EncodeUTF8String_OneChar()
   {
    Print(__FUNCTION__);
-   ushort expected[] = {0, 1, 'a'};
-   ushort result[] = {};
+   uchar expected[] = {0, 1, 'a'};
+   uchar result[] = {};
    ArrayResize(result, expected.Size());
    EncodeUTF8String("a", result);
    bool is_true = AssertEqual(expected, result);
@@ -331,5 +330,4 @@ bool TEST_EncodeUTF8String_OneChar()
    ZeroMemory(result);
    return is_true;
   };
-
 //+------------------------------------------------------------------+

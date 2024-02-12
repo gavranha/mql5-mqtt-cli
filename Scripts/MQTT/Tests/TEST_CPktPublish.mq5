@@ -5,65 +5,517 @@
 //+------------------------------------------------------------------+
 #include <MQTT\CPktPublish.mqh>
 #include "TestUtil.mqh"
-
 //+------------------------------------------------------------------+
 //|           Tests for CPktPublish class                            |
 //+------------------------------------------------------------------+
 void OnStart()
   {
-//--- TEST PROTECTED METHODS
-   TestProtMethods *t = new TestProtMethods();
-   Print(t.TEST_VarHead_SetProps_MessageExpiryInterval_OneByte());
-   Print(t.TEST_VarHead_SetProps_MessageExpiryInterval_TwoBytes());
-//Print(t.TEST_FixHead());
-   delete(t);
-//--- END TEST PROTECTED METHODS
-//Print(TEST_SetTopicName_OneChar());
-//Print(TEST_SetTopicName_TwoChar());
-//Print(TEST_SetTopicName_WildcardChar_NumberSign());
-//Print(TEST_SetTopicName_WildcardChar_PlusSign());
-//Print(TEST_SetTopicName_Empty());
-//Print(TEST_Build());
-//Print(TEST_SetFixedHeader_NoDUP_QoS0_NoRETAIN());
-//Print(TEST_SetFixedHeader_NoDUP_QoS0_RETAIN());
-//Print(TEST_SetFixedHeader_NoDUP_QoS1_NoRETAIN());
-//Print(TEST_SetFixedHeader_NoDUP_QoS1_RETAIN());
-//Print(TEST_SetFixedHeader_NoDUP_QoS2_NoRETAIN());
-//Print(TEST_SetFixedHeader_NoDUP_QoS2_RETAIN());
-//Print(TEST_SetFixedHeader_DUP_QoS0_NoRETAIN());
-//Print(TEST_SetFixedHeader_DUP_QoS0_RETAIN());
-//Print(TEST_SetFixedHeader_DUP_QoS1_NoRETAIN());
-//Print(TEST_SetFixedHeader_DUP_QoS1_RETAIN());
-//Print(TEST_SetFixedHeader_DUP_QoS2_NoRETAIN());
-//Print(TEST_SetFixedHeader_DUP_QoS2_RETAIN());
-//---
-//Print(TEST_SetPacketID_QoS1_TopicName1Char());
-//Print(TEST_SetPacketID_QoS1_TopicName5Char());
-//Print(TEST_SetPacketID_QoS2_TopicName1Char());
-//Print(TEST_SetPacketID_QoS2_TopicName5Char());
-//Print(TEST_SetProps_Length());
-//Print(TEST_SetProps_PayloadFormatIndicator());
-//Print(TEST_SetProps_TopicAlias());
-//Print(TEST_SetProps_ResponseTopic());
-//Print(TEST_SetProps_CorrelationData());
-//Print(TEST_SetProps_UserProperty());
-//Print(TEST_SetProps_SubscriptionIdentifier());
-//Print(TEST_SetProps_ContentType());
-//Print(TEST_SetPayload());
+//--- props
+   Print(TEST_SetProps_PayloadFormatIndicator_UTF8());
+   Print(TEST_SetProps_PayloadFormatIndicator_RawBytes());
+   Print(TEST_SetProps_MessageExpiryInterval_OneByte());
+   Print(TEST_SetProps_MessageExpiryInterval_TwoBytes());
+   Print(TEST_SetProps_MessageExpiryInterval_ThreeBytes());
+   Print(TEST_SetProps_MessageExpiryInterval_FourBytes());
+   Print(TEST_SetProps_TopicAlias_TwoBytes());
+   Print(TEST_SetProps_TopicAlias_OneByte());
+   Print(TEST_SetProps_ResponseTopic());
+   Print(TEST_SetProps_CorrelationData());
+   Print(TEST_SetProps_UserProperty());
+   Print(TEST_SetProps_SubscriptionIdentifier_OneByte());
+   Print(TEST_SetProps_SubscriptionIdentifier_TwoBytes());
+   Print(TEST_SetProps_SubscriptionIdentifier_ThreeBytes());
+   Print(TEST_SetProps_SubscriptionIdentifier_FourBytes());
+   Print(TEST_SetProps_ContentType());
+   Print(TEST_SetPayload());
+//--- topic name
+   Print(TEST_SetTopicName_OneChar());
+   Print(TEST_SetTopicName_TwoChar());
+   Print(TEST_SetTopicName_WildcardChar_NumberSign());
+   Print(TEST_SetTopicName_WildcardChar_PlusSign());
+   Print(TEST_SetTopicName_Empty());
+//--- packet ID
+   Print(TEST_SetPacketID_QoS1_TopicName1Char());
+   Print(TEST_SetPacketID_QoS1_TopicName5Char());
+   Print(TEST_SetPacketID_QoS2_TopicName1Char());
+   Print(TEST_SetPacketID_QoS2_TopicName5Char());
+//--- Ctor
+   Print(TEST_Ctor_NoTopicName());
+   Print(TEST_Ctor_NoFlags_TopicName1Char());
+   Print(TEST_Ctor_NoFlags_TopicName2Char());
+   Print(TEST_Ctor_NoFlags_TopicName5Char());
+   Print(TEST_Ctor_Retain_TopicName1Char());
+   Print(TEST_Ctor_Retain_QoS1_TopicName1Char());
+   Print(TEST_Ctor_Retain_QoS1_Dup_TopicName1Char());
+   Print(TEST_Ctor_Retain_QoS2_Dup_TopicName1Char());
+   Print(TEST_Ctor_Retain_QoS2_Dup_TopicName5Char());
+  }
+//+------------------------------------------------------------------+
+//|                          payload                                 |
+//+------------------------------------------------------------------+
+bool TEST_SetPayload()
+  {
+   Print(__FUNCTION__);
+   static uchar expected[] =
+     {50, 19, 0, 1, 'a', 0, 1, 2, 1, 1, 0, 0, 0, 7, 'p', 'a', 'y', 'l', 'o', 'a', 'd'}; // QoS1 for pkt ID generation
+   uchar result[];
+   CPktPublish *cut = new CPktPublish();
+   cut.SetQoS_1(true);
+   cut.SetTopicName("a");
+   cut.SetPayloadFormatIndicator(UTF8);
+   cut.SetPayload("payload");
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete cut;
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                      props                                       |
+//+------------------------------------------------------------------+
+bool TEST_SetProps_ContentType()
+  {
+   Print(__FUNCTION__);
+   static uchar expected[] = {50, 12, 0, 1, 'a', 0, 1, 6, 3, 0, 3, 'a', 'b', 'c'}; // QoS1 for pkt ID generation
+   uchar result[];
+   CPktPublish *cut = new CPktPublish();
+   cut.SetQoS_1(true);
+   cut.SetTopicName("a");
+   cut.SetContentType("abc");
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete cut;
+   ZeroMemory(result);
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-class TestProtMethods: public CPktPublish
+bool TEST_SetProps_SubscriptionIdentifier_FourBytes()
   {
-public:
-                     TestProtMethods() {};
-                    ~TestProtMethods() {};
-   bool              TEST_VarHead_SetProps_MessageExpiryInterval_OneByte();
-   bool              TEST_VarHead_SetProps_MessageExpiryInterval_TwoBytes();
-   //bool              TEST_SetFixHeader();
-
-  };
+   Print(__FUNCTION__);
+   static uchar expected[] = {50, 11, 0, 1, 'a', 0, 1, 5, 11, 0x80, 0x80, 0x80, 0x01}; // QoS1 for pkt ID generation
+   uchar result[];
+   CPktPublish *cut = new CPktPublish();
+   cut.SetQoS_1(true);
+   cut.SetTopicName("a");
+   cut.SetSubscriptionIdentifier(2097152);
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete cut;
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_SetProps_SubscriptionIdentifier_ThreeBytes()
+  {
+   Print(__FUNCTION__);
+   static uchar expected[] = {50, 10, 0, 1, 'a', 0, 1, 4, 11, 0x80, 0x80, 0x01}; // QoS1 for pkt ID generation
+   uchar result[];
+   CPktPublish *cut = new CPktPublish();
+   cut.SetQoS_1(true);
+   cut.SetTopicName("a");
+   cut.SetSubscriptionIdentifier(16384);
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete cut;
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_SetProps_SubscriptionIdentifier_TwoBytes()
+  {
+   Print(__FUNCTION__);
+   static uchar expected[] = {50, 9, 0, 1, 'a', 0, 1, 3, 11, 0x80, 0x01}; // QoS1 for pkt ID generation
+   uchar result[];
+   CPktPublish *cut = new CPktPublish();
+   cut.SetQoS_1(true);
+   cut.SetTopicName("a");
+   cut.SetSubscriptionIdentifier(128);
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete cut;
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_SetProps_SubscriptionIdentifier_OneByte()
+  {
+   Print(__FUNCTION__);
+   static uchar expected[] = {50, 8, 0, 1, 'a', 0, 1, 2, 11, 0x01}; // QoS1 for pkt ID generation
+   uchar result[];
+   CPktPublish *cut = new CPktPublish();
+   cut.SetQoS_1(true);
+   cut.SetTopicName("a");
+   cut.SetSubscriptionIdentifier(1);
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete cut;
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_SetProps_UserProperty()
+  {
+   Print(__FUNCTION__);
+   static uchar expected[] = {50, 17, 0, 1, 'a', 0, 1, 11, 38, 0, 3, 'k', 'e', 'y', 0, 3, 'v', 'a', 'l'}; // QoS1 for pkt ID generation
+   uchar result[];
+   CPktPublish *cut = new CPktPublish();
+   cut.SetQoS_1(true);
+   cut.SetTopicName("a");
+   cut.SetUserProperty("key", "val");
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete cut;
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_SetProps_CorrelationData()
+  {
+   Print(__FUNCTION__);
+   static uchar expected[] = {50, 15, 0, 1, 'a', 0, 1, 9, 9, 0, 1, 0, 1, 0, 1, 0, 1}; // QoS1 for pkt ID generation
+   uchar result[];
+   CPktPublish *cut = new CPktPublish();
+   cut.SetQoS_1(true);
+   cut.SetTopicName("a");
+   uchar binary_data[] = {0, 1, 0, 1, 0, 1, 0, 1};
+   cut.SetCorrelationData(binary_data);
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete cut;
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_SetProps_ResponseTopic()
+  {
+   Print(__FUNCTION__);
+   static uchar expected[] = {50, 12, 0, 1, 'a', 0, 1, 6, 8, 0, 3, 'a', 'b', 'c'}; // QoS1 for pkt ID generation
+   uchar result[];
+   CPktPublish *cut = new CPktPublish();
+   cut.SetQoS_1(true);
+   cut.SetTopicName("a");
+   cut.SetResponseTopic("abc");
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete cut;
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_SetProps_TopicAlias_TwoBytes()
+  {
+   Print(__FUNCTION__);
+   static uchar expected[] = {50, 9, 0, 1, 'a', 0, 1, 3, 35, 1, 0}; // QoS1 for pkt ID generation
+   uchar result[];
+   CPktPublish *cut = new CPktPublish();
+   cut.SetQoS_1(true);
+   cut.SetTopicName("a");
+   cut.SetTopicAlias(256);
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete cut;
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_SetProps_TopicAlias_OneByte()
+  {
+   Print(__FUNCTION__);
+   static uchar expected[] = {50, 9, 0, 1, 'a', 0, 1, 3, 35, 0, 1}; // QoS1 for pkt ID generation
+   uchar result[];
+   CPktPublish *cut = new CPktPublish();
+   cut.SetQoS_1(true);
+   cut.SetTopicName("a");
+   cut.SetTopicAlias(1);
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete cut;
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_SetProps_MessageExpiryInterval_FourBytes()
+  {
+   Print(__FUNCTION__);
+   static uchar expected[] = {50, 11, 0, 1, 'a', 0, 1, 5, 2, 1, 0, 0, 0}; // QoS1 for pkt ID generation
+   uchar result[];
+   CPktPublish *cut = new CPktPublish();
+   cut.SetQoS_1(true);
+   cut.SetTopicName("a");
+   cut.SetMessageExpiryInterval(16777216);
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete cut;
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_SetProps_MessageExpiryInterval_ThreeBytes()
+  {
+   Print(__FUNCTION__);
+   static uchar expected[] = {50, 11, 0, 1, 'a', 0, 1, 5, 2, 0, 1, 0, 0}; // QoS1 for pkt ID generation
+   uchar result[];
+   CPktPublish *cut = new CPktPublish();
+   cut.SetQoS_1(true);
+   cut.SetTopicName("a");
+   cut.SetMessageExpiryInterval(65536);
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete cut;
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_SetProps_MessageExpiryInterval_TwoBytes()
+  {
+   Print(__FUNCTION__);
+   static uchar expected[] = {50, 11, 0, 1, 'a', 0, 1, 5, 2, 0, 0, 1, 0}; // QoS1 for pkt ID generation
+   uchar result[];
+   CPktPublish *cut = new CPktPublish();
+   cut.SetQoS_1(true);
+   cut.SetTopicName("a");
+   cut.SetMessageExpiryInterval(256);
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete cut;
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_SetProps_MessageExpiryInterval_OneByte()
+  {
+   Print(__FUNCTION__);
+   static uchar expected[] = {50, 11, 0, 1, 'a', 0, 1, 5, 2, 0, 0, 0, 1}; // QoS1 for pkt ID generation
+   uchar result[];
+   CPktPublish *cut = new CPktPublish();
+   cut.SetQoS_1(true);
+   cut.SetTopicName("a");
+   cut.SetMessageExpiryInterval(1);
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete cut;
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_SetProps_PayloadFormatIndicator_RawBytes()
+  {
+   Print(__FUNCTION__);
+   static uchar expected[] = {50, 8, 0, 1, 'a', 0, 1, 2, 1, 0}; // QoS1 for pkt ID generation
+   uchar result[];
+   CPktPublish *cut = new CPktPublish();
+   cut.SetQoS_1(true);
+   cut.SetTopicName("a");
+   cut.SetPayloadFormatIndicator(RAW_BYTES);
+   cut.Build(result);
+   bool isTrue = Assert(expected, result);
+   delete cut;
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_SetProps_PayloadFormatIndicator_UTF8()
+  {
+   Print(__FUNCTION__);
+   static uchar expected[] = {50, 8, 0, 1, 'a', 0, 1, 2, 1, 1}; // QoS1 for pkt ID generation
+   uchar result[];
+   CPktPublish *cut = new CPktPublish();
+   cut.SetQoS_1(true);
+   cut.SetTopicName("a");
+   cut.SetPayloadFormatIndicator(UTF8);
+   cut.Build(result);
+   bool isTrue = Assert(expected, result);
+   delete cut;
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                         Ctor                                     |
+//+------------------------------------------------------------------+
+bool TEST_Ctor_Retain_QoS2_Dup_TopicName5Char()
+  {
+   Print(__FUNCTION__);
+   CPktPublish *cut = new CPktPublish();
+   uchar expected[] = {61, 10, 0, 5, 'a', 'b', 'c', 'd', 'e', 0, 1, 0}; // QoS > 0 require packet ID
+   uchar result[];
+   cut.SetTopicName("abcde");
+   cut.SetRetain(true);
+   cut.SetQoS_2(true);
+   cut.SetDup(true);
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete(cut);
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_Ctor_Retain_QoS2_Dup_TopicName1Char()
+  {
+   Print(__FUNCTION__);
+   CPktPublish *cut = new CPktPublish();
+   uchar expected[] = {61, 6, 0, 1, 'a', 0, 1, 0}; // QoS > 0 require packet ID
+   uchar result[];
+   cut.SetTopicName("a");
+   cut.SetRetain(true);
+   cut.SetQoS_2(true);
+   cut.SetDup(true);
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete(cut);
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_Ctor_Retain_QoS1_Dup_TopicName1Char()
+  {
+   Print(__FUNCTION__);
+   CPktPublish *cut = new CPktPublish();
+   uchar expected[] = {59, 6, 0, 1, 'a', 0, 1, 0}; // QoS > 0 require packet ID
+   uchar result[];
+   cut.SetTopicName("a");
+   cut.SetRetain(true);
+   cut.SetQoS_1(true);
+   cut.SetDup(true);
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete(cut);
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_Ctor_Retain_QoS1_TopicName1Char()
+  {
+   Print(__FUNCTION__);
+   CPktPublish *cut = new CPktPublish();
+   uchar expected[] = {51, 6, 0, 1, 'a', 0, 1, 0}; // QoS > 0 require packet ID
+   uchar result[];
+   cut.SetTopicName("a");
+   cut.SetRetain(true);
+   cut.SetQoS_1(true);
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete(cut);
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_Ctor_Retain_TopicName1Char()
+  {
+   Print(__FUNCTION__);
+   CPktPublish *cut = new CPktPublish();
+   uchar expected[] = {49, 4, 0, 1, 'a', 0};
+   uchar result[];
+   cut.SetTopicName("a");
+   cut.SetRetain(true);
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete(cut);
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_Ctor_NoFlags_TopicName5Char()
+  {
+   Print(__FUNCTION__);
+   CPktPublish *cut = new CPktPublish();
+   uchar expected[] = {48, 8, 0, 5, 'a', 'b', 'c', 'd', 'e', 0};
+   uchar result[];
+   cut.SetTopicName("abcde");
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete(cut);
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_Ctor_NoFlags_TopicName2Char()
+  {
+   Print(__FUNCTION__);
+   CPktPublish *cut = new CPktPublish();
+   uchar expected[] = {48, 5, 0, 2, 'a', 'b', 0};
+   uchar result[];
+   cut.SetTopicName("ab");
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete(cut);
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_Ctor_NoFlags_TopicName1Char()
+  {
+   Print(__FUNCTION__);
+   CPktPublish *cut = new CPktPublish();
+   uchar expected[] = {48, 4, 0, 1, 'a', 0};
+   uchar result[];
+   cut.SetTopicName("a");
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete(cut);
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+// Topic Name is mandatory. Must return empty array and log error.
+// "It is valid for a PUBLISH packet to contain a zero length Payload"
+bool TEST_Ctor_NoTopicName()
+  {
+   Print(__FUNCTION__);
+   CPktPublish *cut = new CPktPublish();
+   uchar expected[] = {};
+   uchar result[];
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete(cut);
+   ZeroMemory(result);
+   return isTrue;
+  }
 //+------------------------------------------------------------------+
 //|   rem_length = var_header + payload                             |
 //|   var_header = topic_name + packet_id + props                    |
@@ -71,10 +523,9 @@ public:
 bool TEST_Build(void)
   {
    Print(__FUNCTION__);
-   uint payload[];
-   uint expected[] = {48, 3, 1, 'a', 1}; //minimum valid fixed header
-   uint result[];
-   CPktPublish *cut = new CPktPublish(payload);
+   uchar expected[] = {};
+   uchar result[];
+   CPktPublish *cut = new CPktPublish();
    cut.SetTopicName("a");
    cut.Build(result);
    bool is_true = AssertEqual(expected, result);
@@ -83,374 +534,81 @@ bool TEST_Build(void)
    return is_true;
   }
 //+------------------------------------------------------------------+
-//|            TEST_SetPacketID_QoS2_TopicName1Char                  |
+//|            packet ID                                             |
 //+------------------------------------------------------------------+
 bool TEST_SetPacketID_QoS2_TopicName5Char()
   {
    Print(__FUNCTION__);
-// Arrange
-   uchar payload[] = {};
    uchar result[]; // expected {52, 9, 0, 1, 'a', 'b', 'c', 'd', 'e', pktID MSB, pktID LSB}
-// Act
-   CPktPublish *cut = new CPktPublish(payload);
-// FIX: if we call SetQoS first this test breaks
+   CPktPublish *cut = new CPktPublish();
    cut.SetTopicName("abcde");
    cut.SetQoS_2(true);
-   ArrayCopy(result, cut.m_byte_array);
-// Assert
-   ArrayPrint(result);
+   cut.Build(result);
    bool is_true = result[9] > 0 || result[10] > 0;
-// cleanup
    delete cut;
    ZeroMemory(result);
    return is_true;
   }
 //+------------------------------------------------------------------+
-//|            TEST_SetPacketID_QoS2_TopicName1Char                  |
+//|                                                                  |
 //+------------------------------------------------------------------+
 bool TEST_SetPacketID_QoS2_TopicName1Char()
   {
    Print(__FUNCTION__);
-// Arrange
-   uchar payload[] = {};
    uchar result[]; // expected {52, 5, 0, 1, 'a', pktID MSB, pktID LSB}
-// Act
-   CPktPublish *cut = new CPktPublish(payload);
-// FIX: if we call SetQoS first this test breaks
+   CPktPublish *cut = new CPktPublish();
    cut.SetTopicName("a");
    cut.SetQoS_2(true);
-   ArrayCopy(result, cut.m_byte_array);
-// Assert
-   ArrayPrint(result);
+   cut.Build(result);
    bool is_true = result[5] > 0 || result[6] > 0;
-// cleanup
    delete cut;
    ZeroMemory(result);
    return is_true;
   }
 //+------------------------------------------------------------------+
-//|            TEST_SetPacketID_QoS1_TopicName5Char                  |
+//|                                                                  |
 //+------------------------------------------------------------------+
 bool TEST_SetPacketID_QoS1_TopicName5Char()
   {
    Print(__FUNCTION__);
-// Arrange
-   uchar payload[] = {};
    uchar result[]; // expected {50, 9, 0, 1, 'a', 'b', 'c', 'd', 'e', pktID MSB, pktID LSB}
-// Act
-   CPktPublish *cut = new CPktPublish(payload);
-// FIX: if we call SetQoS first this test breaks
+   CPktPublish *cut = new CPktPublish();
    cut.SetTopicName("abcde");
    cut.SetQoS_1(true);
-   ArrayCopy(result, cut.m_byte_array);
-// Assert
-   ArrayPrint(result);
+   cut.Build(result);
    bool is_true = result[9] > 0 || result[10] > 0;
-// cleanup
    delete cut;
    ZeroMemory(result);
    return is_true;
   }
 //+------------------------------------------------------------------+
-//|            TEST_SetPacketID_QoS1_TopicName1Char                  |
+//|                                                                  |
 //+------------------------------------------------------------------+
 bool TEST_SetPacketID_QoS1_TopicName1Char()
   {
    Print(__FUNCTION__);
-// Arrange
-   uchar payload[] = {};
    uchar result[]; // expected {50, 5, 0, 1, 'a', pktID MSB, pktID LSB}
-// Act
-   CPktPublish *cut = new CPktPublish(payload);
-// FIX: if we call SetQoS first this test breaks
-   cut.SetTopicName("a");
+   CPktPublish *cut = new CPktPublish();
    cut.SetQoS_1(true);
-   ArrayCopy(result, cut.m_byte_array);
-// Assert
-   ArrayPrint(result);
+   cut.SetTopicName("a");
+   cut.Build(result);
    bool is_true = result[5] > 0 || result[6] > 0;
-// cleanup
    delete cut;
    ZeroMemory(result);
    return is_true;
   }
 //+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetFixedHeader_NoDUP_QoS0_NoRETAIN()
-  {
-   Print(__FUNCTION__);
-//--- Arrange
-   static uchar expected[] = {48, 0};
-   uchar buf[] = {};
-   uchar result[];
-//--- Act
-   CPktPublish *cut = new CPktPublish(buf);
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
-   bool isTrue = AssertEqual(expected, result);
-//--- cleanup
-   delete cut;
-   ZeroMemory(result);
-   return isTrue;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetFixedHeader_NoDUP_QoS0_RETAIN()
-  {
-   Print(__FUNCTION__);
-//--- Arrange
-   static uchar expected[] = {49, 0};
-   uchar buf[] = {};
-//--- Act
-   CPktPublish *cut = new CPktPublish(buf);
-   cut.SetRetain(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
-   bool isTrue = AssertEqual(expected, result);
-//--- cleanup
-   delete cut;
-   ZeroMemory(result);
-   return isTrue;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetFixedHeader_NoDUP_QoS1_NoRETAIN()
-  {
-   Print(__FUNCTION__);
-//--- Arrange
-   static uchar expected[] = {50, 0};
-   uchar buf[] = {};
-//--- Act
-   CPktPublish *cut = new CPktPublish(buf);
-   cut.SetQoS_1(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
-   bool isTrue = AssertEqual(expected, result);
-//--- cleanup
-   delete cut;
-   ZeroMemory(result);
-   return isTrue;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetFixedHeader_NoDUP_QoS1_RETAIN()
-  {
-   Print(__FUNCTION__);
-//--- Arrange
-   static uchar expected[] = {51, 0};
-   uchar buf[] = {};
-//--- Act
-   CPktPublish *cut = new CPktPublish(buf);
-   cut.SetQoS_1(true);
-   cut.SetRetain(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
-   bool isTrue = AssertEqual(expected, result);
-//--- cleanup
-   delete cut;
-   ZeroMemory(result);
-   return isTrue;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetFixedHeader_NoDUP_QoS2_NoRETAIN()
-  {
-   Print(__FUNCTION__);
-//--- Arrange
-   static uchar expected[] = {52, 0};
-   uchar buf[] = {};
-//--- Act
-   CPktPublish *cut = new CPktPublish(buf);
-   cut.SetQoS_2(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
-   bool isTrue = AssertEqual(expected, result);
-//--- cleanup
-   delete cut;
-   ZeroMemory(result);
-   return isTrue;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetFixedHeader_NoDUP_QoS2_RETAIN()
-  {
-   Print(__FUNCTION__);
-//--- Arrange
-   static uchar expected[] = {53, 0};
-   uchar buf[] = {};
-//--- Act
-   CPktPublish *cut = new CPktPublish(buf);
-   cut.SetQoS_2(true);
-   cut.SetRetain(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
-   bool isTrue = AssertEqual(expected, result);
-//--- cleanup
-   delete cut;
-   ZeroMemory(result);
-   return isTrue;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetFixedHeader_DUP_QoS0_NoRETAIN()
-  {
-   Print(__FUNCTION__);
-//--- Arrange
-   static uchar expected[] = {56, 0};
-   uchar buf[] = {};
-//--- Act
-   CPktPublish *cut = new CPktPublish(buf);
-   cut.SetDup(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
-   bool isTrue = AssertEqual(expected, result);
-//--- cleanup
-   delete cut;
-   ZeroMemory(result);
-   return isTrue;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetFixedHeader_DUP_QoS0_RETAIN()
-  {
-   Print(__FUNCTION__);
-//--- Arrange
-   static uchar expected[] = {57, 0};
-   uchar buf[] = {};
-//--- Act
-   CPktPublish *cut = new CPktPublish(buf);
-   cut.SetDup(true);
-   cut.SetRetain(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
-   bool isTrue = AssertEqual(expected, result);
-//--- cleanup
-   delete cut;
-   ZeroMemory(result);
-   return isTrue;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetFixedHeader_DUP_QoS1_NoRETAIN()
-  {
-   Print(__FUNCTION__);
-//--- Arrange
-   static uchar expected[] = {58, 0};
-   uchar buf[] = {};
-//--- Act
-   CPktPublish *cut = new CPktPublish(buf);
-   cut.SetDup(true);
-   cut.SetQoS_1(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
-   bool isTrue = AssertEqual(expected, result);
-//--- cleanup
-   delete cut;
-   ZeroMemory(result);
-   return isTrue;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetFixedHeader_DUP_QoS1_RETAIN()
-  {
-   Print(__FUNCTION__);
-//--- Arrange
-   static uchar expected[] = {59, 0};
-   uchar buf[] = {};
-//--- Act
-   CPktPublish *cut = new CPktPublish(buf);
-   cut.SetDup(true);
-   cut.SetQoS_1(true);
-   cut.SetRetain(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
-   bool isTrue = AssertEqual(expected, result);
-//--- cleanup
-   delete cut;
-   ZeroMemory(result);
-   return isTrue;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetFixedHeader_DUP_QoS2_NoRETAIN()
-  {
-   Print(__FUNCTION__);
-//--- Arrange
-   static uchar expected[] = {60, 0};
-   uchar buf[] = {};
-//--- Act
-   CPktPublish *cut = new CPktPublish(buf);
-   cut.SetDup(true);
-   cut.SetQoS_2(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
-   bool isTrue = AssertEqual(expected, result);
-//--- cleanup
-   delete cut;
-   ZeroMemory(result);
-   return isTrue;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetFixedHeader_DUP_QoS2_RETAIN()
-  {
-   Print(__FUNCTION__);
-//--- Arrange
-   static uchar expected[] = {61, 0};
-   uchar buf[] = {};
-//--- Act
-   CPktPublish *cut = new CPktPublish(buf);
-   cut.SetDup(true);
-   cut.SetQoS_2(true);
-   cut.SetRetain(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
-   bool isTrue = AssertEqual(expected, result);
-//--- cleanup
-   delete cut;
-   ZeroMemory(result);
-   return isTrue;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
+//|               topic name                                         |
 //+------------------------------------------------------------------+
 bool TEST_SetTopicName_TwoChar()
   {
    Print(__FUNCTION__);
-//--- Arrange
-   static uchar expected[] = {48, 4, 0, 2, 'a', 'b'};
-   uchar payload[] = {};
-//--- Act
-   CPktPublish *cut = new CPktPublish(payload);
-   cut.SetTopicName("ab");
+   static uchar expected[] = {48, 5, 0, 2, 'a', 'b', 0};
    uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
+   CPktPublish *cut = new CPktPublish();
+   cut.SetTopicName("ab");
+   cut.Build(result);
    bool isTrue = AssertEqual(expected, result);
-//--- cleanup
    delete cut;
    ZeroMemory(result);
    return isTrue;
@@ -461,17 +619,12 @@ bool TEST_SetTopicName_TwoChar()
 bool TEST_SetTopicName_OneChar()
   {
    Print(__FUNCTION__);
-//--- Arrange
-   static uchar expected[] = {48, 3, 0, 1, 'a'};
-   uchar payload[] = {};
-//--- Act
-   CPktPublish *cut = new CPktPublish(payload);
-   cut.SetTopicName("a");
+   static uchar expected[] = {48, 4, 0, 1, 'a', 0};
    uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
+   CPktPublish *cut = new CPktPublish();
+   cut.SetTopicName("a");
+   cut.Build(result);
    bool isTrue = AssertEqual(expected, result);
-//--- cleanup
    delete cut;
    ZeroMemory(result);
    return isTrue;
@@ -482,38 +635,28 @@ bool TEST_SetTopicName_OneChar()
 bool TEST_SetTopicName_WildcardChar_PlusSign()
   {
    Print(__FUNCTION__);
-//--- Arrange
    static uchar expected[] = {};
-   uchar payload[] = {};
-//--- Act
-   CPktPublish *cut = new CPktPublish(payload);
-   cut.SetTopicName("a+");
    uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
+   CPktPublish *cut = new CPktPublish();
+   cut.SetTopicName("a+");
+   cut.Build(result);
    bool isTrue = AssertEqual(expected, result);
-//--- cleanup
    delete cut;
    ZeroMemory(result);
    return isTrue;
   }
 //+------------------------------------------------------------------+
-//|           TEST_SetTopicName_WildcardChar_NumberSign              |
+//|                                                                  |
 //+------------------------------------------------------------------+
 bool TEST_SetTopicName_WildcardChar_NumberSign()
   {
    Print(__FUNCTION__);
-//--- Arrange
    static uchar expected[] = {};
-   uchar payload[] = {};
-//--- Act
-   CPktPublish *cut = new CPktPublish(payload);
-   cut.SetTopicName("a#");
    uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
+   CPktPublish *cut = new CPktPublish();
+   cut.SetTopicName("a#");
+   cut.Build(result);
    bool isTrue = AssertEqual(expected, result);
-//--- cleanup
    delete cut;
    ZeroMemory(result);
    return isTrue;
@@ -525,250 +668,12 @@ bool TEST_SetTopicName_WildcardChar_NumberSign()
 bool TEST_SetTopicName_Empty()
   {
    Print(__FUNCTION__);
-//--- Arrange
    static uchar expected[] = {};
-   uchar payload[] = {};
-//--- Act
-   CPktPublish *cut = new CPktPublish(payload);
+   uchar result[];
+   CPktPublish *cut = new CPktPublish();
    cut.SetTopicName("");
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
+   cut.Build(result);
    bool isTrue = AssertEqual(expected, result);
-//--- cleanup
-   delete cut;
-   ZeroMemory(result);
-   return isTrue;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetProps_Length()
-  {
-   Print(__FUNCTION__);
-//--- Arrange
-   uchar expected[] =
-     {48, 16, 0, 4, 77, 81, 84, 84, 5, 2, 0, 10, 0, 4, 77, 81, 76, 53};
-   uchar buf[expected.Size() - 2];
-   CPktPublish *cut = new CPktPublish(buf);
-//--- Act
-//cut.SetCleanStart(true);
-//cut.SetKeepAlive(10);//10 sec
-//cut.SetClientIdentifier("MQL5");
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
-   bool isTrue = Assert(expected, result);
-//--- cleanup
-   delete cut;
-   ZeroMemory(result);
-   return isTrue;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetProps_PayloadFormatIndicator()
-  {
-   Print(__FUNCTION__);
-//--- Arrange
-   static uchar expected[] =
-     {16, 16, 0, 4, 77, 81, 84, 84, 5, 0, 0, 0, 0, 4, 77, 81, 76, 53};
-   uchar buf[expected.Size() - 2];
-   CPktPublish *cut = new CPktPublish(buf);
-//--- Act
-//cut.SetClientIdentifier("MQL5");
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
-   bool isTrue = Assert(expected, result);
-//--- cleanup
-   delete cut;
-   ZeroMemory(result);
-   return isTrue;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TestProtMethods::TEST_VarHead_SetProps_MessageExpiryInterval_TwoBytes()
-  {
-   Print(__FUNCTION__);
-   static uchar expected[] = {2, 0, 0, 0, 255};// 2 = MQTT_PROPERTY_MESSAGE_EXPIRY_INTERVAL;
-   CPktPublish *cut = new CPktPublish();
-   cut.SetPropMsgExpiryInterval(255123);
-   uchar result[];
-   ArrayCopy(result, cut.m_tmp_properties_buf);
-   ArrayPrint(result);
-   bool isTrue = AssertEqual(expected, result);
-   delete cut;
-   ZeroMemory(result);
-   return isTrue;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TestProtMethods::TEST_VarHead_SetProps_MessageExpiryInterval_OneByte()
-  {
-   Print(__FUNCTION__);
-   static uchar expected[] = {2, 0, 0, 0, 1};// 2 = MQTT_PROPERTY_MESSAGE_EXPIRY_INTERVAL;
-   CPktPublish *cut = new CPktPublish();
-   cut.SetPropMsgExpiryInterval(1);
-   uchar result[];
-   ArrayCopy(result, cut.m_tmp_properties_buf);
-   ArrayPrint(result);
-   bool isTrue = AssertEqual(expected, result);
-   delete cut;
-   ZeroMemory(result);
-   return isTrue;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetProps_TopicAlias()
-  {
-   Print(__FUNCTION__);
-//--- Arrange
-   static uchar expected[] =
-     {16, 10, 0, 4, 77, 81, 84, 84, 5, 2, 0, 10};
-   uchar buf[expected.Size() - 2];
-   CPktPublish *cut = new CPktPublish(buf);
-//--- Act
-//cut.SetCleanStart(true);
-//cut.SetKeepAlive(10); //10 secs
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
-   bool isTrue = Assert(expected, result);
-//--- cleanup
-   delete cut;
-   ZeroMemory(result);
-   return isTrue;
-  }
-//+------------------------------------------------------------------+
-bool TEST_SetProps_ResponseTopic()
-  {
-   Print(__FUNCTION__);
-//--- Arrange
-   static uchar expected[] =
-     {16, 10, 0, 4, 77, 81, 84, 84, 5, 0, 0, 10};
-   uchar buf[expected.Size() - 2];
-   CPktPublish *cut = new CPktPublish(buf);
-//--- Act
-//cut.SetKeepAlive(10); //10 secs
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
-   bool isTrue = Assert(expected, result);
-//--- cleanup
-   delete cut;
-   ZeroMemory(result);
-   return isTrue;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetProps_CorrelationData()
-  {
-   Print(__FUNCTION__);
-//--- Arrange
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 2};
-   uchar buf[expected.Size() - 2];
-//--- Act
-   CPktPublish *cut = new CPktPublish(buf);
-//cut.SetCleanStart(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
-   bool isTrue = Assert(expected, result);
-//--- cleanup
-   delete cut;
-   ZeroMemory(result);
-   return isTrue;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetProps_UserProperty()
-  {
-   Print(__FUNCTION__);
-//--- Arrange
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 2};
-   uchar buf[expected.Size() - 2];
-//--- Act
-   CPktPublish *cut = new CPktPublish(buf);
-//cut.SetCleanStart(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
-   bool isTrue = Assert(expected, result);
-//--- cleanup
-   delete cut;
-   ZeroMemory(result);
-   return isTrue;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetProps_SubscriptionIdentifier()
-  {
-   Print(__FUNCTION__);
-//--- Arrange
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 2};
-   uchar buf[expected.Size() - 2];
-//--- Act
-   CPktPublish *cut = new CPktPublish(buf);
-//cut.SetCleanStart(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
-   bool isTrue = Assert(expected, result);
-//--- cleanup
-   delete cut;
-   ZeroMemory(result);
-   return isTrue;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetProps_ContentType()
-  {
-   Print(__FUNCTION__);
-//--- Arrange
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 2};
-   uchar buf[expected.Size() - 2];
-//--- Act
-   CPktPublish *cut = new CPktPublish(buf);
-//cut.SetCleanStart(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
-   bool isTrue = Assert(expected, result);
-//--- cleanup
-   delete cut;
-   ZeroMemory(result);
-   return isTrue;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetPayload()
-  {
-   Print(__FUNCTION__);
-//--- Arrange
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 2};
-   uchar buf[expected.Size() - 2];
-//--- Act
-   CPktPublish *cut = new CPktPublish(buf);
-//cut.SetCleanStart(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-//--- Assert
-   bool isTrue = Assert(expected, result);
-//--- cleanup
    delete cut;
    ZeroMemory(result);
    return isTrue;

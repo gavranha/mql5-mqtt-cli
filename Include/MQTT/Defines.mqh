@@ -22,33 +22,33 @@ PUBREL, PUBCOMP, SUBSCRIBE, SUBACK, UNSUBSCRIBE, UNSUBACK, DISCONNECT, and
 AUTH packet is a set of Properties. In the CONNECT packet there is also an optional set of Properties in
 the Will Properties field with the Payload
 */
-#define MQTT_PROPERTY_PAYLOAD_FORMAT_INDICATOR          0x01 // (1) Byte                  
-#define MQTT_PROPERTY_MESSAGE_EXPIRY_INTERVAL           0x02 // (2) Four Byte Integer     
-#define MQTT_PROPERTY_CONTENT_TYPE                      0x03 // (3) UTF-8 Encoded String  
-#define MQTT_PROPERTY_RESPONSE_TOPIC                    0x08 // (8) UTF-8 Encoded String  
-#define MQTT_PROPERTY_CORRELATION_DATA                  0x09 // (9) Binary Data           
-#define MQTT_PROPERTY_SUBSCRIPTION_IDENTIFIER           0x0B // (11) Variable Byte Integer
-#define MQTT_PROPERTY_SESSION_EXPIRY_INTERVAL           0x11 // (17) Four Byte Integer    
-#define MQTT_PROPERTY_ASSIGNED_CLIENT_IDENTIFIER        0x12 // (18) UTF-8 Encoded String  
-#define MQTT_PROPERTY_SERVER_KEEP_ALIVE                 0x13 // (19) Two Byte Integer      
-#define MQTT_PROPERTY_AUTHENTICATION_METHOD             0x15 // (21) UTF-8 Encoded String 
-#define MQTT_PROPERTY_AUTHENTICATION_DATA               0x16 // (22) Binary Data          
-#define MQTT_PROPERTY_REQUEST_PROBLEM_INFORMATION       0x17 // (23) Byte                  
-#define MQTT_PROPERTY_WILL_DELAY_INTERVAL               0x18 // (24) Four Byte Integer    
-#define MQTT_PROPERTY_REQUEST_RESPONSE_INFORMATION      0x19 // (25) Byte                  
-#define MQTT_PROPERTY_RESPONSE_INFORMATION              0x1A // (26) UTF-8 Encoded String  
-#define MQTT_PROPERTY_SERVER_REFERENCE                  0x1C // (28) UTF-8 Encoded String 
-#define MQTT_PROPERTY_REASON_STRING                     0x1F // (31) UTF-8 Encoded String
-#define MQTT_PROPERTY_RECEIVE_MAXIMUM                   0x21 // (33) Two Byte Integer     
-#define MQTT_PROPERTY_TOPIC_ALIAS_MAXIMUM               0x22 // (34) Two Byte Integer     
-#define MQTT_PROPERTY_TOPIC_ALIAS                       0x23 // (35) Two Byte Integer     
-#define MQTT_PROPERTY_MAXIMUM_QOS                       0x24 // (36) Byte                 
-#define MQTT_PROPERTY_RETAIN_AVAILABLE                  0x25 // (37) Byte                 
-#define MQTT_PROPERTY_USER_PROPERTY                     0x26 // (38) UTF-8 String Pair   
-#define MQTT_PROPERTY_MAXIMUM_PACKET_SIZE               0x27 // (39) Four Byte Integer    
-#define MQTT_PROPERTY_WILDCARD_SUBSCRIPTION_AVAILABLE   0x28 // (40) Byte                  
-#define MQTT_PROPERTY_SUBSCRIPTION_IDENTIFIER_AVAILABLE 0x29 // (41) Byte                  
-#define MQTT_PROPERTY_SHARED_SUBSCRIPTION_AVAILABLE     0x2A // (42) Byte 
+#define MQTT_PROP_IDENTIFIER_PAYLOAD_FORMAT_INDICATOR          0x01 // (1) Byte                  
+#define MQTT_PROP_IDENTIFIER_MESSAGE_EXPIRY_INTERVAL           0x02 // (2) Four Byte Integer     
+#define MQTT_PROP_IDENTIFIER_CONTENT_TYPE                      0x03 // (3) UTF-8 Encoded String  
+#define MQTT_PROP_IDENTIFIER_RESPONSE_TOPIC                    0x08 // (8) UTF-8 Encoded String  
+#define MQTT_PROP_IDENTIFIER_CORRELATION_DATA                  0x09 // (9) Binary Data           
+#define MQTT_PROP_IDENTIFIER_SUBSCRIPTION_IDENTIFIER           0x0B // (11) Variable Byte Integer
+#define MQTT_PROP_IDENTIFIER_SESSION_EXPIRY_INTERVAL           0x11 // (17) Four Byte Integer    
+#define MQTT_PROP_IDENTIFIER_ASSIGNED_CLIENT_IDENTIFIER        0x12 // (18) UTF-8 Encoded String  
+#define MQTT_PROP_IDENTIFIER_SERVER_KEEP_ALIVE                 0x13 // (19) Two Byte Integer      
+#define MQTT_PROP_IDENTIFIER_AUTHENTICATION_METHOD             0x15 // (21) UTF-8 Encoded String 
+#define MQTT_PROP_IDENTIFIER_AUTHENTICATION_DATA               0x16 // (22) Binary Data          
+#define MQTT_PROP_IDENTIFIER_REQUEST_PROBLEM_INFORMATION       0x17 // (23) Byte                  
+#define MQTT_PROP_IDENTIFIER_WILL_DELAY_INTERVAL               0x18 // (24) Four Byte Integer    
+#define MQTT_PROP_IDENTIFIER_REQUEST_RESPONSE_INFORMATION      0x19 // (25) Byte                  
+#define MQTT_PROP_IDENTIFIER_RESPONSE_INFORMATION              0x1A // (26) UTF-8 Encoded String  
+#define MQTT_PROP_IDENTIFIER_SERVER_REFERENCE                  0x1C // (28) UTF-8 Encoded String 
+#define MQTT_PROP_IDENTIFIER_REASON_STRING                     0x1F // (31) UTF-8 Encoded String
+#define MQTT_PROP_IDENTIFIER_RECEIVE_MAXIMUM                   0x21 // (33) Two Byte Integer     
+#define MQTT_PROP_IDENTIFIER_TOPIC_ALIAS_MAXIMUM               0x22 // (34) Two Byte Integer     
+#define MQTT_PROP_IDENTIFIER_TOPIC_ALIAS                       0x23 // (35) Two Byte Integer     
+#define MQTT_PROP_IDENTIFIER_MAXIMUM_QOS                       0x24 // (36) Byte                 
+#define MQTT_PROP_IDENTIFIER_RETAIN_AVAILABLE                  0x25 // (37) Byte                 
+#define MQTT_PROP_IDENTIFIER_USER_PROPERTY                     0x26 // (38) UTF-8 String Pair   
+#define MQTT_PROP_IDENTIFIER_MAXIMUM_PACKET_SIZE               0x27 // (39) Four Byte Integer    
+#define MQTT_PROP_IDENTIFIER_WILDCARD_SUBSCRIPTION_AVAILABLE   0x28 // (40) Byte                  
+#define MQTT_PROP_IDENTIFIER_SUBSCRIPTION_IDENTIFIER_AVAILABLE 0x29 // (41) Byte                  
+#define MQTT_PROP_IDENTIFIER_SHARED_SUBSCRIPTION_AVAILABLE     0x2A // (42) Byte 
 //+------------------------------------------------------------------+
 //|              REASON CODES                                        |
 //+------------------------------------------------------------------+

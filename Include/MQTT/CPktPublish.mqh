@@ -22,96 +22,189 @@ private:
    bool              IsControlPacket() {return true;}
    bool              HasWildcardChar(const string str);
 protected:
-   uchar             m_buf[];
-   uint              m_fix_header[];
-   uchar             m_publish_flags;
-   uint              m_remaining_length;
-   ushort            m_topic_name[];
-   ushort            m_packet_id;
-   uint              m_props[];
-   uint              m_var_header[];
+   uchar             m_pubflags;
+   uint              m_remlen;
+   uchar             m_topname[];
+   uchar             m_props[];
    uint              m_payload[];
-   uchar             m_tmp_properties_buf[];
-   void              SetFixHeader(ENUM_PKT_TYPE, uint rem_length, uchar pub_flags = 0);
-
 public:
                      CPktPublish();
-                     CPktPublish(uchar& payload[]);
-                     CPktPublish(uint& payload[]);
                     ~CPktPublish();
    //--- methods for setting Publish flags
    void              SetRetain(const bool retain);
    void              SetQoS_1(const bool QoS_1);
    void              SetQoS_2(const bool QoS_2);
    void              SetDup(const bool dup);
-
-   //--- member for getting the byte array
-   uint              m_byte_array[];
-   //--- methods for setting Topic Name and Properties
+   //--- method for setting Topic Name
    void              SetTopicName(const string topic_name);
-   void              SetPropMsgExpiryInterval(uint msg_expiry_interval);
+   //--- methods for setting Properties
+   void              SetPayloadFormatIndicator(PAYLOAD_FORMAT_INDICATOR format);
+   void              SetMessageExpiryInterval(uint msg_expiry_interval);
+   void              SetTopicAlias(ushort topic_alias);
+   void              SetResponseTopic(const string response_topic);
+   void              SetCorrelationData(uchar &binary_data[]);
+   void              SetUserProperty(const string key, const string val);
+   void              SetSubscriptionIdentifier(uint subscript_id);
+   void              SetContentType(const string content_type);
+   //--- method for setting the payload
+   void              SetPayload(const string payload);
    //--- method for building the final packet
-   void              Build(uint &result[]);
-
+   void              Build(uchar &result[]);
   };
 //+------------------------------------------------------------------+
-//|                SetPropMsgExpiryInterval                          |
+//|                                                                  |
 //+------------------------------------------------------------------+
-void CPktPublish::SetPropMsgExpiryInterval(uint msg_expiry_interval)
+void CPktPublish::SetPayload(const string payload)
   {
-   ArrayResize(m_tmp_properties_buf, 5);
-   m_tmp_properties_buf[0] = MQTT_PROPERTY_MESSAGE_EXPIRY_INTERVAL;
-   uchar value[4];
-   value[0] = (uchar)msg_expiry_interval >> 24;
-   value[1] = (uchar)msg_expiry_interval >> 16;
-   value[2] = (uchar)msg_expiry_interval >> 8;
-   value[3] = (uchar)msg_expiry_interval;
-   ArrayCopy(m_tmp_properties_buf, value, 1);
+   uchar aux[];
+   EncodeUTF8String(payload, aux);
+   ArrayCopy(m_payload, aux, m_props.Size());
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void CPktPublish::SetFixHeader(ENUM_PKT_TYPE pkt_type, uint rem_length, uchar pub_flags = 0)
+void CPktPublish::SetContentType(const string content_type)
   {
-   m_fix_header[0] = (uchar)pkt_type << 4;
-   m_fix_header[0] |= m_publish_flags;
-   uint aux[];
-   EncodeVariableByteInteger(rem_length, aux);
-   ArrayCopy(m_fix_header, aux, 1);
+   uchar aux[1];
+   aux[0] = MQTT_PROP_IDENTIFIER_CONTENT_TYPE;
+   ArrayCopy(m_props, aux, m_props.Size());
+   uchar buf[];
+   EncodeUTF8String(content_type, buf);
+   ArrayCopy(m_props, buf, m_props.Size());
+  };
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CPktPublish::SetSubscriptionIdentifier(uint subscript_id)
+  {
+   if(subscript_id < 1 || subscript_id > 0xfffffff)
+     {
+      printf("Error: " + __FUNCTION__ +  "Subscription Identifier must be between 1 and 268,435,455");
+      return;
+     }
+   uchar aux[1];
+   aux[0] = MQTT_PROP_IDENTIFIER_SUBSCRIPTION_IDENTIFIER;
+   ArrayCopy(m_props, aux, m_props.Size());
+   uchar buf[];
+   EncodeVariableByteInteger(subscript_id, buf);
+   ArrayCopy(m_props, buf, m_props.Size());
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void CPktPublish::Build(uint &dest[])
+void CPktPublish::SetUserProperty(const string key, const string val)
   {
-   ArrayResize(dest, 10);
-//ArrayCopy(dest, m_var_header, 2);
-//ArrayCopy(dest, m_payload, dest.Size() + 1);
-   SetFixHeader(PUBLISH, m_remaining_length, m_publish_flags);
-   ArrayCopy(dest, m_fix_header);
-   ArrayResize(m_var_header, (m_topic_name.Size() + 2 + m_props.Size()));
-   SetPacketID(m_var_header, m_topic_name.Size() + 1);
-   ArrayCopy(dest, m_var_header, dest.Size() + 1);
+   uchar aux[1];
+   aux[0] = MQTT_PROP_IDENTIFIER_USER_PROPERTY;
+   ArrayCopy(m_props, aux, m_props.Size());
+   uchar key_buf[];
+   EncodeUTF8String(key, key_buf);
+   ArrayCopy(m_props, key_buf, m_props.Size());
+   uchar val_buf[];
+   EncodeUTF8String(val, val_buf);
+   ArrayCopy(m_props, val_buf, m_props.Size());
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-CPktPublish::CPktPublish(uint &payload[])
+void CPktPublish::SetCorrelationData(uchar &binary_data[])
   {
-   ArrayFree(m_fix_header);
-   ArrayFree(m_var_header);
-   ArrayFree(m_payload);
-   ArrayResize(m_fix_header, payload.Size() + 2, 4);
+   uchar aux[1];
+   aux[0] = MQTT_PROP_IDENTIFIER_CORRELATION_DATA;
+   ArrayCopy(m_props, aux, m_props.Size());
+   ArrayCopy(m_props, binary_data, m_props.Size());
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-CPktPublish::CPktPublish(uchar& payload[])
+void CPktPublish::SetResponseTopic(const string response_topic)
   {
-   ArrayFree(m_byte_array);
-   ArrayResize(m_byte_array, payload.Size() + 2, 0);
-   ArrayCopy(m_buf, payload);
-   SetFixedHeader(PUBLISH, payload, m_byte_array, m_publish_flags);
+   uchar aux[1];
+   aux[0] = MQTT_PROP_IDENTIFIER_RESPONSE_TOPIC;
+   ArrayCopy(m_props, aux, m_props.Size());
+   uchar buf[];
+   EncodeUTF8String(response_topic, buf);
+   ArrayCopy(m_props, buf, m_props.Size());
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CPktPublish::SetTopicAlias(ushort topic_alias)
+  {
+   uchar aux[2];
+   aux[0] = MQTT_PROP_IDENTIFIER_TOPIC_ALIAS;
+   ArrayCopy(m_props, aux, m_props.Size(), 0, 1);
+   EncodeTwoByteInteger(topic_alias, aux);
+   ArrayCopy(m_props, aux, m_props.Size());
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CPktPublish::SetMessageExpiryInterval(uint msg_expiry_interval)
+  {
+   uchar aux[4];
+   aux[0] = MQTT_PROP_IDENTIFIER_MESSAGE_EXPIRY_INTERVAL;
+   ArrayCopy(m_props, aux, m_props.Size(), 0, 1);
+   EncodeFourByteInteger(msg_expiry_interval, aux);
+   ArrayCopy(m_props, aux, m_props.Size());
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CPktPublish::SetPayloadFormatIndicator(PAYLOAD_FORMAT_INDICATOR format)
+  {
+   uchar aux[] = {0, 0};
+   aux[0] = MQTT_PROP_IDENTIFIER_PAYLOAD_FORMAT_INDICATOR;
+   aux[1] = (uchar)format;
+   ArrayCopy(m_props, aux, ArraySize(m_props));
+  }
+//+------------------------------------------------------------------+
+//|            CPktPublish::SetTopicName                             |
+//+------------------------------------------------------------------+
+void CPktPublish::SetTopicName(const string topic_name)
+  {
+   if(HasWildcardChar(topic_name) || StringLen(topic_name) == 0)
+     {
+      ArrayFree(m_topname);
+      return;
+     }
+   EncodeUTF8String(topic_name, m_topname);
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CPktPublish::Build(uchar &pkt[])
+  {
+   if(m_topname.Size() == 0)
+     {
+      printf("Error: " + __FUNCTION__ + " topic name is mandatory");
+      return;
+     }
+   ArrayResize(pkt, 2);
+// pkt type with publish flags
+   pkt[0] = (uchar)PUBLISH << 4;
+   pkt[0] |= m_pubflags;
+// topic name
+   ArrayCopy(pkt, m_topname, pkt.Size());
+// QoS > 0 require packet ID
+   if((m_pubflags & 0x06) != 0)
+     {
+      SetPacketID(pkt, pkt.Size());
+      //m_remlen += 2;
+     }
+// properties lenght
+   uchar buf[];
+   EncodeVariableByteInteger(m_props.Size(), buf);
+   ArrayCopy(pkt, buf, pkt.Size());
+// properties
+   ArrayCopy(pkt, m_props, pkt.Size());
+// payload
+   ArrayCopy(pkt, m_payload, pkt.Size());
+// remaining lenght
+   m_remlen += pkt.Size() - 2;
+   uchar aux[];
+   EncodeVariableByteInteger(m_remlen, aux);
+   ArrayCopy(pkt, aux, 1);
   }
 //+------------------------------------------------------------------+
 //|            CPktPublish::HasWildcardChar                          |
@@ -125,52 +218,34 @@ bool CPktPublish::HasWildcardChar(const string str)
      }
    return false;
   }
-//+------------------------------------------------------------------+
-//|            CPktPublish::SetTopicName                             |
-//+------------------------------------------------------------------+
-void CPktPublish::SetTopicName(const string topic_name)
-  {
-   if(HasWildcardChar(topic_name) || StringLen(topic_name) == 0)
-     {
-      ArrayFree(m_topic_name);
-      return;
-     }
-   EncodeUTF8String(topic_name, m_topic_name);
-   m_remaining_length += m_topic_name.Size();
-  }
+
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 void CPktPublish::SetDup(const bool dup)
   {
-   dup ? m_publish_flags |= DUP_FLAG : m_publish_flags &= ~DUP_FLAG;
-   SetFixedHeader(PUBLISH, m_buf, m_byte_array, m_publish_flags);
+   dup ? m_pubflags |= DUP_FLAG : m_pubflags &= ~DUP_FLAG;
   }
 //+------------------------------------------------------------------+
 //|            CPktPublish::SetQoS_2                                 |
 //+------------------------------------------------------------------+
 void CPktPublish::SetQoS_2(const bool QoS_2)
   {
-   QoS_2 ? m_publish_flags |= QoS_2_FLAG : m_publish_flags &= ~QoS_2_FLAG;
-   SetFixedHeader(PUBLISH, m_buf, m_byte_array, m_publish_flags);
-   SetPacketID(m_byte_array, m_byte_array.Size());
+   QoS_2 ? m_pubflags |= QoS_2_FLAG : m_pubflags &= ~QoS_2_FLAG;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 void CPktPublish::SetQoS_1(const bool QoS_1)
   {
-   QoS_1 ? m_publish_flags |= QoS_1_FLAG : m_publish_flags &= ~QoS_1_FLAG;
-   SetFixedHeader(PUBLISH, m_buf, m_byte_array, m_publish_flags);
-   SetPacketID(m_byte_array, m_byte_array.Size());
+   QoS_1 ? m_pubflags |= QoS_1_FLAG : m_pubflags &= ~QoS_1_FLAG;
   }
 //+------------------------------------------------------------------+
 //|               CPktPublish::SetRetain                             |
 //+------------------------------------------------------------------+
 void CPktPublish::SetRetain(const bool retain)
   {
-   retain ? m_publish_flags |= RETAIN_FLAG : m_publish_flags &= ~RETAIN_FLAG;
-   SetFixedHeader(PUBLISH, m_buf, m_byte_array, m_publish_flags);
+   retain ? m_pubflags |= RETAIN_FLAG : m_pubflags &= ~RETAIN_FLAG;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |

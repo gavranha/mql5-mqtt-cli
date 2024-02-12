@@ -164,6 +164,30 @@ Digits  From                               To
 3       16,384 (0x80, 0x80, 0x01)          2,097,151 (0xFF, 0xFF, 0x7F)
 4       2,097,152 (0x80, 0x80, 0x80, 0x01) 268,435,455 (0xFF, 0xFF, 0xFF, 0x7F)
 */
+void EncodeVariableByteInteger(uint value, uchar &dest_buf[])
+  {
+   ArrayResize(dest_buf, 1, 4);
+   uint num_bytes = 0;
+   uint idx = 0;
+   do
+     {
+      uchar digit = (uchar)value % 128;
+      value = value / 128;
+      if(value > 0)
+        {
+         ArrayResize(dest_buf, dest_buf.Size() + 1, 4);
+         digit |= 128;
+        }
+      dest_buf[idx] = digit;
+      idx++;
+      num_bytes++;
+     }
+   while(value > 0 && num_bytes < 4);
+  };
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 void EncodeVariableByteInteger(uint value, uint &dest_buf[])
   {
    ArrayResize(dest_buf, 1, 4);
@@ -287,7 +311,7 @@ bool IsDisallowedCodePoint(ushort code_point)
 //+------------------------------------------------------------------+
 //|                    Encode UTF-8 String                           |
 //+------------------------------------------------------------------+
-void EncodeUTF8String(string str, ushort& dest_buf[])
+void EncodeUTF8String(string str, uchar& dest_buf[])
   {
    uint str_len = StringLen(str);
 // check for Disallowed Unicode Code Points
@@ -314,9 +338,10 @@ void EncodeUTF8String(string str, ushort& dest_buf[])
 // we have no disallowed code points and the string is not empty: encode it.
    printf("Encoding %d bytes ", str_len);
    ArrayResize(dest_buf, str_len + 2);
-   dest_buf[0] = (char)str_len >> 8; // MSB
-   dest_buf[1] = (char)str_len % 256; // LSB
+   dest_buf[0] = (uchar)str_len >> 8; // MSB
+   dest_buf[1] = (uchar)(str_len % 256) & 0xff; // LSB
    ushort char_array[];
+//uchar char_array[];
    StringToShortArray(str, char_array, 0, str_len);// to Unicode
    ArrayCopy(dest_buf, char_array, 2);
    ZeroMemory(char_array);
@@ -340,7 +365,7 @@ uchar GetQoSLevel(uchar& buf[])
 //|            SetPacketID                                           |
 //+------------------------------------------------------------------+
 #define TEST true
-void SetPacketID(uint& buf[], int start_idx)
+void SetPacketID(uchar& buf[], int start_idx)
   {
 // MathRand - Before the first call of the function, it's necessary to call
 // MathSrand to set the generator of pseudorandom numbers to the initial state.
@@ -351,17 +376,21 @@ void SetPacketID(uint& buf[], int start_idx)
       printf("ERROR: failed to resize array at %s", __FUNCTION__);
       return;
      }
-   buf[start_idx] = packet_id >> 8; // MSB
-   buf[start_idx + 1] = packet_id % 256; //LSB
+   buf[start_idx] = (uchar)packet_id >> 8; // MSB
+   buf[start_idx + 1] = (uchar)(packet_id % 256) & 0xff; //LSB
 //--- if testing, set packet ID to 1
    if(TEST)
      {
-      Print("=======================TEST======================");
+      Print("WARN: SetPacketID TEST true fixed ID = 1");
       buf[start_idx] = 0; // MSB
       buf[start_idx + 1] = 1; //LSB
-      Print("=======================TEST======================");
      }
   }
+enum PAYLOAD_FORMAT_INDICATOR
+  {
+   RAW_BYTES   = 0x00,
+   UTF8        = 0x01
+  };
 //+------------------------------------------------------------------+
 //MQTT_PROPERTY_PAYLOAD_FORMAT_INDICATOR          = Byte
 //MQTT_PROPERTY_REQUEST_PROBLEM_INFORMATION       = Byte
