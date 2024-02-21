@@ -153,7 +153,7 @@ void CPktPublish::SetMessageExpiryInterval(uint msg_expiry_interval)
 //+------------------------------------------------------------------+
 void CPktPublish::SetPayloadFormatIndicator(PAYLOAD_FORMAT_INDICATOR format)
   {
-   uchar aux[] = {0, 0};
+   uchar aux[2];
    aux[0] = MQTT_PROP_IDENTIFIER_PAYLOAD_FORMAT_INDICATOR;
    aux[1] = (uchar)format;
    ArrayCopy(m_props, aux, ArraySize(m_props));
@@ -190,9 +190,8 @@ void CPktPublish::Build(uchar &pkt[])
    if((m_pubflags & 0x06) != 0)
      {
       SetPacketID(pkt, pkt.Size());
-      //m_remlen += 2;
      }
-// properties lenght
+// properties length
    uchar buf[];
    EncodeVariableByteInteger(m_props.Size(), buf);
    ArrayCopy(pkt, buf, pkt.Size());
@@ -200,7 +199,7 @@ void CPktPublish::Build(uchar &pkt[])
    ArrayCopy(pkt, m_props, pkt.Size());
 // payload
    ArrayCopy(pkt, m_payload, pkt.Size());
-// remaining lenght
+// remaining length
    m_remlen += pkt.Size() - 2;
    uchar aux[];
    EncodeVariableByteInteger(m_remlen, aux);
