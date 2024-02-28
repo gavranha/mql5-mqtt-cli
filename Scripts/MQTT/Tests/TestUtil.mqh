@@ -1,5 +1,7 @@
 //+------------------------------------------------------------------+
 //|                                                     TestUtil.mqh |
+//|            ********* WORK IN PROGRESS **********                 |
+//| **** PART OF ARTICLE https://www.mql5.com/en/articles/14391 **** |
 //+------------------------------------------------------------------+
 bool AssertEqual(ushort & expected[], ushort & result[])
   {

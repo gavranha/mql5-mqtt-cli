@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
 //|                                                    TEST_MQTT.mq5 |
 //|            ********* WORK IN PROGRESS **********                 |
-//| **** PART OF ARTICLE https://www.mql5.com/en/articles/13998 **** |
+//| **** PART OF ARTICLE https://www.mql5.com/en/articles/14391 **** |
 //+------------------------------------------------------------------+
 #include <MQTT\MQTT.mqh>
 #include "TestUtil.mqh"
@@ -10,26 +10,51 @@
 //+------------------------------------------------------------------+
 void OnStart()
   {
-   Print(TEST_EncodeTwoByteInteger_TwoBytes());
-   Print(TEST_EncodeTwoByteInteger_OneByte());
-   Print(TEST_EncodeFourByteInteger_OneByte());
-   Print(TEST_EncodeFourByteInteger_TwoBytes());
-   Print(TEST_EncodeFourByteInteger_ThreeBytes());
-   Print(TEST_EncodeFourByteInteger_FourBytes());
-   Print(TEST_SetPacketID_TopicName1Char());
-   Print(TEST_SetPacketID_TopicName5Char());
-   Print(TEST_GetQoSLevel_2_RETAIN_DUP());
-   Print(TEST_GetQoSLevel_2_RETAIN());
-   Print(TEST_GetQoSLevel_2());
-   Print(TEST_GetQoSLevel_1_RETAIN_DUP());
-   Print(TEST_GetQoSLevel_1_RETAIN());
-   Print(TEST_GetQoSLevel_1());
-   Print(TEST_GetQoSLevel_0_RETAIN());
-   Print(TEST_GetQoSLevel_0());
-   Print(TEST_EncodeUTF8String_Disallowed_CodePoint_0x01_Ret_Empty_Array());
-   Print(TEST_EncodeUTF8String_EmptyString());
-   Print(TEST_EncodeUTF8String_ASCII());
-   Print(TEST_EncodeUTF8String_OneChar());
+   //Print(TEST_EncodeTwoByteInteger_TwoBytes());
+   //Print(TEST_EncodeTwoByteInteger_OneByte());
+   //Print(TEST_EncodeFourByteInteger_OneByte());
+   //Print(TEST_EncodeFourByteInteger_TwoBytes());
+   //Print(TEST_EncodeFourByteInteger_ThreeBytes());
+   //Print(TEST_EncodeFourByteInteger_FourBytes());
+   //Print(TEST_SetPacketID_TopicName1Char());
+   //Print(TEST_SetPacketID_TopicName5Char());
+   //Print(TEST_GetQoSLevel_2_RETAIN_DUP());
+   //Print(TEST_GetQoSLevel_2_RETAIN());
+   //Print(TEST_GetQoSLevel_2());
+   //Print(TEST_GetQoSLevel_1_RETAIN_DUP());
+   //Print(TEST_GetQoSLevel_1_RETAIN());
+   //Print(TEST_GetQoSLevel_1());
+   //Print(TEST_GetQoSLevel_0_RETAIN());
+   //Print(TEST_GetQoSLevel_0());
+   //Print(TEST_EncodeUTF8String_Disallowed_CodePoint_0x01_Ret_Empty_Array());
+   //Print(TEST_EncodeUTF8String_EmptyString());
+   //Print(TEST_EncodeUTF8String_ASCII());
+   //Print(TEST_EncodeUTF8String_OneChar());
+   Print(TEST_DecodeVariableByteInteger_OneByte());
+   Print(TEST_DecodeVariableByteInteger_TwoBytes());
+  }
+  bool TEST_DecodeVariableByteInteger_TwoBytes()
+  {
+   Print(__FUNCTION__);
+   uint expected = 256;
+   uint buf[] = {0,1};
+   uint result = DecodeVariableByteInteger(buf, 0);
+   bool isTrue = (result == expected);
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_DecodeVariableByteInteger_OneByte()
+  {
+   Print(__FUNCTION__);
+   uint expected = 1;
+   uint buf[] = {1};
+   uint result = DecodeVariableByteInteger(buf, 0);
+   bool isTrue = (result == expected);
+   ZeroMemory(result);
+   return isTrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
