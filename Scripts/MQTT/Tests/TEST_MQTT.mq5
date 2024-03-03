@@ -10,36 +10,84 @@
 //+------------------------------------------------------------------+
 void OnStart()
   {
-   //Print(TEST_EncodeTwoByteInteger_TwoBytes());
-   //Print(TEST_EncodeTwoByteInteger_OneByte());
-   //Print(TEST_EncodeFourByteInteger_OneByte());
-   //Print(TEST_EncodeFourByteInteger_TwoBytes());
-   //Print(TEST_EncodeFourByteInteger_ThreeBytes());
-   //Print(TEST_EncodeFourByteInteger_FourBytes());
-   //Print(TEST_SetPacketID_TopicName1Char());
-   //Print(TEST_SetPacketID_TopicName5Char());
-   //Print(TEST_GetQoSLevel_2_RETAIN_DUP());
-   //Print(TEST_GetQoSLevel_2_RETAIN());
-   //Print(TEST_GetQoSLevel_2());
-   //Print(TEST_GetQoSLevel_1_RETAIN_DUP());
-   //Print(TEST_GetQoSLevel_1_RETAIN());
-   //Print(TEST_GetQoSLevel_1());
-   //Print(TEST_GetQoSLevel_0_RETAIN());
-   //Print(TEST_GetQoSLevel_0());
-   //Print(TEST_EncodeUTF8String_Disallowed_CodePoint_0x01_Ret_Empty_Array());
-   //Print(TEST_EncodeUTF8String_EmptyString());
-   //Print(TEST_EncodeUTF8String_ASCII());
-   //Print(TEST_EncodeUTF8String_OneChar());
+   Print(TEST_EncodeTwoByteInteger_TwoBytes());
+   Print(TEST_EncodeTwoByteInteger_OneByte());
+   Print(TEST_EncodeFourByteInteger_OneByte());
+   Print(TEST_EncodeFourByteInteger_TwoBytes());
+   Print(TEST_EncodeFourByteInteger_ThreeBytes());
+   Print(TEST_EncodeFourByteInteger_FourBytes());
+   Print(TEST_SetPacketID_TopicName1Char());
+   Print(TEST_SetPacketID_TopicName5Char());
+   Print(TEST_GetQoSLevel_2_RETAIN_DUP());
+   Print(TEST_GetQoSLevel_2_RETAIN());
+   Print(TEST_GetQoSLevel_2());
+   Print(TEST_GetQoSLevel_1_RETAIN_DUP());
+   Print(TEST_GetQoSLevel_1_RETAIN());
+   Print(TEST_GetQoSLevel_1());
+   Print(TEST_GetQoSLevel_0_RETAIN());
+   Print(TEST_GetQoSLevel_0());
+   Print(TEST_EncodeUTF8String_Disallowed_CodePoint_0x01_Ret_Empty_Array());
+   Print(TEST_EncodeUTF8String_EmptyString());
+   Print(TEST_EncodeUTF8String_ASCII());
+   Print(TEST_EncodeUTF8String_OneChar());
+   Print(TEST_EncodeVariableByteInteger_OneDigit());
+   Print(TEST_EncodeVariableByteInteger_TwoDigits());
+   Print(TEST_EncodeVariableByteInteger_ThreeDigits());
+   Print(TEST_EncodeVariableByteInteger_FourDigits());
    Print(TEST_DecodeVariableByteInteger_OneByte());
    Print(TEST_DecodeVariableByteInteger_TwoBytes());
+   Print(TEST_DecodeVariableByteInteger_ThreeBytes());
+   Print(TEST_DecodeVariableByteInteger_FourBytes());
   }
-  bool TEST_DecodeVariableByteInteger_TwoBytes()
+/*
+The maximum number of bytes in the Variable Byte Integer field is four.
+The encoded value MUST use the minimum number of bytes necessary to represent the value
+Size of Variable Byte Integer
+Digits  From                               To
+1       0 (0x00)                           127 (0x7F)
+2       128 (0x80, 0x01)                   16,383 (0xFF, 0x7F) => (255,127)
+3       16,384 (0x80, 0x80, 0x01)          2,097,151 (0xFF, 0xFF, 0x7F)
+4       2,097,152 (0x80, 0x80, 0x80, 0x01) 268,435,455 (0xFF, 0xFF, 0xFF, 0x7F)
+*/
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_DecodeVariableByteInteger_FourBytes()
   {
    Print(__FUNCTION__);
-   uint expected = 256;
-   uint buf[] = {0,1};
-   uint result = DecodeVariableByteInteger(buf, 0);
-   bool isTrue = (result == expected);
+   uint expected[];
+   EncodeVariableByteInteger(268435455, expected);
+   uint result = DecodeVariableByteInteger(expected, 0);
+   bool isTrue = (result == 268435455);
+   Print(result);
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_DecodeVariableByteInteger_ThreeBytes()
+  {
+   Print(__FUNCTION__);
+   uint expected[];
+   EncodeVariableByteInteger(8388608, expected);
+   uint result = DecodeVariableByteInteger(expected, 0);
+   bool isTrue = (result == 8388608);
+   Print(result);
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_DecodeVariableByteInteger_TwoBytes()
+  {
+   Print(__FUNCTION__);
+   uint expected[];
+   EncodeVariableByteInteger(32768, expected);
+   uint result = DecodeVariableByteInteger(expected, 0);
+   bool isTrue = (result == 32768);
+   Print(result);
    ZeroMemory(result);
    return isTrue;
   }
@@ -49,10 +97,89 @@ void OnStart()
 bool TEST_DecodeVariableByteInteger_OneByte()
   {
    Print(__FUNCTION__);
-   uint expected = 1;
-   uint buf[] = {1};
-   uint result = DecodeVariableByteInteger(buf, 0);
-   bool isTrue = (result == expected);
+   uint expected[];
+   EncodeVariableByteInteger(128, expected);
+   uint result = DecodeVariableByteInteger(expected, 0);
+   bool isTrue = (result == 128);
+   Print(result);
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+//  Digits  From                               To
+//1       0 (0x00)                           127 (0x7F)
+//2       128 (0x80, 0x01)                   16,383 (0xFF, 0x7F) => (255,127)
+//3       16,384 (0x80, 0x80, 0x01)          2,097,151 (0xFF, 0xFF, 0x7F)
+//4       2,097,152 (0x80, 0x80, 0x80, 0x01) 268,435,455 (0xFF, 0xFF, 0xFF, 0x7F)
+bool TEST_EncodeVariableByteInteger_FourDigits()
+  {
+   Print(__FUNCTION__);
+   uint result[];
+   uint expected[] = {0xFF, 0xFF, 0xFF, 0x7F};
+   uint to_encode = 268435455;
+   EncodeVariableByteInteger(to_encode, result);
+   printf("to_encode %d ", to_encode);
+   ArrayPrint(result);
+   bool isTrue = AssertEqual(expected, result);
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+//  Digits  From                               To
+//1       0 (0x00)                           127 (0x7F)
+//2       128 (0x80, 0x01)                   16,383 (0xFF, 0x7F) => (255,127)
+//3       16,384 (0x80, 0x80, 0x01)          2,097,151 (0xFF, 0xFF, 0x7F)
+bool TEST_EncodeVariableByteInteger_ThreeDigits()
+  {
+   Print(__FUNCTION__);
+   uint result[];
+   uint expected[] = {0xFF, 0xFF, 0x7F};
+   uint to_encode = 2097151;
+   EncodeVariableByteInteger(to_encode, result);
+   printf("to_encode %d ", to_encode);
+   ArrayPrint(result);
+   bool isTrue = AssertEqual(expected, result);
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+//Digits  From                               To
+//1       0 (0x00)                           127 (0x7F)
+//2       128 (0x80, 0x01)                   16,383 (0xFF, 0x7F) => (255,127)
+bool TEST_EncodeVariableByteInteger_TwoDigits()
+  {
+   Print(__FUNCTION__);
+   uint result[];
+   uint expected[] = {0xFF, 0x7F};
+   uint to_encode = 16383;
+   EncodeVariableByteInteger(to_encode, result);
+   printf("to_encode %d ", to_encode);
+   ArrayPrint(result);
+   bool isTrue = AssertEqual(expected, result);
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+//Digits  From                               To
+//1       0 (0x00)                           127 (0x7F)
+bool TEST_EncodeVariableByteInteger_OneDigit()
+  {
+   Print(__FUNCTION__);
+   uint result[];
+   uint expected[] = {0x7F};
+   uint to_encode = 127;
+   EncodeVariableByteInteger(to_encode, result);
+   printf("to_encode %d ", to_encode);
+   ArrayPrint(result);
+   bool isTrue = AssertEqual(expected, result);
    ZeroMemory(result);
    return isTrue;
   }

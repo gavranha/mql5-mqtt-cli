@@ -250,13 +250,14 @@ uchar EncodeVariableByteInteger(uchar& buf[])
   };
 
 //+------------------------------------------------------------------+
-uint DecodeVariableByteInteger(uint &buf[], uint idx)
+uint DecodeVariableByteInteger(uint & buf[], uint idx)
   {
    uint multiplier = 1;
    uint value = 0;
    uint encodedByte;
    do
      {
+      Print(value);
       encodedByte = buf[idx];
       value += (encodedByte & 127) * multiplier;
       if(multiplier > 128 * 128 * 128)
@@ -265,10 +266,12 @@ uint DecodeVariableByteInteger(uint &buf[], uint idx)
          return -1;
         }
       multiplier *= 128;
+      idx++;
      }
    while((encodedByte & 128) != 0);
    return value;
   };
+
 //+------------------------------------------------------------------+
 //|        Disallowed Unicode Code Points in UTF-8 Strings           |
 //+------------------------------------------------------------------+
