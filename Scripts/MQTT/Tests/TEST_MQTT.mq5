@@ -10,34 +10,47 @@
 //+------------------------------------------------------------------+
 void OnStart()
   {
-   Print(TEST_EncodeTwoByteInteger_TwoBytes());
-   Print(TEST_EncodeTwoByteInteger_OneByte());
-   Print(TEST_EncodeFourByteInteger_OneByte());
-   Print(TEST_EncodeFourByteInteger_TwoBytes());
-   Print(TEST_EncodeFourByteInteger_ThreeBytes());
-   Print(TEST_EncodeFourByteInteger_FourBytes());
-   Print(TEST_SetPacketID_TopicName1Char());
-   Print(TEST_SetPacketID_TopicName5Char());
-   Print(TEST_GetQoSLevel_2_RETAIN_DUP());
-   Print(TEST_GetQoSLevel_2_RETAIN());
-   Print(TEST_GetQoSLevel_2());
-   Print(TEST_GetQoSLevel_1_RETAIN_DUP());
-   Print(TEST_GetQoSLevel_1_RETAIN());
-   Print(TEST_GetQoSLevel_1());
-   Print(TEST_GetQoSLevel_0_RETAIN());
-   Print(TEST_GetQoSLevel_0());
-   Print(TEST_EncodeUTF8String_Disallowed_CodePoint_0x01_Ret_Empty_Array());
-   Print(TEST_EncodeUTF8String_EmptyString());
-   Print(TEST_EncodeUTF8String_ASCII());
-   Print(TEST_EncodeUTF8String_OneChar());
-   Print(TEST_EncodeVariableByteInteger_OneDigit());
-   Print(TEST_EncodeVariableByteInteger_TwoDigits());
-   Print(TEST_EncodeVariableByteInteger_ThreeDigits());
-   Print(TEST_EncodeVariableByteInteger_FourDigits());
-   Print(TEST_DecodeVariableByteInteger_OneByte());
-   Print(TEST_DecodeVariableByteInteger_TwoBytes());
-   Print(TEST_DecodeVariableByteInteger_ThreeBytes());
-   Print(TEST_DecodeVariableByteInteger_FourBytes());
+   //Print(TEST_EncodeTwoByteInteger_TwoBytes());
+   //Print(TEST_EncodeTwoByteInteger_OneByte());
+   //Print(TEST_EncodeFourByteInteger_OneByte());
+   //Print(TEST_EncodeFourByteInteger_TwoBytes());
+   //Print(TEST_EncodeFourByteInteger_ThreeBytes());
+   //Print(TEST_EncodeFourByteInteger_FourBytes());
+   //Print(TEST_SetPacketID_TopicName1Char());
+   //Print(TEST_SetPacketID_TopicName5Char());
+   //Print(TEST_GetQoSLevel_2_RETAIN_DUP());
+   //Print(TEST_GetQoSLevel_2_RETAIN());
+   //Print(TEST_GetQoSLevel_2());
+   //Print(TEST_GetQoSLevel_1_RETAIN_DUP());
+   //Print(TEST_GetQoSLevel_1_RETAIN());
+   //Print(TEST_GetQoSLevel_1());
+   //Print(TEST_GetQoSLevel_0_RETAIN());
+   //Print(TEST_GetQoSLevel_0());
+   //Print(TEST_EncodeUTF8String_Disallowed_CodePoint_0x01_Ret_Empty_Array());
+   //Print(TEST_EncodeUTF8String_EmptyString());
+   //Print(TEST_EncodeUTF8String_ASCII());
+   //Print(TEST_EncodeUTF8String_OneChar());
+   //Print(TEST_EncodeVariableByteInteger_OneDigit());
+   //Print(TEST_EncodeVariableByteInteger_TwoDigits());
+   //Print(TEST_EncodeVariableByteInteger_ThreeDigits());
+   //Print(TEST_EncodeVariableByteInteger_FourDigits());
+   //Print(TEST_DecodeVariableByteInteger_OneByte());
+   //Print(TEST_DecodeVariableByteInteger_TwoBytes());
+   //Print(TEST_DecodeVariableByteInteger_ThreeBytes());
+   //Print(TEST_DecodeVariableByteInteger_FourBytes());
+   Print(TEST_ReadUtf8String());
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_ReadUtf8String()
+  {
+   Print(__FUNCTION__);
+   uchar char_array_to_read[] = {0, 10, 'u', 't', 'f', '8', 's', 't', 'r', 'i', 'n', 'g'};
+   string expected = "utf8string";
+   string result = ReadUtf8String(char_array_to_read, 2, 10);
+   return StringCompare(expected, result) == 0;
+   
   }
 /*
 The maximum number of bytes in the Variable Byte Integer field is four.

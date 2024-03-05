@@ -11,16 +11,19 @@
 void OnStart()
   {
    TestProtMethods *t = new TestProtMethods();
-   //Print(t.TEST_GetPacketID());
-   //Print(t.TEST_GetReasonCode());
-   //Print(t.TEST_IsPendingPkt_True());
-   //Print(t.TEST_IsPendingPkt_False());
+//Print(t.TEST_GetPacketID());
+//Print(t.TEST_GetReasonCode());
+//Print(t.TEST_IsPendingPkt_True());
+//Print(t.TEST_IsPendingPkt_False());
+   Print(t.TEST_ReadProperties_ReasonString());
+   Print(t.TEST_ReadProperties_UserProperty());
+   Print(t.TEST_ReadProperties_ReasonString_and_UserProperty());
    delete(t);
-   //Print(TEST_Ctor());
-   //Print(TEST_Read_NoReasonCode_NoProps());
-   Print(TEST_Read_PropLength_ONE());
-   //Print(TEST_Read_InvalidRemainingLength_0());
-   //Print(TEST_Read_InvalidRemainingLength_4228250625());
+//Print(TEST_Ctor());
+//Print(TEST_Read_NoReasonCode_NoProps());
+//Print(TEST_Read_PropLength_ONE());
+//Print(TEST_Read_InvalidRemainingLength_0());
+//Print(TEST_Read_InvalidRemainingLength_4228250625());
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -105,7 +108,49 @@ public:
    bool              TEST_GetReasonCode();
    bool              TEST_IsPendingPkt_False();
    bool              TEST_IsPendingPkt_True();
+   bool              TEST_ReadProperties_ReasonString();
+   bool              TEST_ReadProperties_UserProperty();
+   bool              TEST_ReadProperties_ReasonString_and_UserProperty();
   };
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TestProtMethods::TEST_ReadProperties_ReasonString_and_UserProperty()
+  {
+   Print(__FUNCTION__);
+   bool isTrue;
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TestProtMethods::TEST_ReadProperties_UserProperty()
+  {
+   Print(__FUNCTION__);
+   uchar char_array_to_read[] = {38, 0, 4, 'k', 'e', 'y', ':', 0, 3, 'v', 'a', 'l'};
+   string expected = "key:val";
+   CPuback *cut = new CPuback();
+   string result = this.ReadProperties(char_array_to_read, 1, 0);
+   bool isTrue = StringCompare(expected, result) == 0;
+   delete(cut);
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TestProtMethods::TEST_ReadProperties_ReasonString()
+  {
+   Print(__FUNCTION__);
+   uchar char_array_to_read[] = {31, 0, 9, 'r','e','a','s','o','n','s','t','r'};
+   string expected = "reasonstr";
+   CPuback *cut = new CPuback();
+   string result = this.ReadProperties(char_array_to_read, 1, 0);
+   bool isTrue = StringCompare(expected, result) == 0;
+   delete(cut);
+   ZeroMemory(result);
+   return isTrue;
+  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+

@@ -349,6 +349,14 @@ void EncodeUTF8String(string str, uchar& dest_buf[])
    ZeroMemory(char_array);
   }
 //+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+string ReadUtf8String(uchar &char_array[], uint start, uint count)
+  {
+   string str = CharArrayToString(char_array, start, count);
+   return str;
+  }
+//+------------------------------------------------------------------+
 //|                 GetQoSLevel                                      |
 //+------------------------------------------------------------------+
 uchar GetQoSLevel(uchar& buf[])

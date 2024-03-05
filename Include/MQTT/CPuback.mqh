@@ -34,7 +34,7 @@ protected:
    void              HandlePublishError(uint reason_code);
    bool              IsPendingPkt(uint pkt_id);
    uchar             GetReasonCode(uint &pkt[], uint idx);
-   void              ReadProperties(uint props_len, uint idx);
+   void              ReadProperties(uint &pkt[], uint props_len, uint idx);
 public:
 
    //--- method for reading incoming packets
@@ -94,7 +94,7 @@ int CPuback::Read(uint &pkt[])
    m_propslen_in = DecodeVariableByteInteger(pkt, m_remlen_in_bytes + 4);
    if(m_propslen_in > 0)
      {
-      ReadProperties(m_propslen_in, m_remlen_in_bytes + 5);
+      ReadProperties(pkt, m_propslen_in, m_remlen_in_bytes + 5);
       return 0;
      }
    else
@@ -106,10 +106,11 @@ int CPuback::Read(uint &pkt[])
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void CPuback::ReadProperties(uint props_len, uint idx)// TODO move to MQTT.mqh
+void CPuback::ReadProperties(uint &pkt[], uint props_len, uint idx)// TODO move to MQTT.mqh
   {
    Print(__FUNCTION__);
    Print("Reading PUBACK properties");
+   
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
