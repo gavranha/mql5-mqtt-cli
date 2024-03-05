@@ -257,7 +257,6 @@ uint DecodeVariableByteInteger(uint & buf[], uint idx)
    uint encodedByte;
    do
      {
-      Print(value);
       encodedByte = buf[idx];
       value += (encodedByte & 127) * multiplier;
       if(multiplier > 128 * 128 * 128)
