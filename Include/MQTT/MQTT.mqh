@@ -250,7 +250,7 @@ uchar EncodeVariableByteInteger(uchar& buf[])
   };
 
 //+------------------------------------------------------------------+
-uint DecodeVariableByteInteger(uint & buf[], uint idx)
+uint DecodeVariableByteInteger(uchar & buf[], uint idx)
   {
    uint multiplier = 1;
    uint value = 0;

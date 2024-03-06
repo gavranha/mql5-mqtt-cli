@@ -49,6 +49,7 @@ bool TEST_ReadUtf8String()
    uchar char_array_to_read[] = {0, 10, 'u', 't', 'f', '8', 's', 't', 'r', 'i', 'n', 'g'};
    string expected = "utf8string";
    string result = ReadUtf8String(char_array_to_read, 2, 10);
+   Print(result);
    return StringCompare(expected, result) == 0;
    
   }
@@ -68,7 +69,7 @@ Digits  From                               To
 bool TEST_DecodeVariableByteInteger_FourBytes()
   {
    Print(__FUNCTION__);
-   uint expected[];
+   uchar expected[];
    EncodeVariableByteInteger(268435455, expected);
    uint result = DecodeVariableByteInteger(expected, 0);
    bool isTrue = (result == 268435455);
@@ -82,7 +83,7 @@ bool TEST_DecodeVariableByteInteger_FourBytes()
 bool TEST_DecodeVariableByteInteger_ThreeBytes()
   {
    Print(__FUNCTION__);
-   uint expected[];
+   uchar expected[];
    EncodeVariableByteInteger(8388608, expected);
    uint result = DecodeVariableByteInteger(expected, 0);
    bool isTrue = (result == 8388608);
@@ -96,7 +97,7 @@ bool TEST_DecodeVariableByteInteger_ThreeBytes()
 bool TEST_DecodeVariableByteInteger_TwoBytes()
   {
    Print(__FUNCTION__);
-   uint expected[];
+   uchar expected[];
    EncodeVariableByteInteger(32768, expected);
    uint result = DecodeVariableByteInteger(expected, 0);
    bool isTrue = (result == 32768);
@@ -110,7 +111,7 @@ bool TEST_DecodeVariableByteInteger_TwoBytes()
 bool TEST_DecodeVariableByteInteger_OneByte()
   {
    Print(__FUNCTION__);
-   uint expected[];
+   uchar expected[];
    EncodeVariableByteInteger(128, expected);
    uint result = DecodeVariableByteInteger(expected, 0);
    bool isTrue = (result == 128);

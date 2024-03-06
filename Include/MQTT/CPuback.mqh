@@ -27,18 +27,19 @@ private:
    uint              m_remlen_in_bytes;
    uchar             m_reason_code;
    uint              m_propslen_in;
+   uint              m_propslen_in_bytes;
    uint              m_pktID_in;
 protected:
-   ushort            GetPacketID(uint &pkt[], uint idx);
-   int               ReleasePktID(uint pkt_id);
+   ushort            GetPacketID(uchar &pkt[], uint idx);
+   int               ReleasePktID(ushort pkt_id);
    void              HandlePublishError(uint reason_code);
    bool              IsPendingPkt(uint pkt_id);
-   uchar             GetReasonCode(uint &pkt[], uint idx);
-   void              ReadProperties(uint &pkt[], uint props_len, uint idx);
+   uchar             GetReasonCode(uchar &pkt[], uint idx);
+   uint              ReadProperties(uchar &pkt[], uint props_len, uint idx);
 public:
 
    //--- method for reading incoming packets
-   int               Read(uint &pkt[]);
+   int               Read(uchar &pkt[]);
    //--- method for building the final packet
    void              Build(uchar &pkt[]);
    //--- ctors
@@ -48,10 +49,10 @@ public:
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-int CPuback::Read(uint &pkt[])
+int CPuback::Read(uchar &pkt[])
   {
    m_remlen_in = DecodeVariableByteInteger(pkt, 1);
-// validate Remaining Length
+// validate Remaining Length and get its size in bytes
    if(m_remlen_in > 2 && m_remlen_in <= 127)
      {m_remlen_in_bytes = 1;}
    if(m_remlen_in >= 128 && m_remlen_in <= 16383)
@@ -71,30 +72,50 @@ int CPuback::Read(uint &pkt[])
       m_pktID_in = GetPacketID(pkt, 2);
       if(IsPendingPkt(m_pktID_in))
         {
-         return ReleasePktID(m_pktID_in);
+         return ReleasePktID((ushort)m_pktID_in);
         }
      }
 // get the packet ID
    m_pktID_in = GetPacketID(pkt, m_remlen_in_bytes + 1);
 // get the Reason Code
    m_reason_code = GetReasonCode(pkt, m_remlen_in_bytes + 3);
+// get the properties length
+   m_propslen_in = DecodeVariableByteInteger(pkt, m_remlen_in_bytes + 4);
+// validate Properties Length and get its size in bytes
+   if(m_propslen_in > 2 && m_propslen_in <= 127)
+     {m_propslen_in_bytes = 1;}
+   if(m_propslen_in >= 128 && m_propslen_in <= 16383)
+     {m_propslen_in_bytes = 2;}
+   if(m_propslen_in >= 16384 && m_propslen_in <= 2097151)
+     {m_propslen_in_bytes = 3;}
+   if(m_propslen_in >= 2097152 && m_propslen_in <= 268435455)
+     {m_propslen_in_bytes = 4;}
+   if(m_propslen_in < 2 || m_propslen_in > 268435455)
+     {
+      printf("Invalid Properties Length: %d", m_propslen_in);
+      return -1;
+     }
+// get the Properties start idx
+   uint props_start = m_remlen_in_bytes + 2 + m_propslen_in_bytes + 1;
+// we have a successful PUBLISH; release the packet ID
    if(m_reason_code == 0x00 || m_reason_code == 0x10)
      {
       if(IsPendingPkt(m_pktID_in))
         {
-         ReleasePktID(m_pktID_in);
+         ReleasePktID((ushort)m_pktID_in);
         }
      }
+// PUBLISH was rejected; read props and handle the error and log it
    else
      {
+      ReadProperties(pkt, m_propslen_in, props_start);
       HandlePublishError(m_reason_code);
       return -1;
      }
-// get the properties length
-   m_propslen_in = DecodeVariableByteInteger(pkt, m_remlen_in_bytes + 4);
+// if we have props read them
    if(m_propslen_in > 0)
      {
-      ReadProperties(pkt, m_propslen_in, m_remlen_in_bytes + 5);
+      ReadProperties(pkt, m_propslen_in, props_start);
       return 0;
      }
    else
@@ -106,11 +127,43 @@ int CPuback::Read(uint &pkt[])
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void CPuback::ReadProperties(uint &pkt[], uint props_len, uint idx)// TODO move to MQTT.mqh
+uint CPuback::ReadProperties(uchar &pkt[], uint props_len, uint idx)// TODO move to MQTT.mqh
   {
-   Print(__FUNCTION__);
    Print("Reading PUBACK properties");
-   
+   uint props_count = 0;
+   for(uint bytes = 0; bytes < props_len; idx++)
+     {
+      switch(pkt[idx])
+        {
+         case MQTT_PROP_IDENTIFIER_REASON_STRING :
+           {
+            uint strlen = (pkt[idx + 1] * 256) + pkt[idx + 2];
+            string reason_str = ReadUtf8String(pkt, idx + 3, strlen);
+            Print(reason_str);
+            props_count++;
+            bytes += strlen + 3; // prop id(1 byte) + strlen MSB LSB (2)
+            ArrayRemove(pkt, 0, bytes);
+           }
+         break;
+         case MQTT_PROP_IDENTIFIER_USER_PROPERTY:
+           {
+            uint keylen = (pkt[idx + 1] * 256) + pkt[idx + 2];
+            string key = ReadUtf8String(pkt, idx + 3, keylen);
+            uint vallen = (pkt[idx + keylen + 2] * 256) + pkt[idx + keylen + 3];
+            string val = ReadUtf8String(pkt, idx + keylen + 4, vallen);
+            string userprop;
+            StringConcatenate(userprop, key, val);
+            Print(userprop);
+            props_count++;
+            bytes += keylen + vallen + 5; // prop id (1 byte) + key/val len MSB LSB (4)
+            ArrayRemove(pkt, 0, bytes);
+           }
+         break;
+         default:
+            break;
+        }
+     }
+   return props_count;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -123,14 +176,14 @@ void CPuback::HandlePublishError(uint reason_code)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-int CPuback::ReleasePktID(uint pkt_id)
+int CPuback::ReleasePktID(ushort pkt_id)
   {
    return 0;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-uchar CPuback::GetReasonCode(uint &pkt[], uint idx)
+uchar CPuback::GetReasonCode(uchar &pkt[], uint idx)
   {
    return (uchar)pkt[idx];
   }
@@ -153,7 +206,7 @@ bool CPuback::IsPendingPkt(uint pkt_id)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-ushort CPuback::GetPacketID(uint &pkt[], uint idx)
+ushort CPuback::GetPacketID(uchar &pkt[], uint idx)
   {
    return (ushort)((pkt[idx] * 256) + pkt[idx + 1]);
   }

@@ -15,9 +15,9 @@ void OnStart()
 //Print(t.TEST_GetReasonCode());
 //Print(t.TEST_IsPendingPkt_True());
 //Print(t.TEST_IsPendingPkt_False());
-   Print(t.TEST_ReadProperties_ReasonString());
-   Print(t.TEST_ReadProperties_UserProperty());
-   Print(t.TEST_ReadProperties_ReasonString_and_UserProperty());
+   //Print(t.TEST_ReadProperties_ReasonString());
+   //Print(t.TEST_ReadProperties_UserProperty());
+Print(t.TEST_ReadProperties_ReasonString_and_UserProperty());
    delete(t);
 //Print(TEST_Ctor());
 //Print(TEST_Read_NoReasonCode_NoProps());
@@ -31,7 +31,7 @@ void OnStart()
 bool TEST_Read_InvalidRemainingLength_4228250625()
   {
    Print(__FUNCTION__);
-   uint pkt[] = {4, 0xFF, 0xFF, 0xFF, 0xFF, 0, 1, 0, 0};
+   uchar pkt[] = {4, 0xFF, 0xFF, 0xFF, 0xFF, 0, 1, 0, 0};
    int expected = -1;
    CPuback *cut = new CPuback();
    int result = cut.Read(pkt);
@@ -45,7 +45,7 @@ bool TEST_Read_InvalidRemainingLength_4228250625()
 bool TEST_Read_InvalidRemainingLength_0()
   {
    Print(__FUNCTION__);
-   uint pkt[] = {4, 0, 0, 1, 0, 0};
+   uchar pkt[] = {4, 0, 0, 1, 0, 0};
    int expected = -1;
    CPuback *cut = new CPuback();
    int result = cut.Read(pkt);
@@ -59,7 +59,7 @@ bool TEST_Read_InvalidRemainingLength_0()
 bool TEST_Read_PropLength_ONE()
   {
    Print(__FUNCTION__);
-   uint pkt[] = {4, 4, 0, 1, 0, 1};
+   uchar pkt[] = {4, 4, 0, 1, 0, 1};
    int expected = 0;
    CPuback *cut = new CPuback();
    int result = cut.Read(pkt);
@@ -73,7 +73,7 @@ bool TEST_Read_PropLength_ONE()
 bool TEST_Read_NoReasonCode_NoProps()
   {
    Print(__FUNCTION__);
-   uint pkt[] = {4, 2, 0, 1};
+   uchar pkt[] = {4, 2, 0, 1};
    int expected = 0;
    CPuback *cut = new CPuback();
    int result = cut.Read(pkt);
@@ -118,7 +118,15 @@ public:
 bool TestProtMethods::TEST_ReadProperties_ReasonString_and_UserProperty()
   {
    Print(__FUNCTION__);
-   bool isTrue;
+   uchar pkt[] = {4, 27, 0, 1, 24, 31, 0, 9, 'r', 'e', 'a', 's', 'o', 'n', 's', 't', 'r', \
+                  38, 0, 4, 'k', 'e', 'y', ':', 0, 3, 'v', 'a', 'l'
+                 };
+   uint expected = 2;
+   CPuback *cut = new CPuback();
+   uint result = this.ReadProperties(pkt, 24, 5);
+   bool isTrue = expected == result;
+   delete(cut);
+   ZeroMemory(result);
    return isTrue;
   }
 //+------------------------------------------------------------------+
@@ -127,11 +135,11 @@ bool TestProtMethods::TEST_ReadProperties_ReasonString_and_UserProperty()
 bool TestProtMethods::TEST_ReadProperties_UserProperty()
   {
    Print(__FUNCTION__);
-   uchar char_array_to_read[] = {38, 0, 4, 'k', 'e', 'y', ':', 0, 3, 'v', 'a', 'l'};
-   string expected = "key:val";
+   uchar pkt[] = {4, 15, 0, 1, 12, 38, 0, 4, 'k', 'e', 'y', ':', 0, 3, 'v', 'a', 'l'};
+   uint expected = 1;
    CPuback *cut = new CPuback();
-   string result = this.ReadProperties(char_array_to_read, 1, 0);
-   bool isTrue = StringCompare(expected, result) == 0;
+   uint result = this.ReadProperties(pkt, 12, 5);
+   bool isTrue = expected == result;
    delete(cut);
    ZeroMemory(result);
    return isTrue;
@@ -142,11 +150,11 @@ bool TestProtMethods::TEST_ReadProperties_UserProperty()
 bool TestProtMethods::TEST_ReadProperties_ReasonString()
   {
    Print(__FUNCTION__);
-   uchar char_array_to_read[] = {31, 0, 9, 'r','e','a','s','o','n','s','t','r'};
-   string expected = "reasonstr";
+   uchar pkt[] = {4, 15, 0, 1, 12, 31, 0, 9, 'r', 'e', 'a', 's', 'o', 'n', 's', 't', 'r'};
+   uint expected = 1;
    CPuback *cut = new CPuback();
-   string result = this.ReadProperties(char_array_to_read, 1, 0);
-   bool isTrue = StringCompare(expected, result) == 0;
+   uint result = this.ReadProperties(pkt, 12, 5);
+   bool isTrue = expected == result;
    delete(cut);
    ZeroMemory(result);
    return isTrue;
@@ -157,7 +165,7 @@ bool TestProtMethods::TEST_ReadProperties_ReasonString()
 bool TestProtMethods::TEST_GetReasonCode()
   {
    Print(__FUNCTION__);
-   uint pkt[] = {4, 2, 0, 1, 0};
+   uchar pkt[] = {4, 2, 0, 1, 0};
    int expected = 0;
    CPuback *cut = new CPuback();
    int result = this.GetReasonCode(pkt, 4);
@@ -171,7 +179,7 @@ bool TestProtMethods::TEST_GetReasonCode()
 bool TestProtMethods::TEST_GetPacketID()
   {
    Print(__FUNCTION__);
-   uint pkt[] = {4, 2, 0, 1};
+   uchar pkt[] = {4, 2, 0, 1};
    int expected = 1;
    CPuback *cut = new CPuback();
    int result = this.GetPacketID(pkt, 2);
@@ -185,7 +193,7 @@ bool TestProtMethods::TEST_GetPacketID()
 bool TestProtMethods::TEST_IsPendingPkt_False()
   {
    Print(__FUNCTION__);
-   uint pkt_id = 0;
+   uchar pkt_id = 0;
    bool expected = false;
    CPuback *cut = new CPuback();
    bool result = this.IsPendingPkt(pkt_id);
@@ -199,7 +207,7 @@ bool TestProtMethods::TEST_IsPendingPkt_False()
 bool TestProtMethods::TEST_IsPendingPkt_True()
   {
    Print(__FUNCTION__);
-   uint pkt_id = 65535;
+   ushort pkt_id = 65535;
    bool expected = true;
    CPuback *cut = new CPuback();
    bool result = this.IsPendingPkt(pkt_id);
