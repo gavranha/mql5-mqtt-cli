@@ -11,19 +11,19 @@
 void OnStart()
   {
    TestProtMethods *t = new TestProtMethods();
-//Print(t.TEST_GetPacketID());
-//Print(t.TEST_GetReasonCode());
-//Print(t.TEST_IsPendingPkt_True());
-//Print(t.TEST_IsPendingPkt_False());
-   //Print(t.TEST_ReadProperties_ReasonString());
-   //Print(t.TEST_ReadProperties_UserProperty());
-Print(t.TEST_ReadProperties_ReasonString_and_UserProperty());
+   Print(t.TEST_GetPacketID());
+   Print(t.TEST_GetReasonCode());
+   Print(t.TEST_IsPendingPkt_True());
+   Print(t.TEST_IsPendingPkt_False());
+   Print(t.TEST_ReadProperties_ReasonString());
+   Print(t.TEST_ReadProperties_UserProperty());
+   Print(t.TEST_ReadProperties_ReasonString_and_UserProperty());
    delete(t);
-//Print(TEST_Ctor());
-//Print(TEST_Read_NoReasonCode_NoProps());
-//Print(TEST_Read_PropLength_ONE());
-//Print(TEST_Read_InvalidRemainingLength_0());
-//Print(TEST_Read_InvalidRemainingLength_4228250625());
+   Print(TEST_Ctor());
+   Print(TEST_Read_NoReasonCode_NoProps());
+   Print(TEST_Read_PropLength_ONE());
+   Print(TEST_Read_InvalidRemainingLength_0());
+   Print(TEST_Read_InvalidRemainingLength_4228250625());
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -59,7 +59,7 @@ bool TEST_Read_InvalidRemainingLength_0()
 bool TEST_Read_PropLength_ONE()
   {
    Print(__FUNCTION__);
-   uchar pkt[] = {4, 4, 0, 1, 0, 1};
+   uchar pkt[] = {4, 4, 0, 1, 0, 0};
    int expected = 0;
    CPuback *cut = new CPuback();
    int result = cut.Read(pkt);

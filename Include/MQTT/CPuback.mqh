@@ -82,7 +82,7 @@ int CPuback::Read(uchar &pkt[])
 // get the properties length
    m_propslen_in = DecodeVariableByteInteger(pkt, m_remlen_in_bytes + 4);
 // validate Properties Length and get its size in bytes
-   if(m_propslen_in > 2 && m_propslen_in <= 127)
+   if(m_propslen_in == 0 && m_propslen_in <= 127)
      {m_propslen_in_bytes = 1;}
    if(m_propslen_in >= 128 && m_propslen_in <= 16383)
      {m_propslen_in_bytes = 2;}
@@ -90,7 +90,7 @@ int CPuback::Read(uchar &pkt[])
      {m_propslen_in_bytes = 3;}
    if(m_propslen_in >= 2097152 && m_propslen_in <= 268435455)
      {m_propslen_in_bytes = 4;}
-   if(m_propslen_in < 2 || m_propslen_in > 268435455)
+   if(m_propslen_in < 0 || m_propslen_in > 268435455)
      {
       printf("Invalid Properties Length: %d", m_propslen_in);
       return -1;
