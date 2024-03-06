@@ -90,7 +90,7 @@ int CPuback::Read(uchar &pkt[])
      {m_propslen_in_bytes = 3;}
    if(m_propslen_in >= 2097152 && m_propslen_in <= 268435455)
      {m_propslen_in_bytes = 4;}
-   if(m_propslen_in < 0 || m_propslen_in > 268435455)
+   if(m_propslen_in > 268435455)
      {
       printf("Invalid Properties Length: %d", m_propslen_in);
       return -1;
@@ -105,14 +105,14 @@ int CPuback::Read(uchar &pkt[])
          ReleasePktID((ushort)m_pktID_in);
         }
      }
-// PUBLISH was rejected; read props and handle the error and log it
+// PUBLISH was rejected; read props, handle the error and log it
    else
      {
       ReadProperties(pkt, m_propslen_in, props_start);
       HandlePublishError(m_reason_code);
       return -1;
      }
-// if we have props read them
+// we have props; read them
    if(m_propslen_in > 0)
      {
       ReadProperties(pkt, m_propslen_in, props_start);
