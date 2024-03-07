@@ -15,8 +15,8 @@ from the PUBLISH packet that is being acknowledged, PUBACK Reason Code, Property
 Properties.
 */
 //+------------------------------------------------------------------+
-//| Class CPuback.                                                  |
-//| Purpose: Class of MQTT Puback Control Packets.                  |
+//| Class CPuback.                                                   |
+//| Purpose: Class of MQTT Puback Control Packets.                   |
 //|          Implements IControlPacket                               |
 //+------------------------------------------------------------------+
 class CPuback : public IControlPacket
@@ -36,6 +36,8 @@ protected:
    bool              IsPendingPkt(uint pkt_id);
    uchar             GetReasonCode(uchar &pkt[], uint idx);
    uint              ReadProperties(uchar &pkt[], uint props_len, uint idx);
+   uint              GetRemLenBytes(uint remlen);
+   uint              ValidatePropsLen(uint propslen);
 public:
 
    //--- method for reading incoming packets
@@ -52,20 +54,13 @@ public:
 int CPuback::Read(uchar &pkt[])
   {
    m_remlen_in = DecodeVariableByteInteger(pkt, 1);
-// validate Remaining Length and get its size in bytes
-   if(m_remlen_in > 2 && m_remlen_in <= 127)
-     {m_remlen_in_bytes = 1;}
-   if(m_remlen_in >= 128 && m_remlen_in <= 16383)
-     {m_remlen_in_bytes = 2;}
-   if(m_remlen_in >= 16384 && m_remlen_in <= 2097151)
-     {m_remlen_in_bytes = 3;}
-   if(m_remlen_in >= 2097152 && m_remlen_in <= 268435455)
-     {m_remlen_in_bytes = 4;}
+// validate Remaining Length
    if(m_remlen_in < 2 || m_remlen_in > 268435455)
      {
       printf("Invalid Remaining Length: %d", m_remlen_in);
       return -1;
      }
+   m_remlen_in_bytes = GetRemLenBytes(m_remlen_in);
 // implicit Reason Code and no properties
    if(m_remlen_in == 2)
      {
@@ -81,20 +76,13 @@ int CPuback::Read(uchar &pkt[])
    m_reason_code = GetReasonCode(pkt, m_remlen_in_bytes + 3);
 // get the properties length
    m_propslen_in = DecodeVariableByteInteger(pkt, m_remlen_in_bytes + 4);
-// validate Properties Length and get its size in bytes
-   if(m_propslen_in == 0 && m_propslen_in <= 127)
-     {m_propslen_in_bytes = 1;}
-   if(m_propslen_in >= 128 && m_propslen_in <= 16383)
-     {m_propslen_in_bytes = 2;}
-   if(m_propslen_in >= 16384 && m_propslen_in <= 2097151)
-     {m_propslen_in_bytes = 3;}
-   if(m_propslen_in >= 2097152 && m_propslen_in <= 268435455)
-     {m_propslen_in_bytes = 4;}
+// validate Property Length
    if(m_propslen_in > 268435455)
      {
       printf("Invalid Properties Length: %d", m_propslen_in);
       return -1;
      }
+   m_propslen_in_bytes = ValidatePropsLen(m_propslen_in);
 // get the Properties start idx
    uint props_start = m_remlen_in_bytes + 2 + m_propslen_in_bytes + 1;
 // we have a successful PUBLISH; release the packet ID
@@ -123,6 +111,40 @@ int CPuback::Read(uchar &pkt[])
       return 0;
      }
    return -1;
+  }
+//+------------------------------------------------------------------+
+//|  get Remaining Length size in bytes                              |
+//+------------------------------------------------------------------+
+uint CPuback::GetRemLenBytes(uint remlen)
+  {
+   uint remlen_bytes = 0;
+//
+   if(m_remlen_in > 2 && m_remlen_in <= 127)
+     {remlen_bytes = 1;}
+   if(m_remlen_in >= 128 && m_remlen_in <= 16383)
+     {remlen_bytes = 2;}
+   if(m_remlen_in >= 16384 && m_remlen_in <= 2097151)
+     {remlen_bytes = 3;}
+   if(m_remlen_in >= 2097152 && m_remlen_in <= 268435455)
+     {remlen_bytes = 4;}
+   return remlen_bytes;
+  }
+//+------------------------------------------------------------------+
+//|   validate Properties Length and get its size in bytes           |
+//+------------------------------------------------------------------+
+uint CPuback::ValidatePropsLen(uint propslen)
+  {
+   uint propslen_bytes = 0;
+//
+   if(m_propslen_in == 0 && m_propslen_in <= 127)
+     {propslen_bytes = 1;}
+   if(m_propslen_in >= 128 && m_propslen_in <= 16383)
+     {propslen_bytes = 2;}
+   if(m_propslen_in >= 16384 && m_propslen_in <= 2097151)
+     {propslen_bytes = 3;}
+   if(m_propslen_in >= 2097152 && m_propslen_in <= 268435455)
+     {propslen_bytes = 4;}
+   return propslen_bytes;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
