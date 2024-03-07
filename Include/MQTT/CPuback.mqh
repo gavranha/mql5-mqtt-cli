@@ -23,21 +23,21 @@ class CPuback : public IControlPacket
   {
 private:
    bool              IsControlPacket() {return true;}
-   uint              m_remlen_in;
-   uint              m_remlen_in_bytes;
-   uchar             m_reason_code;
-   uint              m_propslen_in;
-   uint              m_propslen_in_bytes;
-   uint              m_pktID_in;
+   uint              m_remlen;
+   uint              m_remlen_bytes;
+   uchar             m_reasoncode;
+   uint              m_propslen;
+   uint              m_propslen_bytes;
+   uint              m_pktid;
 protected:
-   ushort            GetPacketID(uchar &pkt[], uint idx);
-   int               ReleasePktID(ushort pkt_id);
+   ushort            GetPacketid(uchar &pkt[], uint idx);
+   int               ReleasePktid(ushort pkt_id);
    void              HandlePublishError(uint reason_code);
    bool              IsPendingPkt(uint pkt_id);
    uchar             GetReasonCode(uchar &pkt[], uint idx);
    uint              ReadProperties(uchar &pkt[], uint props_len, uint idx);
    uint              GetRemLenBytes(uint remlen);
-   uint              ValidatePropsLen(uint propslen);
+   uint              GetPropsLenBytes(uint propslen);
 public:
 
    //--- method for reading incoming packets
@@ -53,57 +53,57 @@ public:
 //+------------------------------------------------------------------+
 int CPuback::Read(uchar &pkt[])
   {
-   m_remlen_in = DecodeVariableByteInteger(pkt, 1);
+   m_remlen = DecodeVariableByteInteger(pkt, 1);
 // validate Remaining Length
-   if(m_remlen_in < 2 || m_remlen_in > 268435455)
+   if(m_remlen < 2 || m_remlen > 268435455)
      {
-      printf("Invalid Remaining Length: %d", m_remlen_in);
+      printf("Invalid Remaining Length: %d", m_remlen);
       return -1;
      }
-   m_remlen_in_bytes = GetRemLenBytes(m_remlen_in);
+   m_remlen_bytes = GetRemLenBytes(m_remlen);
 // implicit Reason Code and no properties
-   if(m_remlen_in == 2)
+   if(m_remlen == 2)
      {
-      m_pktID_in = GetPacketID(pkt, 2);
-      if(IsPendingPkt(m_pktID_in))
+      m_pktid = GetPacketid(pkt, 2);
+      if(IsPendingPkt(m_pktid))
         {
-         return ReleasePktID((ushort)m_pktID_in);
+         return ReleasePktid((ushort)m_pktid);
         }
      }
 // get the packet ID
-   m_pktID_in = GetPacketID(pkt, m_remlen_in_bytes + 1);
+   m_pktid = GetPacketid(pkt, m_remlen_bytes + 1);
 // get the Reason Code
-   m_reason_code = GetReasonCode(pkt, m_remlen_in_bytes + 3);
+   m_reasoncode = GetReasonCode(pkt, m_remlen_bytes + 3);
 // get the properties length
-   m_propslen_in = DecodeVariableByteInteger(pkt, m_remlen_in_bytes + 4);
+   m_propslen = DecodeVariableByteInteger(pkt, m_remlen_bytes + 4);
 // validate Property Length
-   if(m_propslen_in > 268435455)
+   if(m_propslen > 268435455)
      {
-      printf("Invalid Properties Length: %d", m_propslen_in);
+      printf("Invalid Properties Length: %d", m_propslen);
       return -1;
      }
-   m_propslen_in_bytes = ValidatePropsLen(m_propslen_in);
+   m_propslen_bytes = GetPropsLenBytes(m_propslen);
 // get the Properties start idx
-   uint props_start = m_remlen_in_bytes + 2 + m_propslen_in_bytes + 1;
+   uint props_start = m_remlen_bytes + 2 + m_propslen_bytes + 1;
 // we have a successful PUBLISH; release the packet ID
-   if(m_reason_code == 0x00 || m_reason_code == 0x10)
+   if(m_reasoncode == 0x00 || m_reasoncode == 0x10)
      {
-      if(IsPendingPkt(m_pktID_in))
+      if(IsPendingPkt(m_pktid))
         {
-         ReleasePktID((ushort)m_pktID_in);
+         ReleasePktid((ushort)m_pktid);
         }
      }
 // PUBLISH was rejected; read props, handle the error and log it
    else
      {
-      ReadProperties(pkt, m_propslen_in, props_start);
-      HandlePublishError(m_reason_code);
+      ReadProperties(pkt, m_propslen, props_start);
+      HandlePublishError(m_reasoncode);
       return -1;
      }
 // we have props; read them
-   if(m_propslen_in > 0)
+   if(m_propslen > 0)
      {
-      ReadProperties(pkt, m_propslen_in, props_start);
+      ReadProperties(pkt, m_propslen, props_start);
       return 0;
      }
    else
@@ -119,30 +119,30 @@ uint CPuback::GetRemLenBytes(uint remlen)
   {
    uint remlen_bytes = 0;
 //
-   if(m_remlen_in > 2 && m_remlen_in <= 127)
+   if(m_remlen > 2 && m_remlen <= 127)
      {remlen_bytes = 1;}
-   if(m_remlen_in >= 128 && m_remlen_in <= 16383)
+   if(m_remlen >= 128 && m_remlen <= 16383)
      {remlen_bytes = 2;}
-   if(m_remlen_in >= 16384 && m_remlen_in <= 2097151)
+   if(m_remlen >= 16384 && m_remlen <= 2097151)
      {remlen_bytes = 3;}
-   if(m_remlen_in >= 2097152 && m_remlen_in <= 268435455)
+   if(m_remlen >= 2097152 && m_remlen <= 268435455)
      {remlen_bytes = 4;}
    return remlen_bytes;
   }
 //+------------------------------------------------------------------+
 //|   validate Properties Length and get its size in bytes           |
 //+------------------------------------------------------------------+
-uint CPuback::ValidatePropsLen(uint propslen)
+uint CPuback::GetPropsLenBytes(uint propslen)
   {
    uint propslen_bytes = 0;
 //
-   if(m_propslen_in == 0 && m_propslen_in <= 127)
+   if(m_propslen == 0 && m_propslen <= 127)
      {propslen_bytes = 1;}
-   if(m_propslen_in >= 128 && m_propslen_in <= 16383)
+   if(m_propslen >= 128 && m_propslen <= 16383)
      {propslen_bytes = 2;}
-   if(m_propslen_in >= 16384 && m_propslen_in <= 2097151)
+   if(m_propslen >= 16384 && m_propslen <= 2097151)
      {propslen_bytes = 3;}
-   if(m_propslen_in >= 2097152 && m_propslen_in <= 268435455)
+   if(m_propslen >= 2097152 && m_propslen <= 268435455)
      {propslen_bytes = 4;}
    return propslen_bytes;
   }
@@ -198,7 +198,7 @@ void CPuback::HandlePublishError(uint reason_code)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-int CPuback::ReleasePktID(ushort pkt_id)
+int CPuback::ReleasePktid(ushort pkt_id)
   {
    return 0;
   }
@@ -228,7 +228,7 @@ bool CPuback::IsPendingPkt(uint pkt_id)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-ushort CPuback::GetPacketID(uchar &pkt[], uint idx)
+ushort CPuback::GetPacketid(uchar &pkt[], uint idx)
   {
    return (ushort)((pkt[idx] * 256) + pkt[idx + 1]);
   }

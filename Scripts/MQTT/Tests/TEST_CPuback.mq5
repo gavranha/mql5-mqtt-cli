@@ -182,7 +182,7 @@ bool TestProtMethods::TEST_GetPacketID()
    uchar pkt[] = {4, 2, 0, 1};
    int expected = 1;
    CPuback *cut = new CPuback();
-   int result = this.GetPacketID(pkt, 2);
+   int result = this.GetPacketid(pkt, 2);
    bool isTrue = (result == expected);
    delete cut;
    return isTrue;
