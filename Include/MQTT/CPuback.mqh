@@ -55,7 +55,7 @@ int CPuback::Read(uchar &pkt[])
   {
    m_remlen = DecodeVariableByteInteger(pkt, 1);
 // validate Remaining Length
-   if(m_remlen < 2 || m_remlen > 268435455)
+   if(m_remlen < 2 || m_remlen > VARINT_MAX_FOUR_BYTES)
      {
       printf("Invalid Remaining Length: %d", m_remlen);
       return -1;
@@ -77,7 +77,7 @@ int CPuback::Read(uchar &pkt[])
 // get the properties length
    m_propslen = DecodeVariableByteInteger(pkt, m_remlen_bytes + 4);
 // validate Property Length
-   if(m_propslen > 268435455)
+   if(m_propslen > VARINT_MAX_FOUR_BYTES)
      {
       printf("Invalid Properties Length: %d", m_propslen);
       return -1;
@@ -86,7 +86,7 @@ int CPuback::Read(uchar &pkt[])
 // get the Properties start idx
    uint props_start = m_remlen_bytes + 2 + m_propslen_bytes + 1;
 // we have a successful PUBLISH; release the packet ID
-   if(m_reasoncode == 0x00 || m_reasoncode == 0x10)
+   if(m_reasoncode == MQTT_REASON_CODE_SUCCESS || m_reasoncode == MQTT_REASON_CODE_NO_MATCHING_SUBSCRIBERS)
      {
       if(IsPendingPkt(m_pktid))
         {
@@ -119,13 +119,13 @@ uint CPuback::GetRemLenBytes(uint remlen)
   {
    uint remlen_bytes = 0;
 //
-   if(m_remlen > 2 && m_remlen <= 127)
+   if(m_remlen > 2 && m_remlen <= VARINT_MAX_ONE_BYTE)
      {remlen_bytes = 1;}
-   if(m_remlen >= 128 && m_remlen <= 16383)
+   if(m_remlen >= VARINT_MIN_TWO_BYTES && m_remlen <= VARINT_MAX_TWO_BYTES)
      {remlen_bytes = 2;}
-   if(m_remlen >= 16384 && m_remlen <= 2097151)
+   if(m_remlen >= VARINT_MIN_THREE_BYTES && m_remlen <= VARINT_MAX_THREE_BYTES)
      {remlen_bytes = 3;}
-   if(m_remlen >= 2097152 && m_remlen <= 268435455)
+   if(m_remlen >= VARINT_MIN_FOUR_BYTES && m_remlen <= VARINT_MAX_FOUR_BYTES)
      {remlen_bytes = 4;}
    return remlen_bytes;
   }
@@ -136,13 +136,13 @@ uint CPuback::GetPropsLenBytes(uint propslen)
   {
    uint propslen_bytes = 0;
 //
-   if(m_propslen == 0 && m_propslen <= 127)
+   if(m_propslen == 0 && m_propslen <= VARINT_MAX_ONE_BYTE)
      {propslen_bytes = 1;}
-   if(m_propslen >= 128 && m_propslen <= 16383)
+   if(m_propslen >= VARINT_MIN_TWO_BYTES && m_propslen <= VARINT_MAX_TWO_BYTES)
      {propslen_bytes = 2;}
-   if(m_propslen >= 16384 && m_propslen <= 2097151)
+   if(m_propslen >= VARINT_MIN_THREE_BYTES && m_propslen <= VARINT_MAX_THREE_BYTES)
      {propslen_bytes = 3;}
-   if(m_propslen >= 2097152 && m_propslen <= 268435455)
+   if(m_propslen >= VARINT_MIN_FOUR_BYTES && m_propslen <= VARINT_MAX_FOUR_BYTES)
      {propslen_bytes = 4;}
    return propslen_bytes;
   }

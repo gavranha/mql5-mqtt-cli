@@ -106,3 +106,25 @@ contain a list of one or more Reason Codes in the Payload.
 #define MQTT_REASON_CODE_MAXIMUM_CONNECT_TIME                   0xA0 // (160)
 #define MQTT_REASON_CODE_SUBSCRIPTION_IDENTIFIERS_NOT_SUPPORTED 0xA1 // (161)
 #define MQTT_REASON_CODE_WILDCARD_SUBSCRIPTIONS_NOT_SUPPORTED   0xA2 // (162)
+
+//+------------------------------------------------------------------+
+//|                 Variable Byte Integer Limits                     |
+//+------------------------------------------------------------------+
+/*
+The maximum number of bytes in the Variable Byte Integer field is four.
+The encoded value MUST use the minimum number of bytes necessary to represent the value
+Size of Variable Byte Integer
+Digits  From                               To
+1       0 (0x00)                           127 (0x7F)
+2       128 (0x80, 0x01)                   16,383 (0xFF, 0x7F) => (255,127)
+3       16,384 (0x80, 0x80, 0x01)          2,097,151 (0xFF, 0xFF, 0x7F)
+4       2,097,152 (0x80, 0x80, 0x80, 0x01) 268,435,455 (0xFF, 0xFF, 0xFF, 0x7F)
+*/
+#define VARINT_MIN_ONE_BYTE      0x00        // (0)
+#define VARINT_MAX_ONE_BYTE      0x7F        // (127)
+#define VARINT_MIN_TWO_BYTES     0x80        // (128)
+#define VARINT_MAX_TWO_BYTES     0x3FFF      // (16,383)
+#define VARINT_MIN_THREE_BYTES   0x4000      // (16,384)
+#define VARINT_MAX_THREE_BYTES   0x1FFFFF    // (2,097,151)
+#define VARINT_MIN_FOUR_BYTES    0x200000    // (2,097,152)
+#define VARINT_MAX_FOUR_BYTES    0xFFFFFFF   // (268,435,455)
