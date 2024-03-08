@@ -11,11 +11,8 @@
 //+------------------------------------------------------------------+
 void OnStart()
   {
+// test protected methods or public methods that set protected fields
    TestProtMethods *t = new TestProtMethods();
-//Print(t.TEST_SetFixHeader_RemLength_4digits());
-//Print(t.TEST_SetFixHeader_RemLength_3digits());
-//Print(t.TEST_SetFixHeader_RemLength_2digits());
-//Print(t.TEST_SetFixHeader_RemLength_1digit());
    Print(t.TEST_SetCleanStart());
    Print(t.TEST_SetWillFlag());
    Print(t.TEST_SetWillQoS_1());
@@ -24,26 +21,13 @@ void OnStart()
    Print(t.TEST_SetPasswordFlag());
    Print(t.TEST_SetUserNameFlag());
    Print(t.TEST_SetKeepAlive());
+   Print(t.TEST_GetClienIdLen());
+   Print(t.TEST_SetClientIdentifier());
    delete(t);
-//Print(TEST_SetUserNameFlag());
-//Print(TEST_SetUserNameFlag_FAIL());
-//Print(TEST_SetPasswordFlag());
-//Print(TEST_SetPasswordFlag_FAIL());
-//Print(TEST_SetWillRetain());
-//Print(TEST_SetWillRetain_FAIL());
-//Print(TEST_SetWillQoS2());
-//Print(TEST_SetWillQoS2_FAIL());
-//Print(TEST_SetWillQoS1());
-//Print(TEST_SetWillQoS1_FAIL());
-//Print(TEST_SetWillFlag());
-//Print(TEST_SetWillFlag_FAIL());
-//Print(TEST_SetCleanStart_KeepAlive_ClientIdentifier());
-//Print(TEST_SetClientIdentifier());
-//Print(TEST_SetClientIdentifierLength());
-//Print(TEST_SetCleanStart_and_SetKeepAlive());
+//---
+// test public methods
    Print(TEST_Build_CleanStart_KeepAlive10());
   }
-
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -64,31 +48,11 @@ bool TEST_Build_CleanStart_KeepAlive10()
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_Build()
-  {
-   Print(__FUNCTION__);
-   uchar expected[] = {16};
-   uchar result[];
-   CConnect *cut = new CConnect();
-   cut.Build(result);
-   bool isTrue = AssertEqual(expected, result);
-   ZeroMemory(result);
-   delete(cut);
-   return isTrue;
-  }
-//=============================================================================================================================================
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
 class TestProtMethods: public CConnect
   {
 public:
                      TestProtMethods() {};
                     ~TestProtMethods() {};
-   bool              TEST_SetFixHeader_RemLength_1digit();
-   bool              TEST_SetFixHeader_RemLength_2digits();
-   bool              TEST_SetFixHeader_RemLength_3digits();
-   bool              TEST_SetFixHeader_RemLength_4digits();
    bool              TEST_SetCleanStart();
    bool              TEST_SetWillFlag();
    bool              TEST_SetWillQoS_1();
@@ -97,8 +61,43 @@ public:
    bool              TEST_SetPasswordFlag();
    bool              TEST_SetUserNameFlag();
    bool              TEST_SetKeepAlive();
+   bool              TEST_GetClienIdLen();
+   bool              TEST_SetClientIdentifier();
 
   };
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TestProtMethods::TEST_SetClientIdentifier()
+  {
+   Print(__FUNCTION__);
+   uchar expected[] = {'M', 'Q', 'L', '5'};
+   CConnect *cut = new CConnect();
+   this.SetClientIdentifier("MQL5");
+   uchar result[];
+   ArrayCopy(result, m_clientId);
+   bool isTrue = AssertEqual(expected, result);
+   ZeroMemory(result);
+   delete(cut);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TestProtMethods::TEST_GetClienIdLen()
+  {
+   Print(__FUNCTION__);
+   uchar expected[] = {0, 4};
+   CConnect *cut = new CConnect();
+   this.GetClienIdLen("MQL5");
+   uchar result[2];
+   result[0] = clientIdLen.msb;
+   result[1] = clientIdLen.lsb;
+   bool isTrue = AssertEqual(expected, result);
+   ZeroMemory(result);
+   delete cut;
+   return isTrue;
+  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -213,368 +212,5 @@ bool TestProtMethods::TEST_SetCleanStart()
    bool isTrue = this.m_connect_flags == expected;
    ZeroMemory(this.m_connect_flags);
    return isTrue;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TestProtMethods::TEST_SetFixHeader_RemLength_4digits()
-  {
-   Print(__FUNCTION__);
-   uint expected[] = {16, 0xFF, 0xFF, 0xFF, 0x7F};
-   uchar buf[10];
-   CConnect *cut = new CConnect(buf);
-   uint buf1[];
-   this.SetFixHeader(268435455, buf1);
-   uint result[];
-   ArrayCopy(result, this.m_fixed_header);
-   bool is_true = AssertEqual(expected, result);
-   ZeroMemory(result);
-   delete cut;
-   return is_true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TestProtMethods::TEST_SetFixHeader_RemLength_3digits()
-  {
-   Print(__FUNCTION__);
-   uint expected[] = {16, 0xFF, 0xFF, 0x7F};
-   uchar buf[10];
-   CConnect *cut = new CConnect(buf);
-   uint buf1[];
-   this.SetFixHeader(2097151, buf1);
-   uint result[];
-   ArrayCopy(result, this.m_fixed_header);
-   bool is_true = AssertEqual(expected, result);
-   ZeroMemory(result);
-   delete cut;
-   return is_true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TestProtMethods::TEST_SetFixHeader_RemLength_2digits()
-  {
-   Print(__FUNCTION__);
-   uint expected[] = {16, 0xFF, 0x7F};
-   uchar buf[10];
-   CConnect *cut = new CConnect(buf);
-   uint buf1[];
-   this.SetFixHeader(16383, buf1);
-   uint result[];
-   ArrayCopy(result, this.m_fixed_header);
-   bool is_true = AssertEqual(expected, result);
-   ZeroMemory(result);
-   delete cut;
-   return is_true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TestProtMethods::TEST_SetFixHeader_RemLength_1digit()
-  {
-   Print(__FUNCTION__);
-   uint expected[] = {16, 0x7F};
-   uchar buf[10];
-   CConnect *cut = new CConnect(buf);
-   uint buf1[];
-   this.SetFixHeader(127, buf1);
-   uint result[];
-   ArrayCopy(result, this.m_fixed_header);
-   bool is_true = AssertEqual(expected, result);
-   ZeroMemory(result);
-   delete cut;
-   return is_true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetUserNameFlag()
-  {
-   Print(__FUNCTION__);
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 128};
-   uchar buf[expected.Size() - 2];
-   CConnect *cut = new CConnect(buf);
-   cut.SetUserNameFlag(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-   bool is_true = AssertEqual(expected, result);
-   delete cut;
-   ZeroMemory(result);
-   return  is_true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetUserNameFlag_FAIL()
-  {
-   Print(__FUNCTION__);
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 64};// last element should be 128 - FAIL()
-   uchar buf[expected.Size() - 2];
-   CConnect *cut = new CConnect(buf);
-   cut.SetUserNameFlag(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-   bool is_true = AssertNotEqual(expected, result);
-   delete cut;
-   ZeroMemory(result);
-   return  is_true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetPasswordFlag()
-  {
-   Print(__FUNCTION__);
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 64};
-   uchar buf[expected.Size() - 2];
-   CConnect *cut = new CConnect(buf);
-   cut.SetPasswordFlag(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-   bool is_true = AssertEqual(expected, result);
-   delete cut;
-   ZeroMemory(result);
-   return  is_true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetPasswordFlag_FAIL()
-  {
-   Print(__FUNCTION__);
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 32};// last element should be 64 - FAIL()
-   uchar buf[expected.Size() - 2];
-   CConnect *cut = new CConnect(buf);
-   cut.SetPasswordFlag(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-   bool is_true = AssertNotEqual(expected, result);
-   delete cut;
-   ZeroMemory(result);
-   return  is_true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetWillRetain()
-  {
-   Print(__FUNCTION__);
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 32};
-   uchar buf[expected.Size() - 2];
-   CConnect *cut = new CConnect(buf);
-   cut.SetWillRetain(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-   bool is_true = AssertEqual(expected, result);
-   delete cut;
-   ZeroMemory(result);
-   return  is_true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetWillRetain_FAIL()
-  {
-   Print(__FUNCTION__);
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 16};
-   uchar buf[expected.Size() - 2];
-   CConnect *cut = new CConnect(buf);
-   cut.SetWillRetain(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-   bool is_true = AssertNotEqual(expected, result);
-   delete cut;
-   ZeroMemory(result);
-   return  is_true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetWillQoS2()
-  {
-   Print(__FUNCTION__);
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 16};
-   uchar buf[expected.Size() - 2];
-   CConnect *cut = new CConnect(buf);
-   cut.SetWillQoS_2(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-   bool is_true = AssertEqual(expected, result);
-   delete cut;
-   ZeroMemory(result);
-   return  is_true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetWillQoS2_FAIL()
-  {
-   Print(__FUNCTION__);
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 8}; // last element should be 16 - FAIL()
-   uchar buf[expected.Size() - 2];
-   CConnect *cut = new CConnect(buf);
-   cut.SetWillQoS_2(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-   bool is_true = AssertNotEqual(expected, result);
-   delete cut;
-   ZeroMemory(result);
-   return  is_true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetWillQoS1()
-  {
-   Print(__FUNCTION__);
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 8};
-   uchar buf[expected.Size() - 2];
-   CConnect *cut = new CConnect(buf);
-   cut.SetWillQoS_1(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-   bool is_true = AssertEqual(expected, result);
-   delete cut;
-   ZeroMemory(result);
-   return  is_true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetWillQoS1_FAIL()
-  {
-   Print(__FUNCTION__);
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 4};// last element should be 8 - FAIL()
-   uchar buf[expected.Size() - 2];
-   CConnect *cut = new CConnect(buf);
-   cut.SetWillQoS_1(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-   bool is_true = AssertNotEqual(expected, result);
-   delete cut;
-   ZeroMemory(result);
-   return  is_true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetWillFlag()
-  {
-   Print(__FUNCTION__);
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 4};
-   uchar buf[expected.Size() - 2];
-   CConnect *cut = new CConnect(buf);
-   cut.SetWillFlag(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-   bool is_true = Assert(expected, result);
-   delete cut;
-   ZeroMemory(result);
-   return  is_true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetWillFlag_FAIL()
-  {
-   Print(__FUNCTION__);
-   static uchar expected[] =
-     {16, 8, 0, 4, 77, 81, 84, 84, 5, 2};//last element should be 4 instead of 2 - FAIL()
-   uchar buf[expected.Size() - 2];
-   CConnect *cut = new CConnect(buf);
-   cut.SetWillFlag(true);
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-   bool is_true = AssertNotEqual(expected, result);
-   delete cut;
-   ZeroMemory(result);
-   return  is_true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetCleanStart_KeepAlive_ClientIdentifier()
-  {
-   Print(__FUNCTION__);
-   static uchar expected[] =
-     {16, 16, 0, 4, 77, 81, 84, 84, 5, 2, 0, 10, 0, 4, 77, 81, 76, 53};
-   uchar buf[expected.Size() - 2];
-   CConnect *cut = new CConnect(buf);
-   cut.SetCleanStart(true);
-   cut.SetKeepAlive(10);//10 sec
-   cut.SetClientIdentifier("MQL5");
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-   bool is_true = Assert(expected, result);
-   delete cut;
-   ZeroMemory(result);
-   return  is_true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetClientIdentifier()
-  {
-   Print(__FUNCTION__);
-   static uchar expected[] =
-     {16, 16, 0, 4, 77, 81, 84, 84, 5, 0, 0, 0, 0, 4, 77, 81, 76, 53};
-   uchar buf[expected.Size() - 2];
-   CConnect *cut = new CConnect(buf);
-   cut.SetClientIdentifier("MQL5");
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-   bool is_true = Assert(expected, result);
-   delete cut;
-   ZeroMemory(result);
-   return  is_true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetClientIdentifierLength()
-  {
-   Print(__FUNCTION__);
-   static uchar expected[] =
-     {16, 12, 0, 4, 77, 81, 84, 84, 5, 0, 0, 0, 0, 4};
-   uchar buf[expected.Size() - 2];
-   CConnect *cut = new CConnect(buf);
-   cut.SetClientIdentifierLength("MQL5");
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-   bool is_true = Assert(expected, result);
-   delete cut;
-   ZeroMemory(result);
-   return  is_true;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool TEST_SetCleanStart_and_SetKeepAlive()
-  {
-   Print(__FUNCTION__);
-   static uchar expected[] =
-     {16, 10, 0, 4, 77, 81, 84, 84, 5, 2, 0, 10};
-   uchar buf[expected.Size() - 2];
-   CConnect *cut = new CConnect(buf);
-   cut.SetCleanStart(true);
-   cut.SetKeepAlive(10); //10 secs
-   uchar result[];
-   ArrayCopy(result, cut.m_byte_array);
-   bool is_true = Assert(expected, result);
-   delete cut;
-   ZeroMemory(result);
-   return  is_true;
   }
 //+------------------------------------------------------------------+

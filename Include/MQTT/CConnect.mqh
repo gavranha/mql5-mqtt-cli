@@ -87,16 +87,12 @@ private:
    uint              m_remlen;
 protected:
    uchar             m_connect_flags;
-   void              InitConnectFlags() {m_byte_array[9] = 0;}
-   void              InitKeepAlive() {m_byte_array[10] = 0; m_byte_array[11] = 0;}
-   void              InitPropertiesLength() {m_byte_array[12] = 0;}
-
-   void              SetFixHeader(uint rem_length, uint &dest_buf[]);
+   uchar             m_clientId[];
    uint              m_fixed_header[];
+   void              GetClienIdLen(string clientId);
 
 public:
                      CConnect();
-                     CConnect(uchar &buf[]);
                     ~CConnect();
    //--- methods for setting Connect Flags
    void              SetCleanStart(const bool cleanStart);
@@ -107,11 +103,8 @@ public:
    void              SetPasswordFlag(const bool passwordFlag);
    void              SetUserNameFlag(const bool userNameFlag);
    void              SetKeepAlive(ushort seconds);
-   void              SetClientIdentifierLength(string clientId);
-   void              SetClientIdentifier(string clientId);
 
-   //--- member for getting the byte array
-   uint              m_byte_array[];
+   void              SetClientIdentifier(string clientId);
    //--- method for building the final packet
    void              Build(uchar &result[]);
   };
@@ -143,50 +136,22 @@ void CConnect::Build(uchar &pkt[])
    ArrayCopy(pkt, fixhead);
    ArrayCopy(pkt, varhead, pkt.Size());
   }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-CConnect::CConnect(uchar &buf[])
-  {
-   ArrayFree(m_byte_array);
-   ArrayResize(m_byte_array, buf.Size() + 2, UCHAR_MAX);
-   SetFixedHeader(CONNECT, buf, m_byte_array);
-   SetProtocolName(m_byte_array);
-   SetProtocolVersion(m_byte_array);
-   InitConnectFlags();
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-void CConnect::SetFixHeader(uint rem_length, uint &dest_buf[])
-  {
-// validate(rem_length);
-   EncodeVariableByteInteger(rem_length, dest_buf);
-   ArrayResize(m_fixed_header, dest_buf.Size() + 1);
-   m_fixed_header[0] = CONNECT << 4;
-   ArrayCopy(m_fixed_header, dest_buf, 1);
-  }
+
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 void CConnect::SetClientIdentifier(string clientId)
   {
-   SetClientIdentifierLength(clientId);
-   uchar tmp[];
-   ArrayResize(tmp, StringLen(clientId));
-   StringToCharArray(clientId, tmp,
-                     m_byte_array.Size() - StringLen(clientId), StringLen(clientId));
-   ArrayCopy(m_byte_array, tmp, m_byte_array.Size() - StringLen(clientId));
+   GetClienIdLen(clientId);
+   StringToCharArray(clientId, m_clientId, 0, StringLen(clientId));
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void CConnect::SetClientIdentifierLength(string clientId)
+void CConnect::GetClienIdLen(string clientId)
   {
    clientIdLen.msb = (char)StringLen(clientId) >> 8;
    clientIdLen.lsb = (char)(StringLen(clientId) % 256);
-   m_byte_array[12] = clientIdLen.msb;
-   m_byte_array[13] = clientIdLen.lsb;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
