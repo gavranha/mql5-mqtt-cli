@@ -23,6 +23,19 @@ void OnStart()
    Print(t.TEST_SetKeepAlive());
    Print(t.TEST_GetClienIdLen());
    Print(t.TEST_SetClientIdentifier());
+   Print(t.TEST_SetKeepAlive_ZERO());
+   Print(t.TEST_Prop_SetSessionExpiryInterval());
+   Print(t.TEST_Prop_SetReceiveMaximum());
+   Print(t.TEST_Prop_SetMaximumPacketSize());
+   Print(t.TEST_Prop_SetTopicAliasMaximum());
+   Print(t.TEST_Prop_SetRequestResponseInfo());
+   Print(t.TEST_Prop_SetRequestProblemInfo());
+   Print(t.TEST_Prop_SetUserProperty());
+   Print(t.TEST_Prop_SetAuthMethod());
+   Print(t.TEST_Prop_SetAuthData());
+   Print(t.TEST_PropertiesLength_OneProp());
+   Print(t.TEST_PropertiesLength_TwoProps());
+   Print(t.TEST_PropertiesLength_ThreeProps());
    delete(t);
 //---
 // test public methods
@@ -63,8 +76,232 @@ public:
    bool              TEST_SetKeepAlive();
    bool              TEST_GetClienIdLen();
    bool              TEST_SetClientIdentifier();
-
+   bool              TEST_SetKeepAlive_ZERO();
+   bool              TEST_Prop_SetSessionExpiryInterval();
+   bool              TEST_Prop_SetReceiveMaximum();
+   bool              TEST_Prop_SetMaximumPacketSize();
+   bool              TEST_Prop_SetTopicAliasMaximum();
+   bool              TEST_Prop_SetRequestResponseInfo();
+   bool              TEST_Prop_SetRequestProblemInfo();
+   bool              TEST_Prop_SetUserProperty();
+   bool              TEST_Prop_SetAuthMethod();
+   bool              TEST_Prop_SetAuthData();
+   bool              TEST_PropertiesLength_OneProp();
+   bool              TEST_PropertiesLength_TwoProps();
+   bool              TEST_PropertiesLength_ThreeProps();
   };
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TestProtMethods::TEST_PropertiesLength_ThreeProps()
+  {
+   Print(__FUNCTION__);
+   this.m_propslen = 0;
+   uint expected = 33;
+   CConnect *cut = new CConnect();
+   this.SetUserProperty("key:", "val"); // {38, 0, 4, 'k', 'e', 'y', ':', 0, 3, 'v', 'a', 'l'};
+   this.SetAuthMethod("authmethod"); // {21, 0, 10, 'a', 'u', 't', 'h', 'm', 'e', 't', 'h', 'o', 'd'};
+   this.SetAuthData("bindata"); // {22, 'b', 'i', 'n', 'd', 'a', 't', 'a'};
+   uint result = this.m_propslen;
+   bool isTrue = expected == result;
+   ZeroMemory(result);
+   delete cut;
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TestProtMethods::TEST_PropertiesLength_TwoProps()
+  {
+   Print(__FUNCTION__);
+   this.m_propslen = 0;
+   uint expected = 21;
+   CConnect *cut = new CConnect();
+   this.SetAuthMethod("authmethod");// {21, 0, 10, 'a', 'u', 't', 'h', 'm', 'e', 't', 'h', 'o', 'd'};
+   this.SetAuthData("bindata");// {22, 'b', 'i', 'n', 'd', 'a', 't', 'a'};
+   uint result = this.m_propslen;
+   bool isTrue = expected == result;
+   ZeroMemory(result);
+   delete cut;
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TestProtMethods::TEST_PropertiesLength_OneProp()
+  {
+   Print(__FUNCTION__);
+   this.m_propslen = 0;
+   uint expected = 8;
+   CConnect *cut = new CConnect();
+   this.SetAuthData("bindata");// {22, 'b', 'i', 'n', 'd', 'a', 't', 'a'};
+   uint result = this.m_propslen;
+   bool isTrue = expected == result;
+   ZeroMemory(result);
+   delete cut;
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TestProtMethods::TEST_Prop_SetAuthData()
+  {
+   Print(__FUNCTION__);
+   uchar expected[] = {22, 'b', 'i', 'n', 'd', 'a', 't', 'a'};
+   CConnect *cut = new CConnect();
+   this.SetAuthData("bindata");
+   uchar result[];
+   ArrayCopy(result, this.m_auth_data);
+   bool isTrue = AssertEqual(expected, result);
+   ZeroMemory(result);
+   delete cut;
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TestProtMethods::TEST_Prop_SetAuthMethod()
+  {
+   Print(__FUNCTION__);
+   uchar expected[] = {21, 0, 10, 'a', 'u', 't', 'h', 'm', 'e', 't', 'h', 'o', 'd'};
+   CConnect *cut = new CConnect();
+   this.SetAuthMethod("authmethod");
+   uchar result[];
+   ArrayCopy(result, this.m_auth_method);
+   bool isTrue = AssertEqual(expected, result);
+   ZeroMemory(result);
+   delete cut;
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TestProtMethods::TEST_Prop_SetUserProperty()
+  {
+   Print(__FUNCTION__);
+   uchar expected[] = {38, 0, 4, 'k', 'e', 'y', ':', 0, 3, 'v', 'a', 'l'};
+   CConnect *cut = new CConnect();
+   this.SetUserProperty("key:", "val");
+   uchar result[];
+   ArrayCopy(result, this.m_user_prop);
+   bool isTrue = AssertEqual(expected, result);
+   ZeroMemory(result);
+   delete cut;
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TestProtMethods::TEST_Prop_SetRequestProblemInfo()
+  {
+   Print(__FUNCTION__);
+   uchar expected[] = {23, 1};
+   CConnect *cut = new CConnect();
+   this.SetRequestProblemInfo();
+   uchar result[];
+   ArrayCopy(result, this.m_req_probl_info);
+   bool isTrue = AssertEqual(expected, result);
+   ZeroMemory(result);
+   delete cut;
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TestProtMethods::TEST_Prop_SetRequestResponseInfo()
+  {
+   Print(__FUNCTION__);
+   uchar expected[] = {25, 1};
+   CConnect *cut = new CConnect();
+   this.SetRequestResponseInfo();
+   uchar result[];
+   ArrayCopy(result, this.m_req_resp_info);
+   bool isTrue = AssertEqual(expected, result);
+   ZeroMemory(result);
+   delete cut;
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TestProtMethods::TEST_Prop_SetTopicAliasMaximum()
+  {
+   Print(__FUNCTION__);
+   uchar expected[] = {34, 0, 10};
+   CConnect *cut = new CConnect();
+   this.SetTopicAliasMaximum(10);
+   uchar result[];
+   ArrayCopy(result, this.m_topic_alias_max);
+   bool isTrue = AssertEqual(expected, result);
+   ZeroMemory(result);
+   delete cut;
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TestProtMethods::TEST_Prop_SetMaximumPacketSize()
+  {
+   Print(__FUNCTION__);
+   uchar expected[] = {39, 0, 0, 4, 0};
+   CConnect *cut = new CConnect();
+   this.SetMaximumPacketSize(1024);
+   uchar result[];
+   ArrayCopy(result, this.m_max_pkt_size);
+   bool isTrue = AssertEqual(expected, result);
+   ZeroMemory(result);
+   delete cut;
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TestProtMethods::TEST_Prop_SetReceiveMaximum()
+  {
+   Print(__FUNCTION__);
+   uchar expected[] = {33, 0, 10};
+   CConnect *cut = new CConnect();
+   this.SetReceiveMaximum(10);
+   uchar result[];
+   ArrayCopy(result, this.m_receive_max);
+   bool isTrue = AssertEqual(expected, result);
+   ZeroMemory(result);
+   delete cut;
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TestProtMethods::TEST_Prop_SetSessionExpiryInterval()
+  {
+   Print(__FUNCTION__);
+   uchar expected[] = {17, 0, 0, 0, 10};
+   CConnect *cut = new CConnect();
+   this.SetSessionExpiryInterval(10);
+   uchar result[];
+   ArrayCopy(result, this.m_session_exp_int);
+   bool isTrue = AssertEqual(expected, result);
+   ZeroMemory(result);
+   delete cut;
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TestProtMethods::TEST_SetKeepAlive_ZERO()
+  {
+   Print(__FUNCTION__);
+   uchar expected[] = {0, 0};
+   CConnect *cut = new CConnect();
+   this.SetKeepAlive(0);
+   uchar result[2];
+   result[0] = keepAlive.msb;
+   result[1] = keepAlive.lsb;
+   bool isTrue = AssertEqual(expected, result);
+   ZeroMemory(result);
+   delete cut;
+   return isTrue;
+  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+

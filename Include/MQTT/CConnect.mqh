@@ -22,59 +22,7 @@ struct MqttKeepAlive
    uchar             msb;
    uchar             lsb;
   } keepAlive;
-//---
-struct MqttConnectProperties
-  {
-   uint              prop_len;
-   uchar             session_expiry_interval_id;
-   uint              session_expiry_interval;
-   uchar             receive_maximum_id;
-   ushort            receive_maximum;
-   uchar             maximum_packet_size_id;
-   ushort            maximum_packet_size;
-   uchar             topic_alias_maximum_id;
-   ushort            topic_alias_maximum;
-   uchar             request_response_information_id;
-   uchar             request_response_information;
-   uchar             request_problem_information_id;
-   uchar             request_problem_information;
-   uchar             user_property_id;
-   string            user_property_key;
-   string            user_property_value;
-   uchar             authentication_method_id;
-   string            authentication_method;
-   uchar             authentication_data_id;
-  } connectProps;
-//---
-struct MqttConnectPayload
-  {
-   uchar             client_id_len;
-   string            client_id;
-   ushort            will_properties_len;
-   uchar             will_delay_interval_id;
-   uint              will_delay_interval;
-   uchar             payload_format_indicator_id;
-   uchar             payload_format_indicator;
-   uchar             message_expiry_interval_id;
-   uint              message_expiry_interval;
-   uchar             content_type_id;
-   string            content_type;
-   uchar             response_topic_id; // for request/response
-   string            response_topic;
-   uchar             correlation_data_id; // for request/response
-   ulong             correlation_data[]; // binary data
-   uchar             user_property_id;
-   string            user_property_key;
-   string            user_property_value;
-   uchar             will_topic_len;
-   string            will_topic;
-   uchar             will_payload_len;
-   ulong             will_payload[]; // binary data
-   uchar             user_name_len;
-   string            user_name;
-   uchar             password_len;
-   ulong             password; // binary data
-  } connectPayload;
+
 //+------------------------------------------------------------------+
 //| Class CConnect.                                               |
 //| Purpose: Class of MQTT Connect Control Packets.                  |
@@ -88,7 +36,16 @@ private:
 protected:
    uchar             m_connect_flags;
    uchar             m_clientId[];
-   uint              m_fixed_header[];
+   uint              m_propslen;
+   uchar             m_session_exp_int[];
+   uchar             m_receive_max[];
+   uchar             m_max_pkt_size[];
+   uchar             m_topic_alias_max[];
+   uchar             m_req_resp_info[];
+   uchar             m_req_probl_info[];
+   uchar             m_user_prop[];
+   uchar             m_auth_method[];
+   uchar             m_auth_data[];
    void              GetClienIdLen(string clientId);
 
 public:
@@ -103,11 +60,136 @@ public:
    void              SetPasswordFlag(const bool passwordFlag);
    void              SetUserNameFlag(const bool userNameFlag);
    void              SetKeepAlive(ushort seconds);
-
+   //--- methods for setting Properties
+   void              SetSessionExpiryInterval(uint seconds);
+   void              SetReceiveMaximum(ushort receive_max);
+   void              SetMaximumPacketSize(uint max_pkt_size);
+   void              SetTopicAliasMaximum(ushort topic_alias_max);
+   void              SetRequestResponseInfo();
+   void              SetRequestProblemInfo();
+   void              SetUserProperty(const string key, const string val);
+   void              SetAuthMethod(const string auth_method);
+   void              SetAuthData(const string bindata);
+   //--- methods for setting the Payloa
    void              SetClientIdentifier(string clientId);
    //--- method for building the final packet
    void              Build(uchar &result[]);
   };
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CConnect::SetAuthData(const string bindata)
+  {
+   ArrayResize(m_auth_data, StringLen(bindata) + 1);
+   m_auth_data[0] = MQTT_PROP_IDENTIFIER_AUTHENTICATION_DATA;
+   StringToCharArray(bindata, m_auth_data, 1, StringLen(bindata));
+   m_propslen += m_auth_data.Size();
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CConnect::SetAuthMethod(const string auth_method)
+  {
+   ArrayResize(m_auth_method, StringLen(auth_method) + 3);
+   m_auth_method[0] = MQTT_PROP_IDENTIFIER_AUTHENTICATION_METHOD;
+   uchar aux[];
+   ArrayResize(aux, StringLen(auth_method) + 2);
+   EncodeUTF8String(auth_method, aux);
+   ArrayCopy(m_auth_method, aux, 1);
+   m_propslen += m_auth_method.Size();
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+// TODO: it must allow for multiple User Properties
+void CConnect::SetUserProperty(const string key, const string val)
+  {
+   uint keylen = StringLen(key);
+   uint vallen = StringLen(val);
+//---
+   ArrayResize(m_user_prop, 5 + keylen + vallen);
+   m_user_prop[0] = MQTT_PROP_IDENTIFIER_USER_PROPERTY;
+//---
+   uchar keyaux[];
+   ArrayResize(keyaux, keylen + 2);
+   EncodeUTF8String(key, keyaux);
+//---
+   uchar valaux[];
+   ArrayResize(valaux, vallen + 2);
+   EncodeUTF8String(val, valaux);
+//---
+   ArrayCopy(m_user_prop, keyaux, 1);
+   ArrayCopy(m_user_prop, valaux, m_user_prop.Size() - 5);
+   m_propslen += m_user_prop.Size();
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CConnect::SetRequestProblemInfo(void)
+  {
+   ArrayResize(m_req_probl_info, 2);
+   m_req_probl_info[0] = MQTT_PROP_IDENTIFIER_REQUEST_PROBLEM_INFORMATION;
+   m_req_probl_info[1] = 1;
+   m_propslen += m_req_probl_info.Size();
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CConnect::SetRequestResponseInfo(void)
+  {
+   ArrayResize(m_req_resp_info, 2);
+   m_req_resp_info[0] = MQTT_PROP_IDENTIFIER_REQUEST_RESPONSE_INFORMATION;
+   m_req_resp_info[1] = 1;
+   m_propslen += m_req_resp_info.Size();
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CConnect::SetTopicAliasMaximum(ushort topic_alias_max)
+  {
+   ArrayResize(m_topic_alias_max, 3);
+   m_topic_alias_max[0] = MQTT_PROP_IDENTIFIER_TOPIC_ALIAS_MAXIMUM;
+   uchar aux[2];
+   EncodeTwoByteInteger(topic_alias_max, aux);
+   ArrayCopy(m_topic_alias_max, aux, 1);
+   m_propslen += m_topic_alias_max.Size();
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CConnect::SetMaximumPacketSize(uint max_pkt_s)
+  {
+   ArrayResize(m_max_pkt_size, 5);
+   m_max_pkt_size[0] = MQTT_PROP_IDENTIFIER_MAXIMUM_PACKET_SIZE;
+   uchar aux[4];
+   EncodeFourByteInteger(max_pkt_s, aux);
+   ArrayCopy(m_max_pkt_size, aux, 1);
+   m_propslen += m_max_pkt_size.Size();
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CConnect::SetReceiveMaximum(ushort receive_max)
+  {
+   ArrayResize(m_receive_max, 3);
+   m_receive_max[0] = MQTT_PROP_IDENTIFIER_RECEIVE_MAXIMUM;
+   uchar aux[2];
+   EncodeTwoByteInteger(receive_max, aux);
+   ArrayCopy(m_receive_max, aux, 1);
+   m_propslen += m_receive_max.Size();
+  }
+//+------------------------------------------------------------------+
+//|         Properties                                               |
+//+------------------------------------------------------------------+
+void CConnect::SetSessionExpiryInterval(uint seconds)
+  {
+   ArrayResize(m_session_exp_int, 5);
+   m_session_exp_int[0] = MQTT_PROP_IDENTIFIER_SESSION_EXPIRY_INTERVAL;
+   uchar aux[4];
+   EncodeFourByteInteger(seconds, aux);
+   ArrayCopy(m_session_exp_int, aux, 1);
+   m_propslen += m_session_exp_int.Size();
+  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -216,6 +298,7 @@ void CConnect::SetCleanStart(const bool cleanStart)
 CConnect::CConnect()
   {
    m_remlen = 10;
+   m_propslen = 0;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
