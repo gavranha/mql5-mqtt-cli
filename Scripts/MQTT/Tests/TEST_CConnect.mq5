@@ -55,13 +55,13 @@ void OnStart()
    delete(t);
 //---
 // test public methods
-   Print(TEST_Build_Fixhead());
-//Print(TEST_Build_Fixhead_OneProp());
+   Print(TEST_Build_NoProps_NoPayload());
+//Print(TEST_Build_NoProps_NoPayload_OneProp());
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_Build_Fixhead_OneProp()
+bool TEST_Build_NoProps_NoPayload_OneProp()
   {
    Print(__FUNCTION__);
    uchar expected[] = {};
@@ -103,7 +103,7 @@ bool TEST_Build_Fixhead_OneProp()
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_Build_Fixhead()
+bool TEST_Build_NoProps_NoPayload()
   {
    Print(__FUNCTION__);
    uchar expected[] = {16, 16, 0, 4, 'M', 'Q', 'T', 'T', 5, 2, 0, 10, 0, 4, 'M', 'Q', 'L', '5'};
