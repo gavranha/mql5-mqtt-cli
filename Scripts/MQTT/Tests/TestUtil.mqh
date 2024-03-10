@@ -57,9 +57,11 @@ bool AssertEqual(uchar & expected[], uchar & result[])
      {
       for(uint i = 0; i < expected.Size(); i++)
         {
-         printf("expected\t%d\t\t%d result", expected[i], result[i]);
+         //printf("expected\t%d\t\t%d result", expected[i], result[i]);
         }
       printf("expected size %d <=> %d result size", expected.Size(), result.Size());
+      ArrayPrint(expected);
+      ArrayPrint(result);
       return false;
      }
    return true;

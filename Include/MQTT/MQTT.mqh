@@ -320,7 +320,7 @@ void EncodeUTF8String(string str, uchar& dest_buf[])
    uint iter_pos = 0;
    while(iter_pos < str_len)
      {
-      Print("Checking disallowed code points");
+      //Print("Checking disallowed code points");
       ushort code_point = StringGetCharacter(str, iter_pos);
       if(IsDisallowedCodePoint(code_point))
         {
@@ -328,7 +328,7 @@ void EncodeUTF8String(string str, uchar& dest_buf[])
          ArrayFree(dest_buf);
          return;
         }
-      printf("Iter position %d", iter_pos);
+      //printf("Iter position %d", iter_pos);
       iter_pos++;
      }
    if(str_len == 0)
