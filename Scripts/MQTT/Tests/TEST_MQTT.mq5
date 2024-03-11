@@ -10,35 +10,134 @@
 //+------------------------------------------------------------------+
 void OnStart()
   {
-   //Print(TEST_EncodeTwoByteInteger_TwoBytes());
-   //Print(TEST_EncodeTwoByteInteger_OneByte());
-   //Print(TEST_EncodeFourByteInteger_OneByte());
-   //Print(TEST_EncodeFourByteInteger_TwoBytes());
-   //Print(TEST_EncodeFourByteInteger_ThreeBytes());
-   //Print(TEST_EncodeFourByteInteger_FourBytes());
-   //Print(TEST_SetPacketID_TopicName1Char());
-   //Print(TEST_SetPacketID_TopicName5Char());
-   //Print(TEST_GetQoSLevel_2_RETAIN_DUP());
-   //Print(TEST_GetQoSLevel_2_RETAIN());
-   //Print(TEST_GetQoSLevel_2());
-   //Print(TEST_GetQoSLevel_1_RETAIN_DUP());
-   //Print(TEST_GetQoSLevel_1_RETAIN());
-   //Print(TEST_GetQoSLevel_1());
-   //Print(TEST_GetQoSLevel_0_RETAIN());
-   //Print(TEST_GetQoSLevel_0());
-   //Print(TEST_EncodeUTF8String_Disallowed_CodePoint_0x01_Ret_Empty_Array());
-   //Print(TEST_EncodeUTF8String_EmptyString());
-   //Print(TEST_EncodeUTF8String_ASCII());
-   //Print(TEST_EncodeUTF8String_OneChar());
-   //Print(TEST_EncodeVariableByteInteger_OneDigit());
-   //Print(TEST_EncodeVariableByteInteger_TwoDigits());
-   //Print(TEST_EncodeVariableByteInteger_ThreeDigits());
-   //Print(TEST_EncodeVariableByteInteger_FourDigits());
-   //Print(TEST_DecodeVariableByteInteger_OneByte());
-   //Print(TEST_DecodeVariableByteInteger_TwoBytes());
-   //Print(TEST_DecodeVariableByteInteger_ThreeBytes());
-   //Print(TEST_DecodeVariableByteInteger_FourBytes());
+   Print(TEST_EncodeTwoByteInteger_TwoBytes());
+   Print(TEST_EncodeTwoByteInteger_OneByte());
+   Print(TEST_EncodeFourByteInteger_OneByte());
+   Print(TEST_EncodeFourByteInteger_TwoBytes());
+   Print(TEST_EncodeFourByteInteger_ThreeBytes());
+   Print(TEST_EncodeFourByteInteger_FourBytes());
+   Print(TEST_SetPacketID_TopicName1Char());
+   Print(TEST_SetPacketID_TopicName5Char());
+   Print(TEST_GetQoSLevel_2_RETAIN_DUP());
+   Print(TEST_GetQoSLevel_2_RETAIN());
+   Print(TEST_GetQoSLevel_2());
+   Print(TEST_GetQoSLevel_1_RETAIN_DUP());
+   Print(TEST_GetQoSLevel_1_RETAIN());
+   Print(TEST_GetQoSLevel_1());
+   Print(TEST_GetQoSLevel_0_RETAIN());
+   Print(TEST_GetQoSLevel_0());
+   Print(TEST_EncodeUTF8String_Disallowed_CodePoint_0x01_Ret_Empty_Array());
+   Print(TEST_EncodeUTF8String_EmptyString());
+   Print(TEST_EncodeUTF8String_ASCII());
+   Print(TEST_EncodeUTF8String_OneChar());
+   Print(TEST_EncodeVariableByteInteger_OneDigit());
+   Print(TEST_EncodeVariableByteInteger_TwoDigits());
+   Print(TEST_EncodeVariableByteInteger_ThreeDigits());
+   Print(TEST_EncodeVariableByteInteger_FourDigits());
+   Print(TEST_DecodeVariableByteInteger_OneByte());
+   Print(TEST_DecodeVariableByteInteger_TwoBytes());
+   Print(TEST_DecodeVariableByteInteger_ThreeBytes());
+   Print(TEST_DecodeVariableByteInteger_FourBytes());
    Print(TEST_ReadUtf8String());
+   Print(TEST_DecodeFourByteInt_OneByte());
+   Print(TEST_DecodeFourByteInt_TwoBytes());
+   Print(TEST_DecodeFourByteInt_ThreeBytes());
+   Print(TEST_DecodeFourByteInt_FourBytes());
+   Print(TEST_DecodeTwoByteInt_OneByte());
+   Print(TEST_DecodeTwoByteInt_TwoBytes());
+   Print(TEST_ReadUserProperty());
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_ReadUserProperty()
+  {
+   Print(__FUNCTION__);
+   string expected[] = {"key:","val"};
+   uchar inpkt[] = {32, 15, 1, 0, 10, 38, 0, 4, 'k', 'e', 'y', ':', 0, 3, 'v', 'a', 'l'};
+   string result[];
+   ReadUserProperty(inpkt, 6,result);
+   bool istrue = AssertEqual(expected,result);
+   ZeroMemory(result);
+   return istrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_DecodeTwoByteInt_TwoBytes()
+  {
+   Print(__FUNCTION__);
+   uchar encoded[] = {1, 0 };
+   uint expected = 256 ;
+   uint result = DecodeTwoByteInt(encoded);
+   bool istrue = expected == result;
+   ZeroMemory(result);
+   return istrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_DecodeTwoByteInt_OneByte()
+  {
+   Print(__FUNCTION__);
+   uchar encoded[] = {0, 1};
+   uint expected = 1;
+   uint result = DecodeTwoByteInt(encoded);
+   bool istrue = expected == result;
+   ZeroMemory(result);
+   return istrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_DecodeFourByteInt_FourBytes()
+  {
+   Print(__FUNCTION__);
+   uchar encoded[] = {1, 0, 0, 0};
+   uint expected = 16777216;
+   uint result = DecodeFourByteInt(encoded);
+   bool istrue = expected == result;
+   ZeroMemory(result);
+   return istrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_DecodeFourByteInt_ThreeBytes()
+  {
+   Print(__FUNCTION__);
+   uchar encoded[] = {0, 1, 0, 0};
+   uint expected = 65536;
+   uint result = DecodeFourByteInt(encoded);
+   bool istrue = expected == result;
+   ZeroMemory(result);
+   return istrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_DecodeFourByteInt_TwoBytes()
+  {
+   Print(__FUNCTION__);
+   uchar encoded[] = {0, 0, 1, 0};
+   uint expected = 256;
+   uint result = DecodeFourByteInt(encoded);
+   bool istrue = expected == result;
+   ZeroMemory(result);
+   return istrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_DecodeFourByteInt_OneByte()
+  {
+   Print(__FUNCTION__);
+   uchar encoded[] = {0, 0, 0, 1};
+   uint expected = 1;
+   uint result = DecodeFourByteInt(encoded);
+   bool istrue = expected == result;
+   ZeroMemory(result);
+   return istrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -51,7 +150,6 @@ bool TEST_ReadUtf8String()
    string result = ReadUtf8String(char_array_to_read, 2, 10);
    Print(result);
    return StringCompare(expected, result) == 0;
-   
   }
 /*
 The maximum number of bytes in the Variable Byte Integer field is four.
@@ -72,10 +170,10 @@ bool TEST_DecodeVariableByteInteger_FourBytes()
    uchar expected[];
    EncodeVariableByteInteger(268435455, expected);
    uint result = DecodeVariableByteInteger(expected, 0);
-   bool isTrue = (result == 268435455);
+   bool istrue = (result == 268435455);
    Print(result);
    ZeroMemory(result);
-   return isTrue;
+   return istrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -86,10 +184,10 @@ bool TEST_DecodeVariableByteInteger_ThreeBytes()
    uchar expected[];
    EncodeVariableByteInteger(8388608, expected);
    uint result = DecodeVariableByteInteger(expected, 0);
-   bool isTrue = (result == 8388608);
+   bool istrue = (result == 8388608);
    Print(result);
    ZeroMemory(result);
-   return isTrue;
+   return istrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -100,10 +198,10 @@ bool TEST_DecodeVariableByteInteger_TwoBytes()
    uchar expected[];
    EncodeVariableByteInteger(32768, expected);
    uint result = DecodeVariableByteInteger(expected, 0);
-   bool isTrue = (result == 32768);
+   bool istrue = (result == 32768);
    Print(result);
    ZeroMemory(result);
-   return isTrue;
+   return istrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -114,10 +212,10 @@ bool TEST_DecodeVariableByteInteger_OneByte()
    uchar expected[];
    EncodeVariableByteInteger(128, expected);
    uint result = DecodeVariableByteInteger(expected, 0);
-   bool isTrue = (result == 128);
+   bool istrue = (result == 128);
    Print(result);
    ZeroMemory(result);
-   return isTrue;
+   return istrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -136,9 +234,9 @@ bool TEST_EncodeVariableByteInteger_FourDigits()
    EncodeVariableByteInteger(to_encode, result);
    printf("to_encode %d ", to_encode);
    ArrayPrint(result);
-   bool isTrue = AssertEqual(expected, result);
+   bool istrue = AssertEqual(expected, result);
    ZeroMemory(result);
-   return isTrue;
+   return istrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -156,9 +254,9 @@ bool TEST_EncodeVariableByteInteger_ThreeDigits()
    EncodeVariableByteInteger(to_encode, result);
    printf("to_encode %d ", to_encode);
    ArrayPrint(result);
-   bool isTrue = AssertEqual(expected, result);
+   bool istrue = AssertEqual(expected, result);
    ZeroMemory(result);
-   return isTrue;
+   return istrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -175,9 +273,9 @@ bool TEST_EncodeVariableByteInteger_TwoDigits()
    EncodeVariableByteInteger(to_encode, result);
    printf("to_encode %d ", to_encode);
    ArrayPrint(result);
-   bool isTrue = AssertEqual(expected, result);
+   bool istrue = AssertEqual(expected, result);
    ZeroMemory(result);
-   return isTrue;
+   return istrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -193,9 +291,9 @@ bool TEST_EncodeVariableByteInteger_OneDigit()
    EncodeVariableByteInteger(to_encode, result);
    printf("to_encode %d ", to_encode);
    ArrayPrint(result);
-   bool isTrue = AssertEqual(expected, result);
+   bool istrue = AssertEqual(expected, result);
    ZeroMemory(result);
-   return isTrue;
+   return istrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -206,9 +304,9 @@ bool TEST_EncodeTwoByteInteger_TwoBytes()
    uchar expected[] = {1, 0};
    uchar result[];
    EncodeTwoByteInteger(256, result);
-   bool isTrue = AssertEqual(expected, result);
+   bool istrue = AssertEqual(expected, result);
    ZeroMemory(result);
-   return isTrue;
+   return istrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -219,9 +317,9 @@ bool TEST_EncodeTwoByteInteger_OneByte()
    uchar expected[] = {0, 1};
    uchar result[];
    EncodeTwoByteInteger(1, result);
-   bool isTrue = AssertEqual(expected, result);
+   bool istrue = AssertEqual(expected, result);
    ZeroMemory(result);
-   return isTrue;
+   return istrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -232,9 +330,9 @@ bool TEST_EncodeFourByteInteger_FourBytes()
    uchar expected[] = {1, 0, 0, 0};
    uchar result[];
    EncodeFourByteInteger(16777216, result);
-   bool isTrue = AssertEqual(expected, result);
+   bool istrue = AssertEqual(expected, result);
    ZeroMemory(result);
-   return isTrue;
+   return istrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -245,9 +343,9 @@ bool TEST_EncodeFourByteInteger_ThreeBytes()
    uchar expected[] = {0, 1, 0, 0};
    uchar result[];
    EncodeFourByteInteger(65536, result);
-   bool isTrue = AssertEqual(expected, result);
+   bool istrue = AssertEqual(expected, result);
    ZeroMemory(result);
-   return isTrue;
+   return istrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -258,9 +356,9 @@ bool TEST_EncodeFourByteInteger_TwoBytes()
    uchar expected[] = {0, 0, 1, 0};
    uchar result[];
    EncodeFourByteInteger(256, result);
-   bool isTrue = AssertEqual(expected, result);
+   bool istrue = AssertEqual(expected, result);
    ZeroMemory(result);
-   return isTrue;
+   return istrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -271,9 +369,9 @@ bool TEST_EncodeFourByteInteger_OneByte()
    uchar expected[] = {0, 0, 0, 1};
    uchar result[];
    EncodeFourByteInteger(1, result);
-   bool isTrue = AssertEqual(expected, result);
+   bool istrue = AssertEqual(expected, result);
    ZeroMemory(result);
-   return isTrue;
+   return istrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |

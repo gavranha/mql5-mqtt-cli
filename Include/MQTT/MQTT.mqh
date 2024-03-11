@@ -77,7 +77,7 @@ enum ENUM_QOS_LEVEL
 //+------------------------------------------------------------------+
 void SetProtocolVersion(uint& dest_buf[])
   {
-   //dest_buf[8] = MQTT_PROTOCOL_VERSION;
+//dest_buf[8] = MQTT_PROTOCOL_VERSION;
    dest_buf[8] = MQTT_PROTOCOL_VERSION_COMPAT;
    Print("WARN: Running COMPAT protocol version (3.1.1)");
   }
@@ -136,6 +136,20 @@ precedes the successively lower order bytes. This means that a 32-bit word is pr
 as Most Significant Byte (MSB), followed by the next most Significant Byte (MSB), followed by the next
 most Significant Byte (MSB), followed by Least Significant Byte (LSB).
 */
+ushort DecodeTwoByteInt(uchar &arr[])
+  {
+   return arr[0] << 8 | arr[1];
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+uint DecodeFourByteInt(uchar &arr[])
+  {
+   return arr[0] << 24 | arr[1] << 16 | arr[2] << 8 | arr[3];
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 void EncodeFourByteInteger(uint val, uchar &dest_buf[])
   {
    ArrayResize(dest_buf, 4);
@@ -353,7 +367,16 @@ void EncodeUTF8String(string str, uchar& dest_buf[])
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-string ReadUtf8String(uchar &char_array[], uint start, uint count)
+string ReadUtf8String(uchar &char_array[], uint start) // TODO: fix tests to use this sig;
+  {
+   uint count = ((char_array[start] * 256) + char_array[start + 1]);
+   string str = CharArrayToString(char_array, start + 2, count);
+   return str;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+string ReadUtf8String(uchar &char_array[], uint start, uint count) // TODO: remove this after above
   {
    string str = CharArrayToString(char_array, start, count);
    return str;
@@ -403,6 +426,19 @@ enum PAYLOAD_FORMAT_INDICATOR
    RAW_BYTES   = 0x00,
    UTF8        = 0x01
   };
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void ReadUserProperty(uchar &buf[], uint idx, string &dest_buf[])
+  {
+   ushort key_len = ((buf[idx] * 256) + buf[idx + 1]);
+   ushort val_len = ((buf[idx + key_len + 2] * 256) + buf[idx + key_len + 3]);
+   string key_str = CharArrayToString(buf, idx + 2, key_len);
+   string val_str = CharArrayToString(buf, idx + key_len + 4, val_len);
+   ArrayResize(dest_buf,2);
+   dest_buf[0] = key_str;
+   dest_buf[1] = val_str;
+  }
 //+------------------------------------------------------------------+
 //MQTT_PROPERTY_PAYLOAD_FORMAT_INDICATOR          = Byte
 //MQTT_PROPERTY_REQUEST_PROBLEM_INFORMATION       = Byte

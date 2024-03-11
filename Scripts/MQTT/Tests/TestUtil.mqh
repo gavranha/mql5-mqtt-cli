@@ -48,6 +48,24 @@ bool AssertNotEqual(uchar & expected[], uchar & result[])
      }
    return false;
   }
+  //+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool AssertEqual(string &expected[], string &result[])
+  {
+   if(!ArrayCompare(expected, result) == 0)
+     {
+      for(uint i = 0; i < expected.Size(); i++)
+        {
+         printf("expected\t%d\t\t%d result", expected[i], result[i]);
+        }
+      printf("expected size %d <=> %d result size", expected.Size(), result.Size());
+      ArrayPrint(expected);
+      ArrayPrint(result);
+      return false;
+     }
+   return true;
+  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
