@@ -55,8 +55,17 @@ void OnStart()
    delete(t);
 //---
 // test public methods
-   Print(TEST_Build_NoProps_NoPayload());
+//Print(TEST_Build_NoProps_NoPayload());
 //Print(TEST_Build_NoProps_NoPayload_OneProp());
+   Print(TEST_Build_MosquittoRef());
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_Build_MosquittoRef()
+  {
+   uchar expected[] = {10, 0x0c, 00, 04, 0x4d, 51, 54, 54, 04, 02, 00, 0x3c, 00, 00};
+   return false;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |

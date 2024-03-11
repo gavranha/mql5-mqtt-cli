@@ -409,7 +409,7 @@ void CConnect::Build(uchar & pkt[])
    varhead[3] = MQTT_PROTOCOL_NAME_BYTE_4;
    varhead[4] = MQTT_PROTOCOL_NAME_BYTE_5;
    varhead[5] = MQTT_PROTOCOL_NAME_BYTE_6;
-   varhead[6] = MQTT_PROTOCOL_VERSION;
+   varhead[6] = MQTT_PROTOCOL_VERSION_COMPAT;
    varhead[7] = m_connflags;
    varhead[8] = keepAlive.msb;
    varhead[9] = keepAlive.lsb;

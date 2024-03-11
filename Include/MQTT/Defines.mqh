@@ -13,6 +13,7 @@
 #define MQTT_PROTOCOL_NAME_BYTE_5               'T'
 #define MQTT_PROTOCOL_NAME_BYTE_6               'T'
 #define MQTT_PROTOCOL_VERSION                   0x05
+#define MQTT_PROTOCOL_VERSION_COMPAT            0x04
 //+------------------------------------------------------------------+
 //|              PROPERTIES                                          |
 //+------------------------------------------------------------------+

@@ -77,7 +77,9 @@ enum ENUM_QOS_LEVEL
 //+------------------------------------------------------------------+
 void SetProtocolVersion(uint& dest_buf[])
   {
-   dest_buf[8] = MQTT_PROTOCOL_VERSION;
+   //dest_buf[8] = MQTT_PROTOCOL_VERSION;
+   dest_buf[8] = MQTT_PROTOCOL_VERSION_COMPAT;
+   Print("WARN: Running COMPAT protocol version (3.1.1)");
   }
 //+------------------------------------------------------------------+
 //|                     SetProtocolName                              |
