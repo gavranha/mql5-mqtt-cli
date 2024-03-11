@@ -4,13 +4,13 @@
 //|                                                                  |
 //+------------------------------------------------------------------+
 #include "IControlPacket.mqh"
-class CConack : public IControlPacket
+class CConnack : public IControlPacket
   {
 private:
    bool              IsControlPacket() {return true;}
 public:
-                     CConack(uchar &inpkt[]);
-                    ~CConack();
+                     CConnack(uchar &inpkt[]);
+                    ~CConnack();
    bool              IsConnack(uchar &ininpkt[]);
    bool              IsSessionPresent(uchar &inpkt[]);
    uchar             ReadReasonCode(uchar &inpkt[]);
@@ -20,7 +20,7 @@ public:
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-string CConack::ReadReasonString(uchar &inpkt[], uint idx, uint count)
+string CConnack::ReadReasonString(uchar &inpkt[], uint idx, uint count)
   {
    string reasonstr = ReadUtf8String(inpkt, idx, count);
    return reasonstr;
@@ -28,7 +28,7 @@ string CConack::ReadReasonString(uchar &inpkt[], uint idx, uint count)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-uint CConack::ReadPropertyLength(uchar &inpkt[])
+uint CConnack::ReadPropertyLength(uchar &inpkt[])
   {
    uint propslen = DecodeVariableByteInteger(inpkt, 4);
    return propslen;
@@ -36,21 +36,21 @@ uint CConack::ReadPropertyLength(uchar &inpkt[])
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-uchar CConack::ReadReasonCode(uchar &inpkt[])
+uchar CConnack::ReadReasonCode(uchar &inpkt[])
   {
    return inpkt[3];
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool CConack::IsSessionPresent(uchar &inpkt[])
+bool CConnack::IsSessionPresent(uchar &inpkt[])
   {
    return inpkt[2] == 1 ? true : false;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool CConack::IsConnack(uchar &inpkt[])
+bool CConnack::IsConnack(uchar &inpkt[])
   {
    if(inpkt[0] == (CONNACK << 4))
      {
@@ -61,13 +61,13 @@ bool CConack::IsConnack(uchar &inpkt[])
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-CConack::CConack(uchar &inpkt[])
+CConnack::CConnack(uchar &inpkt[])
   {
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-CConack::~CConack()
+CConnack::~CConnack()
   {
   }
 //+------------------------------------------------------------------+
