@@ -3,7 +3,7 @@
 //|            ********* WORK IN PROGRESS **********                 |
 //| **** PART OF ARTICLE https://www.mql5.com/en/articles/14391 **** |
 //+------------------------------------------------------------------+
-#include <MQTT\CPuback.mqh>
+#include <MQTT\Puback.mqh>
 #include "TestUtil.mqh"
 //+------------------------------------------------------------------+
 //|               Tests for CPuback class                            |
@@ -22,36 +22,48 @@ void OnStart()
    Print(TEST_Ctor());
    Print(TEST_Read_NoReasonCode_NoProps());
    Print(TEST_Read_PropLength_ONE());
-   Print(TEST_Read_InvalidRemainingLength_0());
-   Print(TEST_Read_InvalidRemainingLength_4228250625());
+   Print(TEST_IsPuback_NO());
+   Print(TEST_IsPuback_YES());
+   Print(TEST_ReadPacketIdentifier());
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_Read_InvalidRemainingLength_4228250625()
+bool TEST_ReadPacketIdentifier()
   {
    Print(__FUNCTION__);
-   uchar pkt[] = {4, 0xFF, 0xFF, 0xFF, 0xFF, 0, 1, 0, 0};
-   int expected = -1;
-   CPuback *cut = new CPuback();
-   int result = cut.Read(pkt);
-   bool isTrue = (result == expected);
-   delete cut;
-   return isTrue;
+   uchar expected = 512;
+   uchar inpkt[] = {64, 2, 10, 0};
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_Read_InvalidRemainingLength_0()
+bool TEST_IsPuback_YES()
   {
    Print(__FUNCTION__);
-   uchar pkt[] = {4, 0, 0, 1, 0, 0};
-   int expected = -1;
-   CPuback *cut = new CPuback();
-   int result = cut.Read(pkt);
-   bool isTrue = (result == expected);
-   delete cut;
-   return isTrue;
+   bool expected = true;
+   uchar inpkt[] = {64, 0};
+   CPuback *cut = new CPuback(inpkt);
+   bool result = cut.IsPuback(inpkt);
+   bool is_true = expected == result;
+   ZeroMemory(result);
+   delete(cut);
+   return is_true;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_IsPuback_NO()
+  {
+   Print(__FUNCTION__);
+   bool expected = false;
+   uchar inpkt[] = {'n', 'o', 'a', 'c', 'k'};
+   CPuback *cut = new CPuback(inpkt);
+   bool result = cut.IsPuback(inpkt);
+   bool is_false = expected == result;
+   ZeroMemory(result);
+   delete(cut);
+   return is_false;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |

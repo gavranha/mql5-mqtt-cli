@@ -3,7 +3,7 @@
 //|            ********* WORK IN PROGRESS **********                 |
 //| **** PART OF ARTICLE https://www.mql5.com/en/articles/14391 **** |
 //+------------------------------------------------------------------+
-#include <MQTT\CPublish.mqh>
+#include <MQTT\Publish.mqh>
 #include "TestUtil.mqh"
 //+------------------------------------------------------------------+
 //|           Tests for CPublish class                            |

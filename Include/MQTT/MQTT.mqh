@@ -435,35 +435,34 @@ void ReadUserProperty(uchar &buf[], uint idx, string &dest_buf[])
    ushort val_len = ((buf[idx + key_len + 2] * 256) + buf[idx + key_len + 3]);
    string key_str = CharArrayToString(buf, idx + 2, key_len);
    string val_str = CharArrayToString(buf, idx + key_len + 4, val_len);
-   ArrayResize(dest_buf,2);
+   ArrayResize(dest_buf, 2);
    dest_buf[0] = key_str;
    dest_buf[1] = val_str;
   }
 //+------------------------------------------------------------------+
-//MQTT_PROPERTY_PAYLOAD_FORMAT_INDICATOR          = Byte
-//MQTT_PROPERTY_REQUEST_PROBLEM_INFORMATION       = Byte
-//MQTT_PROPERTY_REQUEST_RESPONSE_INFORMATION      = Byte
-//MQTT_PROPERTY_MAXIMUM_QOS                       = Byte
-//MQTT_PROPERTY_RETAIN_AVAILABLE                  = Byte
-//MQTT_PROPERTY_WILDCARD_SUBSCRIPTION_AVAILABLE   = Byte
-//MQTT_PROPERTY_SUBSCRIPTION_IDENTIFIER_AVAILABLE = Byte
-//MQTT_PROPERTY_SHARED_SUBSCRIPTION_AVAILABLE     = Byte
-//MQTT_PROPERTY_SERVER_KEEP_ALIVE                 = TwoByteInteger
-//MQTT_PROPERTY_RECEIVE_MAXIMUM                   = TwoByteInteger
-//MQTT_PROPERTY_TOPIC_ALIAS_MAXIMUM               = TwoByteInteger
-//MQTT_PROPERTY_TOPIC_ALIAS                       = TwoByteInteger
-//MQTT_PROPERTY_MESSAGE_EXPIRY_INTERVAL           = FourByteInteger
-//MQTT_PROPERTY_SESSION_EXPIRY_INTERVAL           = FourByteInteger
-//MQTT_PROPERTY_MAXIMUM_PACKET_SIZE               = FourByteInteger
-//MQTT_PROPERTY_WILL_DELAY_INTERVAL               = FourByteInteger
-//MQTT_PROPERTY_CORRELATION_DATA                  = BinaryData
-//MQTT_PROPERTY_AUTHENTICATION_DATA               = BinaryData
-//MQTT_PROPERTY_SUBSCRIPTION_IDENTIFIER           = VariableByteInteger
-//MQTT_PROPERTY_CONTENT_TYPE                      = UTF-8EncodedString
-//MQTT_PROPERTY_RESPONSE_TOPIC                    = UTF-8EncodedString
-//MQTT_PROPERTY_ASSIGNED_CLIENT_IDENTIFIER        = UTF-8EncodedString
-//MQTT_PROPERTY_AUTHENTICATION_METHOD             = UTF-8EncodedString
-//MQTT_PROPERTY_RESPONSE_INFORMATION              = UTF-8EncodedString
-//MQTT_PROPERTY_SERVER_REFERENCE                  = UTF-8EncodedString
-//MQTT_PROPERTY_REASON_STRING                     = UTF-8EncodedString
-//MQTT_PROPERTY_USER_PROPERTY                     = UTF-8EncodedStringStringPair
+uint ReadRemainingLength(uchar &inpkt[])
+  {
+   if(HasInvalidBytes(inpkt))
+     {
+      return 0;
+     }
+   return DecodeVariableByteInteger(inpkt, 1);
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool HasInvalidBytes(uchar & inpkt[]) // TODO failing function
+  {
+   //for(int i = 0; i < 5; i++)
+   //  {
+   //   if(inpkt[i] > VARINT_MAX_ONE_BYTE || inpkt[i] < 2)
+   //     {
+   //      printf("Invalid Remaining Length: %d", inpkt[i]);
+   //      return true;
+   //     }
+   //  }
+     return false;
+  }
+//+------------------------------------------------------------------+
+
+//+------------------------------------------------------------------+

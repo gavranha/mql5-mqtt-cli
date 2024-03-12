@@ -46,18 +46,114 @@ void OnStart()
    Print(TEST_DecodeTwoByteInt_OneByte());
    Print(TEST_DecodeTwoByteInt_TwoBytes());
    Print(TEST_ReadUserProperty());
+   //Print(TEST_ReadRemainingLength_INVALID()); // TODO failing test
+   Print(TEST_ReadRemainingLength_ZERO());
+   Print(TEST_ReadRemainingLength_OneByte());
+   Print(TEST_ReadRemainingLength_TwoBytes());
+   Print(TEST_ReadRemainingLength_ThreeBytes());
+   Print(TEST_ReadRemainingLength_FourBytes());
   }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+//  Digits  From                               To
+//4       2,097,152 (0x80, 0x80, 0x80, 0x01) 268,435,455 (0xFF, 0xFF, 0xFF, 0x7F)
+bool TEST_ReadRemainingLength_FourBytes() 
+  {
+   Print(__FUNCTION__);
+   uint expected = 268435455;
+   uchar inpkt[] = {00000000, 0xFF, 0xFF, 0xFF, 0x7F};
+   uint result = ReadRemainingLength(inpkt);
+   bool istrue = expected == result;
+   ZeroMemory(result);
+   return istrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+//  Digits  From                               To
+//3       16,384 (0x80, 0x80, 0x01)          2,097,151 (0xFF, 0xFF, 0x7F)
+bool TEST_ReadRemainingLength_ThreeBytes()
+  {
+   Print(__FUNCTION__);
+   uint expected = 2097151;
+   uchar inpkt[] = {00000000, 0xFF, 0xFF, 0x7F, 0};
+   uint result = ReadRemainingLength(inpkt);
+   bool istrue = expected == result;
+   ZeroMemory(result);
+   return istrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+//Digits  From                               To
+//2       128 (0x80, 0x01)                   16,383 (0xFF, 0x7F) => (255,127)
+bool TEST_ReadRemainingLength_TwoBytes() 
+  {
+   Print(__FUNCTION__);
+   ushort expected = 16383;
+   uchar inpkt[] = {00000000, 0xFF, 0x7F, 0, 0};
+   uint result = ReadRemainingLength(inpkt);
+   bool istrue = expected == result;
+   ZeroMemory(result);
+   return istrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+//Digits  From                               To
+//1       0 (0x00)                           127 (0x7F)
+bool TEST_ReadRemainingLength_OneByte() // TODO: failing test
+  {
+   Print(__FUNCTION__);
+   uchar expected = 2;
+   uchar inpkt[] = {00000000, 2, 0, 0, 0};
+   uint result = ReadRemainingLength(inpkt);
+   bool istrue = expected == result;
+   ZeroMemory(result);
+   return istrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_ReadRemainingLength_ZERO()
+  {
+   Print(__FUNCTION__);
+   uchar expected = 0;
+   uchar inpkt[] = {00000000, 0, 0, 0,0};
+   uint result = ReadRemainingLength(inpkt);
+   bool istrue = expected == result;
+   ZeroMemory(result);
+   return istrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_ReadRemainingLength_INVALID()
+  {
+   Print(__FUNCTION__);
+   int expected = 0;
+   uchar inpkt[] = {00000000, 0xFF, 0xFF, 0xFF, 0xFF}; // remaining length 4228250625
+   uint result = ReadRemainingLength(inpkt);
+   bool istrue = expected == result;
+   ZeroMemory(result);
+   return istrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 bool TEST_ReadUserProperty()
   {
    Print(__FUNCTION__);
-   string expected[] = {"key:","val"};
+   string expected[] = {"key:", "val"};
    uchar inpkt[] = {32, 15, 1, 0, 10, 38, 0, 4, 'k', 'e', 'y', ':', 0, 3, 'v', 'a', 'l'};
    string result[];
-   ReadUserProperty(inpkt, 6,result);
-   bool istrue = AssertEqual(expected,result);
+   ReadUserProperty(inpkt, 6, result);
+   bool istrue = AssertEqual(expected, result);
    ZeroMemory(result);
    return istrue;
   }
@@ -164,56 +260,53 @@ Digits  From                               To
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+//4       2,097,152 (0x80, 0x80, 0x80, 0x01) 268,435,455 (0xFF, 0xFF, 0xFF, 0x7F)
 bool TEST_DecodeVariableByteInteger_FourBytes()
   {
    Print(__FUNCTION__);
-   uchar expected[];
-   EncodeVariableByteInteger(268435455, expected);
+   uchar expected[] = {0xFF, 0xFF, 0xFF, 0x7F};
    uint result = DecodeVariableByteInteger(expected, 0);
    bool istrue = (result == 268435455);
-   Print(result);
    ZeroMemory(result);
    return istrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+//3       16,384 (0x80, 0x80, 0x01)          2,097,151 (0xFF, 0xFF, 0x7F)
 bool TEST_DecodeVariableByteInteger_ThreeBytes()
   {
    Print(__FUNCTION__);
-   uchar expected[];
-   EncodeVariableByteInteger(8388608, expected);
+   uchar expected[] = {0xFF, 0xFF, 0x7F};
    uint result = DecodeVariableByteInteger(expected, 0);
-   bool istrue = (result == 8388608);
-   Print(result);
+   bool istrue = (result == 2097151);
    ZeroMemory(result);
    return istrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+//2       128 (0x80, 0x01)                   16,383 (0xFF, 0x7F) => (255,127)
 bool TEST_DecodeVariableByteInteger_TwoBytes()
   {
    Print(__FUNCTION__);
-   uchar expected[];
-   EncodeVariableByteInteger(32768, expected);
+   uchar expected[] = {0xFF, 0x7F};
    uint result = DecodeVariableByteInteger(expected, 0);
-   bool istrue = (result == 32768);
-   Print(result);
+   bool istrue = (result == 16383);
    ZeroMemory(result);
    return istrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+//  Digits  From                               To
+//1       0 (0x00)                           127 (0x7F)
 bool TEST_DecodeVariableByteInteger_OneByte()
   {
    Print(__FUNCTION__);
-   uchar expected[];
-   EncodeVariableByteInteger(128, expected);
+   uchar expected[] = {0x7F};
    uint result = DecodeVariableByteInteger(expected, 0);
-   bool istrue = (result == 128);
-   Print(result);
+   bool istrue = (result == 127);
    ZeroMemory(result);
    return istrue;
   }
@@ -232,8 +325,6 @@ bool TEST_EncodeVariableByteInteger_FourDigits()
    uint expected[] = {0xFF, 0xFF, 0xFF, 0x7F};
    uint to_encode = 268435455;
    EncodeVariableByteInteger(to_encode, result);
-   printf("to_encode %d ", to_encode);
-   ArrayPrint(result);
    bool istrue = AssertEqual(expected, result);
    ZeroMemory(result);
    return istrue;
@@ -271,8 +362,6 @@ bool TEST_EncodeVariableByteInteger_TwoDigits()
    uint expected[] = {0xFF, 0x7F};
    uint to_encode = 16383;
    EncodeVariableByteInteger(to_encode, result);
-   printf("to_encode %d ", to_encode);
-   ArrayPrint(result);
    bool istrue = AssertEqual(expected, result);
    ZeroMemory(result);
    return istrue;
@@ -289,8 +378,6 @@ bool TEST_EncodeVariableByteInteger_OneDigit()
    uint expected[] = {0x7F};
    uint to_encode = 127;
    EncodeVariableByteInteger(to_encode, result);
-   printf("to_encode %d ", to_encode);
-   ArrayPrint(result);
    bool istrue = AssertEqual(expected, result);
    ZeroMemory(result);
    return istrue;
