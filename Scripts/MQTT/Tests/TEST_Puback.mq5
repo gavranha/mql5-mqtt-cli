@@ -17,7 +17,8 @@ void OnStart()
    Print(TEST_IsPuback_NO());
    Print(TEST_IsPuback_YES());
    Print(TEST_ReadPacketIdentifier());
-   Print(TEST_ReadReasonCode());
+   Print(TEST_PUBACK_ReadReasonCode());
+   Print(TEST_ReadReasonString_OLD());
    Print(TEST_ReadReasonString());
   }
 //+------------------------------------------------------------------+
@@ -25,7 +26,22 @@ void OnStart()
 //+------------------------------------------------------------------+
 bool TEST_ReadReasonString()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
+   string expected = "reasonstr";
+   uchar inpkt[] = {31, 0, 9, 'r', 'e', 'a', 's', 'o', 'n', 's', 't', 'r'};
+   CPuback *cut = new CPuback();
+   string result = cut.ReadReasonString(inpkt, 1);
+   bool istrue = StringCompare(expected, result) == 0;
+   delete(cut);
+   ZeroMemory(result);
+   return istrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_ReadReasonString_OLD()
+  {
+   Print( __FUNCTION__);
    uchar pkt[] = {4, 15, 0, 1, 12, 31, 0, 9, 'r', 'e', 'a', 's', 'o', 'n', 's', 't', 'r'};
    uint expected = 1;
    CPuback *cut = new CPuback();
@@ -38,13 +54,13 @@ bool TEST_ReadReasonString()
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_ReadReasonCode()
+bool TEST_PUBACK_ReadReasonCode()
   {
-   Print(__FUNCTION__);
-   uchar pkt[] = {4, 2, 0, 1};
-   int expected = 0;
+   Print( __FUNCTION__);
+   int expected = 10;
+   uchar pkt[] = {4, 2, 0, 1, 0xA};
    CPuback *cut = new CPuback();
-   int result = cut.Read(pkt);
+   int result = cut.ReadReasonCode(pkt, 4);
    bool istrue = (result == expected);
    delete cut;
    return istrue;
@@ -54,7 +70,7 @@ bool TEST_ReadReasonCode()
 //+------------------------------------------------------------------+
 bool TEST_ReadPacketIdentifier()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    ushort expected = 512;
    uchar inpkt[] = {64, 2, 2, 0};
    CPuback *cut = new CPuback(inpkt);
@@ -68,7 +84,7 @@ bool TEST_ReadPacketIdentifier()
 //+------------------------------------------------------------------+
 bool TEST_IsPuback_YES()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    bool expected = true;
    uchar inpkt[] = {64, 0};
    CPuback *cut = new CPuback(inpkt);
@@ -83,7 +99,7 @@ bool TEST_IsPuback_YES()
 //+------------------------------------------------------------------+
 bool TEST_IsPuback_NO()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    bool expected = false;
    uchar inpkt[] = {'n', 'o', 'a', 'c', 'k'};
    CPuback *cut = new CPuback(inpkt);
@@ -98,7 +114,7 @@ bool TEST_IsPuback_NO()
 //+------------------------------------------------------------------+
 bool TEST_Ctor()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    static uchar expected[] = {64};
    uchar result[];
    CPuback *cut = new CPuback();
@@ -113,7 +129,7 @@ bool TEST_Ctor()
 //+------------------------------------------------------------------+
 bool TEST_ReadProperties_ReasonString_and_UserProperty()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar pkt[] = {4, 27, 0, 1, 24, 31, 0, 9, 'r', 'e', 'a', 's', 'o', 'n', 's', 't', 'r', \
                   38, 0, 4, 'k', 'e', 'y', ':', 0, 3, 'v', 'a', 'l'
                  };
@@ -130,7 +146,7 @@ bool TEST_ReadProperties_ReasonString_and_UserProperty()
 //+------------------------------------------------------------------+
 bool TEST_ReadProperties_UserProperty()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar pkt[] = {4, 15, 0, 1, 12, 38, 0, 4, 'k', 'e', 'y', ':', 0, 3, 'v', 'a', 'l'};
    uint expected = 1;
    CPuback *cut = new CPuback();

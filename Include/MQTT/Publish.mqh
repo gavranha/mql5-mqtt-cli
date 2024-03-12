@@ -173,7 +173,7 @@ void CPublish::SetTopicName(const string topic_name)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void CPublish::Build(uchar &pkt[])
+void CPublish::Build(uchar &pkt[]) // TODO break down this function
   {
    if(m_topname.Size() == 0)
      {

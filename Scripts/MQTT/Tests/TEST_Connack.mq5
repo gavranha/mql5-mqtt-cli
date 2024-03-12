@@ -48,7 +48,7 @@ void OnStart()
 //+------------------------------------------------------------------+
 bool TEST_ReadAuthenticationData()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    string expected = "authdata";
    uchar inpkt[] = {32, 14, 1, 0, 10, 22, 0, 8, 'a', 'u', 't', 'h', 'd', 'a', 't', 'a'};
    CConnack *cut = new CConnack(inpkt);
@@ -63,7 +63,7 @@ bool TEST_ReadAuthenticationData()
 //+------------------------------------------------------------------+
 bool TEST_ReadAuthenticationMethod()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    string expected = "authmeth";
    uchar inpkt[] = {32, 14, 1, 0, 10, 21, 0, 8, 'a', 'u', 't', 'h', 'm', 'e', 't', 'h'};
    CConnack *cut = new CConnack(inpkt);
@@ -78,7 +78,7 @@ bool TEST_ReadAuthenticationMethod()
 //+------------------------------------------------------------------+
 bool TEST_ReadServerReference()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    string expected = "srvref";
    uchar inpkt[] = {32, 12, 1, 0, 10, 28, 0, 6, 's', 'r', 'v', 'r', 'e', 'f'};
    CConnack *cut = new CConnack(inpkt);
@@ -93,7 +93,7 @@ bool TEST_ReadServerReference()
 //+------------------------------------------------------------------+
 bool TEST_ReadResponseInformation()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    string expected = "rspinfo";
    uchar inpkt[] = {32, 13, 1, 0, 10, 26, 0, 7, 'r', 's', 'p', 'i', 'n', 'f', 'o'};
    CConnack *cut = new CConnack(inpkt);
@@ -108,7 +108,7 @@ bool TEST_ReadResponseInformation()
 //+------------------------------------------------------------------+
 bool TEST_ReadServerKeepAlive()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    ushort expected = 3600;
    uchar inpkt[] = {32, 6, 1, 0, 2, 19, 14, 16};
    CConnack *cut = new CConnack(inpkt);
@@ -123,7 +123,7 @@ bool TEST_ReadServerKeepAlive()
 //+------------------------------------------------------------------+
 bool TEST_ReadSharedSubscriptionAvailable_YES()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    ushort expected = 1;
    uchar inpkt[] = {32, 5, 1, 0, 2, 42, 1};
    CConnack *cut = new CConnack(inpkt);
@@ -138,7 +138,7 @@ bool TEST_ReadSharedSubscriptionAvailable_YES()
 //+------------------------------------------------------------------+
 bool TEST_ReadSharedSubscriptionAvailable_NO()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    ushort expected = 0;
    uchar inpkt[] = {32, 5, 1, 0, 2, 42, 0};
    CConnack *cut = new CConnack(inpkt);
@@ -153,7 +153,7 @@ bool TEST_ReadSharedSubscriptionAvailable_NO()
 //+------------------------------------------------------------------+
 bool TEST_ReadSubscriptionIdentifiersAvailable_YES()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    ushort expected = 1;
    uchar inpkt[] = {32, 5, 1, 0, 2, 41, 1};
    CConnack *cut = new CConnack(inpkt);
@@ -168,7 +168,7 @@ bool TEST_ReadSubscriptionIdentifiersAvailable_YES()
 //+------------------------------------------------------------------+
 bool TEST_ReadSubscriptionIdentifiersAvailable_NO()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    ushort expected = 0;
    uchar inpkt[] = {32, 5, 1, 0, 2, 41, 0};
    CConnack *cut = new CConnack(inpkt);
@@ -183,7 +183,7 @@ bool TEST_ReadSubscriptionIdentifiersAvailable_NO()
 //+------------------------------------------------------------------+
 bool TEST_ReadWildcardSubscriptionAvailable_YES()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    ushort expected = 1;
    uchar inpkt[] = {32, 5, 1, 0, 2, 40, 1};
    CConnack *cut = new CConnack(inpkt);
@@ -198,7 +198,7 @@ bool TEST_ReadWildcardSubscriptionAvailable_YES()
 //+------------------------------------------------------------------+
 bool TEST_ReadWildcardSubscriptionAvailable_NO()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    ushort expected = 0;
    uchar inpkt[] = {32, 5, 1, 0, 2, 40, 0};
    CConnack *cut = new CConnack(inpkt);
@@ -213,7 +213,7 @@ bool TEST_ReadWildcardSubscriptionAvailable_NO()
 //+------------------------------------------------------------------+
 bool TEST_ReadReasonString()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    string expected = "reasstr";
    uchar inpkt[] = {32, 13, 1, 0, 10, 31, 0, 7, 'r', 'e', 'a', 's', 's', 't', 'r'};
    CConnack *cut = new CConnack(inpkt);
@@ -228,7 +228,7 @@ bool TEST_ReadReasonString()
 //+------------------------------------------------------------------+
 bool TEST_ReadTopicAliasMaximum()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    ushort expected = 256;
    uchar inpkt[] = {32, 13, 1, 0, 9, 34, 1, 0};
    CConnack *cut = new CConnack(inpkt);
@@ -243,7 +243,7 @@ bool TEST_ReadTopicAliasMaximum()
 //+------------------------------------------------------------------+
 bool TEST_ReadAssignedClientIdentifier()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    string expected = "asscli";
    uchar inpkt[] = {32, 13, 1, 0, 9, 18, 0, 6, 'a', 's', 's', 'c', 'l', 'i'};
    CConnack *cut = new CConnack(inpkt);
@@ -258,7 +258,7 @@ bool TEST_ReadAssignedClientIdentifier()
 //+------------------------------------------------------------------+
 bool TEST_ReadMaximumPacketSize()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    ushort expected = 1024;
    uchar inpkt[] = {32, 8, 1, 0, 5, 39, 0, 0, 4, 0};
    CConnack *cut = new CConnack(inpkt);
@@ -273,7 +273,7 @@ bool TEST_ReadMaximumPacketSize()
 //+------------------------------------------------------------------+
 bool TEST_ReadRetainAvailable_YES()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    ushort expected = 1;
    uchar inpkt[] = {32, 5, 1, 0, 2, 37, 1};
    CConnack *cut = new CConnack(inpkt);
@@ -288,7 +288,7 @@ bool TEST_ReadRetainAvailable_YES()
 //+------------------------------------------------------------------+
 bool TEST_ReadRetainAvailable_NO()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    ushort expected = 0;
    uchar inpkt[] = {32, 5, 1, 0, 2, 37, 0};
    CConnack *cut = new CConnack(inpkt);
@@ -303,7 +303,7 @@ bool TEST_ReadRetainAvailable_NO()
 //+------------------------------------------------------------------+
 bool TEST_ReadMaximumQoS_1()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    ushort expected = 1;
    uchar inpkt[] = {32, 5, 1, 0, 2, 36, 1};
    CConnack *cut = new CConnack(inpkt);
@@ -318,7 +318,7 @@ bool TEST_ReadMaximumQoS_1()
 //+------------------------------------------------------------------+
 bool TEST_ReadMaximumQoS_0()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    ushort expected = 0;
    uchar inpkt[] = {32, 5, 1, 0, 2, 36, 0};
    CConnack *cut = new CConnack(inpkt);
@@ -333,7 +333,7 @@ bool TEST_ReadMaximumQoS_0()
 //+------------------------------------------------------------------+
 bool TEST_ReadReceiveMaximum()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    ushort expected = 3600;
    uchar inpkt[] = {32, 6, 1, 0, 3, 33, 14, 16};
    CConnack *cut = new CConnack(inpkt);
@@ -348,7 +348,7 @@ bool TEST_ReadReceiveMaximum()
 //+------------------------------------------------------------------+
 bool TEST_ReadSessionExpiryInterval()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uint expected = 3600;
    uchar inpkt[] = {32, 8, 1, 0, 5, 17, 0, 0, 14, 16};
    CConnack *cut = new CConnack(inpkt);
@@ -363,7 +363,7 @@ bool TEST_ReadSessionExpiryInterval()
 //+------------------------------------------------------------------+
 bool TEST_ReadPropertyLength_FourBytes()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uint expected = 268435455;
    uchar inpkt[] = {32, 6, 1, 0, 0xFF, 0xFF, 0xFF, 0x7F};
    CConnack *cut = new CConnack(inpkt);
@@ -378,7 +378,7 @@ bool TEST_ReadPropertyLength_FourBytes()
 //+------------------------------------------------------------------+
 bool TEST_ReadPropertyLength_ThreeBytes()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uint expected = 2097151;
    uchar inpkt[] = {32, 5, 1, 0, 0xFF, 0xFF, 0x7F};
    CConnack *cut = new CConnack(inpkt);
@@ -393,7 +393,7 @@ bool TEST_ReadPropertyLength_ThreeBytes()
 //+------------------------------------------------------------------+
 bool TEST_ReadPropertyLength_TwoBytes()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uint expected = 16383;
    uchar inpkt[] = {32, 4, 1, 0, 0xFF, 0x7F};
    CConnack *cut = new CConnack(inpkt);
@@ -408,7 +408,7 @@ bool TEST_ReadPropertyLength_TwoBytes()
 //+------------------------------------------------------------------+
 bool TEST_ReadPropertyLength_OneByte()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uint expected = 127;
    uchar inpkt[] = {32, 3, 1, 0, 127};
    CConnack *cut = new CConnack(inpkt);
@@ -423,7 +423,7 @@ bool TEST_ReadPropertyLength_OneByte()
 //+------------------------------------------------------------------+
 bool TEST_ReadReasonCode_ERROR()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected = MQTT_REASON_CODE_UNSPECIFIED_ERROR;
    uchar inpkt[] = {32, 2, 1, 0x80};
    CConnack *cut = new CConnack(inpkt);
@@ -438,7 +438,7 @@ bool TEST_ReadReasonCode_ERROR()
 //+------------------------------------------------------------------+
 bool TEST_ReadReasonCode_SUCCESS()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected = MQTT_REASON_CODE_SUCCESS;
    uchar inpkt[] = {32, 2, 1, 0x00};
    CConnack *cut = new CConnack(inpkt);
@@ -454,7 +454,7 @@ bool TEST_ReadReasonCode_SUCCESS()
 //+------------------------------------------------------------------+
 bool TEST_IsSessionPresent_YES()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    bool expected = true;
    uchar inpkt[] = {32, 1, 1};
    CConnack *cut = new CConnack(inpkt);
@@ -468,7 +468,7 @@ bool TEST_IsSessionPresent_YES()
 //+------------------------------------------------------------------+
 bool TEST_IsSessionPresent_NO()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    bool expected = false;
    uchar inpkt[] = {32, 1, 0};
    CConnack *cut = new CConnack(inpkt);
@@ -483,7 +483,7 @@ bool TEST_IsSessionPresent_NO()
 //+------------------------------------------------------------------+
 bool TEST_IsConnack_YES()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    bool expected = true;
    uchar inpkt[] = {32, 0};
    CConnack *cut = new CConnack(inpkt);
@@ -498,7 +498,7 @@ bool TEST_IsConnack_YES()
 //+------------------------------------------------------------------+
 bool TEST_IsConnack_NO()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    bool expected = false;
    uchar inpkt[] = {'n', 'o', 'a', 'c', 'k'};
    CConnack *cut = new CConnack(inpkt);

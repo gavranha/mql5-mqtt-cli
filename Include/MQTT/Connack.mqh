@@ -184,11 +184,7 @@ bool CConnack::IsSessionPresent(uchar &inpkt[])
 //+------------------------------------------------------------------+
 bool CConnack::IsConnack(uchar &inpkt[])
   {
-   if(inpkt[0] == (CONNACK << 4))
-     {
-      return true;
-     }
-   return false;
+    return inpkt[0] == (CONNACK << 4) ? true : false;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |

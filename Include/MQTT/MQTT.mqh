@@ -397,10 +397,10 @@ uchar GetQoSLevel(uchar& buf[])
    return 0;
   }
 //+------------------------------------------------------------------+
-//|            SetPacketID                                           |
+//|            SetPacketIdentifier                                   |
 //+------------------------------------------------------------------+
 #define TEST true
-void SetPacketID(uchar& buf[], int start_idx)
+void SetPacketIdentifier(uchar& buf[], int start_idx)
   {
 // MathRand - Before the first call of the function, it's necessary to call
 // MathSrand to set the generator of pseudorandom numbers to the initial state.
@@ -416,7 +416,7 @@ void SetPacketID(uchar& buf[], int start_idx)
 //--- if testing, set packet ID to 1
    if(TEST)
      {
-      Print("WARN: SetPacketID TEST true fixed ID = 1");
+      Print("WARN: SetPacketIdentifier TEST true fixed ID = 1");
       buf[start_idx] = 0; // MSB
       buf[start_idx + 1] = 1; //LSB
      }

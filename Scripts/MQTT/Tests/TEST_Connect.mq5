@@ -3,7 +3,7 @@
 //|            ********* WORK IN PROGRESS **********                 |
 //| **** PART OF ARTICLE https://www.mql5.com/en/articles/13388 **** |
 //+------------------------------------------------------------------+
-#include <MQTT\CConnect.mqh>
+#include <MQTT\Connect.mqh>
 #include "TestUtil.mqh"
 
 //+------------------------------------------------------------------+
@@ -13,51 +13,51 @@ void OnStart()
   {
 // test protected methods or public methods that set protected fields
    CProtMeths *t = new CProtMeths();
-//Print(t.TEST_SetCleanStart());
-//Print(t.TEST_SetWillFlag());
-//Print(t.TEST_SetWillQoS_1());
-//Print(t.TEST_SetWillQoS_2());
-//Print(t.TEST_SetWillRetain());
-//Print(t.TEST_SetPasswordFlag());
-//Print(t.TEST_SetUserNameFlag());
-//Print(t.TEST_SetKeepAlive());
-//Print(t.TEST_SetKeepAlive_ZERO());
-//Print(t.TEST_Prop_SetSessionExpiryInterval());
-//Print(t.TEST_Prop_SetReceiveMaximum());
-//Print(t.TEST_Prop_SetMaximumPacketSize());
-//Print(t.TEST_Prop_SetTopicAliasMaximum());
-//Print(t.TEST_Prop_SetRequestResponseInfo_YES());
-//Print(t.TEST_Prop_SetRequestResponseInfo_NO());
-//Print(t.TEST_Prop_SetRequestProblemInfo_YES());
-//Print(t.TEST_Prop_SetRequestProblemInfo_NO());
-//Print(t.TEST_Prop_SetUserProperty());
-//Print(t.TEST_Prop_SetAuthMethod());
-//Print(t.TEST_Prop_SetAuthData());
-//Print(t.TEST_PropertyLength_OneProp());
-//Print(t.TEST_PropertyLength_TwoProps());
-//Print(t.TEST_PropertyLength_ThreeProps());
-//Print(t.TEST_WillPropertyLength_OneProp());
-//Print(t.TEST_WillPropertyLength_TwoProps());
-//Print(t.TEST_WillPropertyLength_ThreeProps());
-//Print(t.TEST_Payload_SetClientIdentifier());
-//Print(t.TEST_WillProps_SetWillDelayInterval());
-//Print(t.TEST_Payload_SetWillPayloadFormatIndicator_UTF8());
-//Print(t.TEST_Payload_SetWillPayloadFormatIndicator_RawBytes());
-//Print(t.TEST_Payload_SetWillMessageExpiryInterval());
-//Print(t.TEST_Payload_SetWillContentType());
-//Print(t.TEST_Payload_SetWillResponseTopic());
-//Print(t.TEST_Payload_SetWillCorrelationData());
-//Print(t.TEST_Payload_SetWillUserProperty());
-//Print(t.TEST_Payload_SetWillTopic());
-//Print(t.TEST_Payload_SetWillPayload());
-//Print(t.TEST_Payload_SetUserName());
-//Print(t.TEST_Payload_SetPassword());
+Print(t.TEST_SetCleanStart());
+Print(t.TEST_SetWillFlag());
+Print(t.TEST_SetWillQoS_1());
+Print(t.TEST_SetWillQoS_2());
+Print(t.TEST_SetWillRetain());
+Print(t.TEST_SetPasswordFlag());
+Print(t.TEST_SetUserNameFlag());
+Print(t.TEST_SetKeepAlive());
+Print(t.TEST_SetKeepAlive_ZERO());
+Print(t.TEST_Prop_SetSessionExpiryInterval());
+Print(t.TEST_Prop_SetReceiveMaximum());
+Print(t.TEST_Prop_SetMaximumPacketSize());
+Print(t.TEST_Prop_SetTopicAliasMaximum());
+Print(t.TEST_Prop_SetRequestResponseInfo_YES());
+Print(t.TEST_Prop_SetRequestResponseInfo_NO());
+Print(t.TEST_Prop_SetRequestProblemInfo_YES());
+Print(t.TEST_Prop_SetRequestProblemInfo_NO());
+Print(t.TEST_Prop_SetUserProperty());
+Print(t.TEST_Prop_SetAuthMethod());
+Print(t.TEST_Prop_SetAuthData());
+Print(t.TEST_PropertyLength_OneProp());
+Print(t.TEST_PropertyLength_TwoProps());
+Print(t.TEST_PropertyLength_ThreeProps());
+Print(t.TEST_WillPropertyLength_OneProp());
+Print(t.TEST_WillPropertyLength_TwoProps());
+Print(t.TEST_WillPropertyLength_ThreeProps());
+Print(t.TEST_Payload_SetClientIdentifier());
+Print(t.TEST_WillProps_SetWillDelayInterval());
+Print(t.TEST_Payload_SetWillPayloadFormatIndicator_UTF8());
+Print(t.TEST_Payload_SetWillPayloadFormatIndicator_RawBytes());
+Print(t.TEST_Payload_SetWillMessageExpiryInterval());
+Print(t.TEST_Payload_SetWillContentType());
+Print(t.TEST_Payload_SetWillResponseTopic());
+Print(t.TEST_Payload_SetWillCorrelationData());
+Print(t.TEST_Payload_SetWillUserProperty());
+Print(t.TEST_Payload_SetWillTopic());
+Print(t.TEST_Payload_SetWillPayload());
+Print(t.TEST_Payload_SetUserName());
+Print(t.TEST_Payload_SetPassword());
    delete(t);
 //---
 // test public methods
 //Print(TEST_Build_NoProps_NoPayload());
 //Print(TEST_Build_NoProps_NoPayload_OneProp());
-   Print(TEST_Build_MosquittoRef());
+   //Print(TEST_Build_MosquittoRef());
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -72,7 +72,7 @@ bool TEST_Build_MosquittoRef()
 //+------------------------------------------------------------------+
 bool TEST_Build_NoProps_NoPayload_OneProp()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {};
 //--- fixhead
    uchar fixhead[] = {16, '?'};
@@ -114,7 +114,7 @@ bool TEST_Build_NoProps_NoPayload_OneProp()
 //+------------------------------------------------------------------+
 bool TEST_Build_NoProps_NoPayload()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {16, 16, 0, 4, 'M', 'Q', 'T', 'T', 5, 2, 0, 10, 0, 4, 'M', 'Q', 'L', '5'};
    uchar result[];
    CConnect *cut = new CConnect();
@@ -181,7 +181,7 @@ public:
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_Payload_SetPassword(void)
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {'p', 'a', 's', 's', 'w', 'o', 'r', 'd'};
    uchar result[];
    CConnect *cut = new CConnect();
@@ -197,7 +197,7 @@ bool CProtMeths::TEST_Payload_SetPassword(void)
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_Payload_SetUserName()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {0, 8, 'u', 's', 'e', 'r', 'n', 'a', 'm', 'e'};
    uchar result[];
    CConnect *cut = new CConnect();
@@ -213,7 +213,7 @@ bool CProtMeths::TEST_Payload_SetUserName()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_Payload_SetWillPayload(void)
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {'w', 'i', 'l', 'l', 'p', 'a', 'y', 'l', 'o', 'a', 'd'};
    uchar result[];
    CConnect *cut = new CConnect();
@@ -229,7 +229,7 @@ bool CProtMeths::TEST_Payload_SetWillPayload(void)
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_Payload_SetWillTopic(void)
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {0, 9, 'w', 'i', 'l', 'l', 't', 'o', 'p', 'i', 'c'};
    uchar result[];
    CConnect *cut = new CConnect();
@@ -245,7 +245,7 @@ bool CProtMeths::TEST_Payload_SetWillTopic(void)
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_Payload_SetWillUserProperty()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {38, 0, 4, 'k', 'e', 'y', ':', 0, 3, 'v', 'a', 'l'};
    uchar result[];
    CConnect *cut = new CConnect();
@@ -261,7 +261,7 @@ bool CProtMeths::TEST_Payload_SetWillUserProperty()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_Payload_SetWillCorrelationData()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {9, 'c', 'o', 'r', 'r', 'd', 'a', 't', 'a'};
    uchar result[];
    CConnect *cut = new CConnect();
@@ -277,7 +277,7 @@ bool CProtMeths::TEST_Payload_SetWillCorrelationData()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_Payload_SetWillResponseTopic()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {8, 0, 9, 'r', 'e', 's', 'p', 't', 'o', 'p', 'i', 'c'};
    uchar result[];
    CConnect *cut = new CConnect();
@@ -293,7 +293,7 @@ bool CProtMeths::TEST_Payload_SetWillResponseTopic()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_Payload_SetWillContentType(void)
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {3, 0, 8, 'c', 'o', 'n', 't', 't', 'y', 'p', 'e'};
    uchar result[];
    CConnect *cut = new CConnect();
@@ -309,7 +309,7 @@ bool CProtMeths::TEST_Payload_SetWillContentType(void)
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_Payload_SetWillMessageExpiryInterval(void)
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {2, 0, 0, 0, 10};
    uchar result[];
    CConnect *cut = new CConnect();
@@ -325,7 +325,7 @@ bool CProtMeths::TEST_Payload_SetWillMessageExpiryInterval(void)
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_Payload_SetWillPayloadFormatIndicator_RawBytes()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {1, 0};
    uchar result[];
    CConnect *cut = new CConnect();
@@ -341,7 +341,7 @@ bool CProtMeths::TEST_Payload_SetWillPayloadFormatIndicator_RawBytes()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_Payload_SetWillPayloadFormatIndicator_UTF8()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {1, 1};
    uchar result[];
    CConnect *cut = new CConnect();
@@ -357,7 +357,7 @@ bool CProtMeths::TEST_Payload_SetWillPayloadFormatIndicator_UTF8()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_WillProps_SetWillDelayInterval()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {24, 0, 0, 0, 10};
    uchar result[];
    CConnect *cut = new CConnect();
@@ -373,7 +373,7 @@ bool CProtMeths::TEST_WillProps_SetWillDelayInterval()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_Payload_SetClientIdentifier()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {0, 8, 'c', 'l', 'i', 'e', 'n', 't', 'i', 'd'};
    CConnect *cut = new CConnect();
    uchar result[];
@@ -389,7 +389,7 @@ bool CProtMeths::TEST_Payload_SetClientIdentifier()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_WillPropertyLength_ThreeProps()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    this.m_willprops_len = 0;
    uint expected = 12;
    CConnect *cut = new CConnect();
@@ -407,7 +407,7 @@ bool CProtMeths::TEST_WillPropertyLength_ThreeProps()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_WillPropertyLength_TwoProps()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    this.m_willprops_len = 0;
    uint expected = 7;
    CConnect *cut = new CConnect();
@@ -424,7 +424,7 @@ bool CProtMeths::TEST_WillPropertyLength_TwoProps()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_WillPropertyLength_OneProp()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    this.m_willprops_len = 0;
    uint expected = 5;
    CConnect *cut = new CConnect();
@@ -440,7 +440,7 @@ bool CProtMeths::TEST_WillPropertyLength_OneProp()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_PropertyLength_ThreeProps()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    this.m_connprops_len = 0;
    uint expected = 33;
    CConnect *cut = new CConnect();
@@ -458,7 +458,7 @@ bool CProtMeths::TEST_PropertyLength_ThreeProps()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_PropertyLength_TwoProps()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    this.m_connprops_len = 0;
    uint expected = 21;
    CConnect *cut = new CConnect();
@@ -475,7 +475,7 @@ bool CProtMeths::TEST_PropertyLength_TwoProps()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_PropertyLength_OneProp()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    this.m_connprops_len = 0;
    uint expected = 8;
    CConnect *cut = new CConnect();
@@ -491,7 +491,7 @@ bool CProtMeths::TEST_PropertyLength_OneProp()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_Prop_SetAuthData()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {22, 'b', 'i', 'n', 'd', 'a', 't', 'a'};
    CConnect *cut = new CConnect();
    this.SetAuthData("bindata");
@@ -507,7 +507,7 @@ bool CProtMeths::TEST_Prop_SetAuthData()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_Prop_SetAuthMethod()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {21, 0, 10, 'a', 'u', 't', 'h', 'm', 'e', 't', 'h', 'o', 'd'};
    CConnect *cut = new CConnect();
    this.SetAuthMethod("authmethod");
@@ -523,7 +523,7 @@ bool CProtMeths::TEST_Prop_SetAuthMethod()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_Prop_SetUserProperty()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {38, 0, 4, 'k', 'e', 'y', ':', 0, 3, 'v', 'a', 'l'};
    CConnect *cut = new CConnect();
    this.SetUserProperty("key:", "val");
@@ -539,7 +539,7 @@ bool CProtMeths::TEST_Prop_SetUserProperty()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_Prop_SetRequestProblemInfo_NO()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {23, 0};
    CConnect *cut = new CConnect();
    this.SetRequestProblemInfo(0);
@@ -555,7 +555,7 @@ bool CProtMeths::TEST_Prop_SetRequestProblemInfo_NO()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_Prop_SetRequestProblemInfo_YES()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {23, 1};
    CConnect *cut = new CConnect();
    this.SetRequestProblemInfo(1);
@@ -571,7 +571,7 @@ bool CProtMeths::TEST_Prop_SetRequestProblemInfo_YES()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_Prop_SetRequestResponseInfo_NO()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {25, 0};
    CConnect *cut = new CConnect();
    this.SetRequestResponseInfo(0);
@@ -587,7 +587,7 @@ bool CProtMeths::TEST_Prop_SetRequestResponseInfo_NO()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_Prop_SetRequestResponseInfo_YES()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {25, 1};
    CConnect *cut = new CConnect();
    this.SetRequestResponseInfo(1);
@@ -603,7 +603,7 @@ bool CProtMeths::TEST_Prop_SetRequestResponseInfo_YES()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_Prop_SetTopicAliasMaximum()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {34, 0, 10};
    CConnect *cut = new CConnect();
    this.SetTopicAliasMaximum(10);
@@ -619,7 +619,7 @@ bool CProtMeths::TEST_Prop_SetTopicAliasMaximum()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_Prop_SetMaximumPacketSize()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {39, 0, 0, 4, 0};
    CConnect *cut = new CConnect();
    this.SetMaximumPacketSize(1024);
@@ -635,7 +635,7 @@ bool CProtMeths::TEST_Prop_SetMaximumPacketSize()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_Prop_SetReceiveMaximum()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {33, 0, 10};
    CConnect *cut = new CConnect();
    this.SetReceiveMaximum(10);
@@ -651,7 +651,7 @@ bool CProtMeths::TEST_Prop_SetReceiveMaximum()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_Prop_SetSessionExpiryInterval()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {17, 0, 0, 0, 10};
    CConnect *cut = new CConnect();
    this.SetSessionExpiryInterval(10);
@@ -667,7 +667,7 @@ bool CProtMeths::TEST_Prop_SetSessionExpiryInterval()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_SetKeepAlive_ZERO()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {0, 0};
    CConnect *cut = new CConnect();
    this.SetKeepAlive(0);
@@ -684,7 +684,7 @@ bool CProtMeths::TEST_SetKeepAlive_ZERO()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_SetKeepAlive()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected[] = {0, 10};
    CConnect *cut = new CConnect();
    this.SetKeepAlive(10);
@@ -701,7 +701,7 @@ bool CProtMeths::TEST_SetKeepAlive()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_SetUserNameFlag()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected = {B'10000000'};
    CConnect *cut = new CConnect();
    this.SetUserNameFlag(true);
@@ -715,7 +715,7 @@ bool CProtMeths::TEST_SetUserNameFlag()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_SetPasswordFlag()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected = {B'01000000'};
    CConnect *cut = new CConnect();
    this.SetPasswordFlag(true);
@@ -729,7 +729,7 @@ bool CProtMeths::TEST_SetPasswordFlag()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_SetWillRetain()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected = {B'00100000'};
    CConnect *cut = new CConnect();
    this.SetWillRetain(true);
@@ -743,7 +743,7 @@ bool CProtMeths::TEST_SetWillRetain()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_SetWillQoS_2()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected = {B'00010000'};
    CConnect *cut = new CConnect();
    this.SetWillQoS_2(true);
@@ -757,7 +757,7 @@ bool CProtMeths::TEST_SetWillQoS_2()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_SetWillQoS_1()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected = {B'00001000'};
    CConnect *cut = new CConnect();
    this.SetWillQoS_1(true);
@@ -771,7 +771,7 @@ bool CProtMeths::TEST_SetWillQoS_1()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_SetWillFlag()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected = {B'00000100'};
    CConnect *cut = new CConnect();
    this.SetWillFlag(true);
@@ -785,7 +785,7 @@ bool CProtMeths::TEST_SetWillFlag()
 //+------------------------------------------------------------------+
 bool CProtMeths::TEST_SetCleanStart()
   {
-   Print(__FUNCTION__);
+   Print( __FUNCTION__);
    uchar expected = {B'00000010'};
    CConnect *cut = new CConnect();
    this.SetCleanStart(true);

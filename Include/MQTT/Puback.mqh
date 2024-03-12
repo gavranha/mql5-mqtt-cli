@@ -52,17 +52,21 @@ public:
    ushort            ReadPacketIdentifier(uchar &pkt[], uint idx);
    uchar             ReadReasonCode(uchar &pkt[], uint idx);
    uint              ReadProperties(uchar &pkt[], uint props_len, uint idx);
+   string            ReadReasonString(uchar &inpkt[], uint idx);
   };
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+string CPuback::ReadReasonString(uchar &inpkt[], uint idx)
+  {
+   return ReadUtf8String(inpkt, idx);
+  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 bool CPuback::IsPuback(uchar &inpkt[])
   {
-   if(inpkt[0] == (PUBACK << 4))
-     {
-      return true;
-     }
-   return false;
+   return inpkt[0] == (PUBACK << 4) ? true : false;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -253,7 +257,7 @@ ushort CPuback::ReadPacketIdentifier(uchar &pkt[], uint idx)
 //+------------------------------------------------------------------+
 void CPuback::Build(uchar &pkt[])
   {
-   ArrayResize(pkt,1);
+   ArrayResize(pkt, 1);
    pkt[0] = (uchar)PUBACK << 4;
   }
 //+------------------------------------------------------------------+
