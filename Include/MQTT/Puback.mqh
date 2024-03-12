@@ -3,6 +3,8 @@
 //|            ********* WORK IN PROGRESS **********                 |
 //| **** PART OF ARTICLE https://www.mql5.com/en/articles/14391 **** |
 //+------------------------------------------------------------------+
+#include "MQTT.mqh"
+
 #include "IControlPacket.mqh"
 #include "DB.mqh"
 
@@ -30,12 +32,10 @@ private:
    uint              m_propslen_bytes;
    uint              m_pktid;
 protected:
-   ushort            GetPacketid(uchar &pkt[], uint idx);
    int               ReleasePktid(ushort pkt_id);
    void              HandlePublishError(uint reason_code);
    bool              IsPendingPkt(uint pkt_id);
-   uchar             GetReasonCode(uchar &pkt[], uint idx);
-   uint              ReadProperties(uchar &pkt[], uint props_len, uint idx);
+
    uint              GetRemLenBytes(uint remlen);
    uint              GetPropsLenBytes(uint propslen);
 public:
@@ -49,6 +49,9 @@ public:
                     ~CPuback(void) {};
                      CPuback(uchar &inpkt[]);
    bool              IsPuback(uchar &inpkt[]);
+   ushort            ReadPacketIdentifier(uchar &pkt[], uint idx);
+   uchar             ReadReasonCode(uchar &pkt[], uint idx);
+   uint              ReadProperties(uchar &pkt[], uint props_len, uint idx);
   };
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -77,18 +80,18 @@ int CPuback::Read(uchar &pkt[])
 // implicit Reason Code and no properties
    if(m_remlen == 2)
      {
-      m_pktid = GetPacketid(pkt, 2);
+      m_pktid = ReadPacketIdentifier(pkt, 2);
       if(IsPendingPkt(m_pktid))
         {
          return ReleasePktid((ushort)m_pktid);
         }
      }
 // get the packet ID
-   m_pktid = GetPacketid(pkt, m_remlen_bytes + 1);
+   m_pktid = ReadPacketIdentifier(pkt, m_remlen_bytes + 1);
 // get the Reason Code
-   m_reasoncode = GetReasonCode(pkt, m_remlen_bytes + 3);
+   m_reasoncode = ReadReasonCode(pkt, m_remlen_bytes + 3);
 // get the properties length
-   m_propslen = DecodeVariableByteInteger(pkt, m_remlen_bytes + 4);
+   m_propslen = ReadPropertyLength(pkt, m_remlen_bytes + 4);
 // validate Property Length
    if(m_propslen > VARINT_MAX_FOUR_BYTES)
      {
@@ -162,7 +165,7 @@ uint CPuback::GetPropsLenBytes(uint propslen)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-uint CPuback::ReadProperties(uchar &pkt[], uint props_len, uint idx)// TODO move to MQTT.mqh
+uint CPuback::ReadProperties(uchar &pkt[], uint props_len, uint idx)
   {
    Print("Reading PUBACK properties");
    uint props_count = 0;
@@ -218,7 +221,7 @@ int CPuback::ReleasePktid(ushort pkt_id)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-uchar CPuback::GetReasonCode(uchar &pkt[], uint idx)
+uchar CPuback::ReadReasonCode(uchar &pkt[], uint idx)
   {
    return (uchar)pkt[idx];
   }
@@ -241,7 +244,7 @@ bool CPuback::IsPendingPkt(uint pkt_id)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-ushort CPuback::GetPacketid(uchar &pkt[], uint idx)
+ushort CPuback::ReadPacketIdentifier(uchar &pkt[], uint idx)
   {
    return (ushort)((pkt[idx] * 256) + pkt[idx + 1]);
   }
@@ -250,7 +253,7 @@ ushort CPuback::GetPacketid(uchar &pkt[], uint idx)
 //+------------------------------------------------------------------+
 void CPuback::Build(uchar &pkt[])
   {
-   ArrayResize(pkt, 2);
+   ArrayResize(pkt,1);
    pkt[0] = (uchar)PUBACK << 4;
   }
 //+------------------------------------------------------------------+

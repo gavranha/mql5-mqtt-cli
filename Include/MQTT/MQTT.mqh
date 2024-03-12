@@ -440,6 +440,8 @@ void ReadUserProperty(uchar &buf[], uint idx, string &dest_buf[])
    dest_buf[1] = val_str;
   }
 //+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 uint ReadRemainingLength(uchar &inpkt[])
   {
    if(HasInvalidBytes(inpkt))
@@ -451,17 +453,28 @@ uint ReadRemainingLength(uchar &inpkt[])
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+uint ReadPropertyLength(uchar &inpkt[], uint idx)
+  {
+   if(HasInvalidBytes(inpkt))
+     {
+      return 0;
+     }
+   return DecodeVariableByteInteger(inpkt, idx);
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 bool HasInvalidBytes(uchar & inpkt[]) // TODO failing function
   {
-   //for(int i = 0; i < 5; i++)
-   //  {
-   //   if(inpkt[i] > VARINT_MAX_ONE_BYTE || inpkt[i] < 2)
-   //     {
-   //      printf("Invalid Remaining Length: %d", inpkt[i]);
-   //      return true;
-   //     }
-   //  }
-     return false;
+//for(int i = 0; i < 5; i++)
+//  {
+//   if(inpkt[i] > VARINT_MAX_ONE_BYTE || inpkt[i] < 2)
+//     {
+//      printf("Invalid Remaining Length: %d", inpkt[i]);
+//      return true;
+//     }
+//  }
+   return false;
   }
 //+------------------------------------------------------------------+
 

@@ -46,19 +46,32 @@ void OnStart()
    Print(TEST_DecodeTwoByteInt_OneByte());
    Print(TEST_DecodeTwoByteInt_TwoBytes());
    Print(TEST_ReadUserProperty());
-   //Print(TEST_ReadRemainingLength_INVALID()); // TODO failing test
+//Print(TEST_ReadRemainingLength_INVALID()); // TODO failing test
    Print(TEST_ReadRemainingLength_ZERO());
    Print(TEST_ReadRemainingLength_OneByte());
    Print(TEST_ReadRemainingLength_TwoBytes());
    Print(TEST_ReadRemainingLength_ThreeBytes());
    Print(TEST_ReadRemainingLength_FourBytes());
+   Print(TEST_ReadPropertyLength_ZERO());
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_ReadPropertyLength_ZERO()
+  {
+   Print(__FUNCTION__);
+   uchar pkt[] = {4, 4, 0, 1, 0, 0};
+   uint expected = 0;
+   uint result = ReadPropertyLength(pkt, 4);
+   bool istrue = (result == expected);
+   return istrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 //  Digits  From                               To
 //4       2,097,152 (0x80, 0x80, 0x80, 0x01) 268,435,455 (0xFF, 0xFF, 0xFF, 0x7F)
-bool TEST_ReadRemainingLength_FourBytes() 
+bool TEST_ReadRemainingLength_FourBytes()
   {
    Print(__FUNCTION__);
    uint expected = 268435455;
@@ -88,7 +101,7 @@ bool TEST_ReadRemainingLength_ThreeBytes()
 //+------------------------------------------------------------------+
 //Digits  From                               To
 //2       128 (0x80, 0x01)                   16,383 (0xFF, 0x7F) => (255,127)
-bool TEST_ReadRemainingLength_TwoBytes() 
+bool TEST_ReadRemainingLength_TwoBytes()
   {
    Print(__FUNCTION__);
    ushort expected = 16383;
@@ -120,7 +133,7 @@ bool TEST_ReadRemainingLength_ZERO()
   {
    Print(__FUNCTION__);
    uchar expected = 0;
-   uchar inpkt[] = {00000000, 0, 0, 0,0};
+   uchar inpkt[] = {00000000, 0, 0, 0, 0};
    uint result = ReadRemainingLength(inpkt);
    bool istrue = expected == result;
    ZeroMemory(result);
