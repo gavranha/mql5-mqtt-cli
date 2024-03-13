@@ -23,7 +23,15 @@ public:
    void              Build(uchar &pkt[]);
    void              AddRemainingLength(uchar &pkt[], uint idx = 1);
    void              AddPropertyLength(uchar &pkt[]);
+   void              SetPayload(const string topic, uchar &dest_buf[]);
   };
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CUnsubscribe::SetPayload(const string topic, uchar &dest_buf[])
+  {
+   EncodeUTF8String(topic, dest_buf);
+  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+

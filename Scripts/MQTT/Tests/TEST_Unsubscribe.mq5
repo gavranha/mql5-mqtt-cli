@@ -13,7 +13,23 @@
 void OnStart()
   {
    Print(TEST_Build_PacketID_NoProps());
-   
+   Print(TEST_SetPayload());
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_SetPayload()
+  {
+   Print(__FUNCTION__);
+   uchar expected[] = {0, 3, 'a', '/', 'b'};
+   uchar result[];
+   string topic = "a/b";
+   CUnsubscribe *cut = new CUnsubscribe();
+   cut.SetPayload(topic, result);
+   bool istrue = AssertEqual(expected, result);
+   ZeroMemory(result);
+   delete(cut);
+   return istrue;
   }
 //+------------------------------------------------------------------+
 //+------------------------------------------------------------------+
@@ -31,3 +47,4 @@ bool TEST_Build_PacketID_NoProps() // Failing test
    delete(cut);
    return istrue;
   }
+//+------------------------------------------------------------------+
