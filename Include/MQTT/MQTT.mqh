@@ -479,3 +479,20 @@ bool HasInvalidBytes(uchar & inpkt[]) // TODO failing function
 //+------------------------------------------------------------------+
 
 //+------------------------------------------------------------------+
+//+------------------------------------------------------------------+
+//|  get Variable Byte Integer size in bytes                         |
+//+------------------------------------------------------------------+
+uint GetVarintBytes(uint varint)
+  {
+   uint varint_bytes = 0;
+//
+   if(varint > 2 && varint <= VARINT_MAX_ONE_BYTE)
+     {varint_bytes = 1;}
+   if(varint >= VARINT_MIN_TWO_BYTES && varint <= VARINT_MAX_TWO_BYTES)
+     {varint_bytes = 2;}
+   if(varint >= VARINT_MIN_THREE_BYTES && varint <= VARINT_MAX_THREE_BYTES)
+     {varint_bytes = 3;}
+   if(varint >= VARINT_MIN_FOUR_BYTES && varint <= VARINT_MAX_FOUR_BYTES)
+     {varint_bytes = 4;}
+   return varint_bytes;
+  }

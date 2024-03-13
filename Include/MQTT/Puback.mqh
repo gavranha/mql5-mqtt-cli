@@ -35,8 +35,6 @@ protected:
    int               ReleasePktid(ushort pkt_id);
    void              HandlePublishError(uint reason_code);
    bool              IsPendingPkt(uint pkt_id);
-
-   uint              GetRemLenBytes(uint remlen);
    uint              GetPropsLenBytes(uint propslen);
 public:
 
@@ -80,7 +78,7 @@ int CPuback::Read(uchar &pkt[])
       printf("Invalid Remaining Length: %d", m_remlen);
       return -1;
      }
-   m_remlen_bytes = GetRemLenBytes(m_remlen);
+   m_remlen_bytes = GetVarintBytes(m_remlen);
 // implicit Reason Code and no properties
    if(m_remlen == 2)
      {
@@ -133,25 +131,9 @@ int CPuback::Read(uchar &pkt[])
    return -1;
   }
 //+------------------------------------------------------------------+
-//|  get Remaining Length size in bytes                              |
-//+------------------------------------------------------------------+
-uint CPuback::GetRemLenBytes(uint remlen)
-  {
-   uint remlen_bytes = 0;
-//
-   if(m_remlen > 2 && m_remlen <= VARINT_MAX_ONE_BYTE)
-     {remlen_bytes = 1;}
-   if(m_remlen >= VARINT_MIN_TWO_BYTES && m_remlen <= VARINT_MAX_TWO_BYTES)
-     {remlen_bytes = 2;}
-   if(m_remlen >= VARINT_MIN_THREE_BYTES && m_remlen <= VARINT_MAX_THREE_BYTES)
-     {remlen_bytes = 3;}
-   if(m_remlen >= VARINT_MIN_FOUR_BYTES && m_remlen <= VARINT_MAX_FOUR_BYTES)
-     {remlen_bytes = 4;}
-   return remlen_bytes;
-  }
-//+------------------------------------------------------------------+
 //|   validate Properties Length and get its size in bytes           |
 //+------------------------------------------------------------------+
+// TODO use MQTT GetVarintBytes(uint i) and check for propslen other way
 uint CPuback::GetPropsLenBytes(uint propslen)
   {
    uint propslen_bytes = 0;
