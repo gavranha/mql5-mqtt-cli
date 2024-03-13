@@ -16,11 +16,11 @@ private:
 public:
                      CPubcomp(uchar &inpkt[]);
                     ~CPubcomp();
-   bool              IsPubcomp(uchar &inpkt[]);
-      uchar             ReadReasonCode(uchar &inpkt[], uint idx);
+   static bool       IsPubcomp(uchar &inpkt[]);
+   uchar             ReadReasonCode(uchar &inpkt[], uint idx);
    string            ReadReasonString(uchar &inpkt[], uint idx);
   };
-  //+------------------------------------------------------------------+
+//+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 string CPubcomp::ReadReasonString(uchar &inpkt[], uint idx)
@@ -37,7 +37,7 @@ uchar CPubcomp::ReadReasonCode(uchar &inpkt[], uint idx)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool CPubcomp::IsPubcomp(uchar &inpkt[])
+static bool CPubcomp::IsPubcomp(uchar &inpkt[])
   {
    return inpkt[0] == (PUBCOMP << 4) ? true : false;
   }

@@ -16,7 +16,7 @@ private:
 public:
                      CPubrel(uchar &inpkt[]);
                     ~CPubrel();
-   bool              IsPubrel(uchar &inpkt[]);
+   static bool              IsPubrel(uchar &inpkt[]);
    uchar             ReadReasonCode(uchar &inpkt[], uint idx);
    string            ReadReasonString(uchar &inpkt[], uint idx);
   };
@@ -37,7 +37,7 @@ uchar CPubrel::ReadReasonCode(uchar &inpkt[], uint idx)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool CPubrel::IsPubrel(uchar &inpkt[])
+static bool CPubrel::IsPubrel(uchar &inpkt[])
   {
    return inpkt[0] == (PUBREL << 4) ? true : false;
   }

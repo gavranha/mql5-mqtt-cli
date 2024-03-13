@@ -1,58 +1,57 @@
 //+------------------------------------------------------------------+
-//|                                                       Pubrec.mqh |
+//|                                                       Suback.mqh |
 //|                                                                  |
 //|                                                                  |
 //+------------------------------------------------------------------+
+#include "MQTT.mqh"
 #include "IControlPacket.mqh"
 
-
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-class CPubrec : public IControlPacket
+class CSuback : public IControlPacket
   {
 private:
    bool              IsControlPacket() {return true;}
+
 public:
-                     CPubrec(uchar &inpkt[]);
-                    ~CPubrec();
-   static  bool      IsPubrec(uchar &inpkt[]);
-   uchar             ReadReasonCode(uchar &inpkt[], uint idx);
+                     CSuback();
+                    ~CSuback();
+   static bool       IsSuback(uchar &inpkt[]);
    string            ReadReasonString(uchar &inpkt[], uint idx);
+   void              ReadPayload(uchar &inpkt[], uchar &dest_buf[]);
   };
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-string CPubrec::ReadReasonString(uchar &inpkt[], uint idx)
+void CSuback::ReadPayload(uchar &inpkt[], uchar &dest_buf[])
+  {
+   ArrayCopy(dest_buf, inpkt);
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+string CSuback::ReadReasonString(uchar &inpkt[], uint idx)
   {
    return ReadUtf8String(inpkt, idx);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-uchar CPubrec::ReadReasonCode(uchar &inpkt[], uint idx)
+static bool CSuback::IsSuback(uchar &inpkt[])
   {
-   return (uchar)inpkt[idx];
+   return inpkt[0] == (SUBACK << 4) ? true : false;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-static bool CPubrec::IsPubrec(uchar & inpkt[])
-  {
-   return inpkt[0] == (PUBREC << 4) ? true : false;
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-CPubrec::CPubrec(uchar & inpkt[])
+CSuback::CSuback()
   {
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-CPubrec::~CPubrec()
+CSuback::~CSuback()
   {
   }
-//+------------------------------------------------------------------+
-
 //+------------------------------------------------------------------+

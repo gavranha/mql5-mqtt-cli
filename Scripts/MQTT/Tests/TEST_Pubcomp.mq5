@@ -50,27 +50,19 @@ bool TEST_ReadReasonCode()
 //+------------------------------------------------------------------+
 bool TEST_IsPubcomp_YES()
   {
-   Print( __FUNCTION__);
+   Print(__FUNCTION__);
    bool expected = true;
    uchar inpkt[] = {112};
-   CPubcomp *cut = new CPubcomp(inpkt);
-   bool result = cut.IsPubcomp(inpkt);
-   bool istrue = expected == result;
-   ZeroMemory(result);
-   delete(cut);
-   return istrue;
+   bool result = CPubcomp(inpkt).IsPubcomp(inpkt);
+   return expected == result;
   }
 //+------------------------------------------------------------------+
 bool TEST_IsPubcomp_NO()
   {
-   Print( __FUNCTION__);
+   Print(__FUNCTION__);
    bool expected = false;
    uchar inpkt[] = {'n', 'o', 'a', 'c', 'k'};
-   CPubcomp *cut = new CPubcomp(inpkt);
-   bool result = cut.IsPubcomp(inpkt);
-   bool isFalse = expected == result;
-   ZeroMemory(result);
-   delete(cut);
-   return isFalse;
+   bool result = CPubcomp(inpkt).IsPubcomp(inpkt);
+   return expected == result;
   }
 //+------------------------------------------------------------------+

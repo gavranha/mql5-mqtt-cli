@@ -49,27 +49,19 @@ bool TEST_ReadReasonCode()
 //+------------------------------------------------------------------+
 bool TEST_IsPubrec_YES()
   {
-   Print( __FUNCTION__);
+   Print(__FUNCTION__);
    bool expected = true;
    uchar inpkt[] = {80};
-   CPubrec *cut = new CPubrec(inpkt);
-   bool result = cut.IsPubrec(inpkt);
-   bool istrue = expected == result;
-   ZeroMemory(result);
-   delete(cut);
-   return istrue;
+   bool result = CPubrec(inpkt).IsPubrec(inpkt);
+   return expected == result;
   }
 //+------------------------------------------------------------------+
 bool TEST_IsPubrec_NO()
   {
-   Print( __FUNCTION__);
+   Print(__FUNCTION__);
    bool expected = false;
    uchar inpkt[] = {'n', 'o', 'a', 'c', 'k'};
-   CPubrec *cut = new CPubrec(inpkt);
-   bool result = cut.IsPubrec(inpkt);
-   bool isFalse = expected == result;
-   ZeroMemory(result);
-   delete(cut);
-   return isFalse;
+   bool result = CPubrec(inpkt).IsPubrec(inpkt);
+   return expected == result;
   }
 //+------------------------------------------------------------------+

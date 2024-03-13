@@ -1,58 +1,72 @@
 //+------------------------------------------------------------------+
-//|                                                       Pubrec.mqh |
+//|                                                  TEST_Suback.mq5 |
 //|                                                                  |
 //|                                                                  |
 //+------------------------------------------------------------------+
-#include "IControlPacket.mqh"
+#include "TestUtil.mqh"
+#include <MQTT\Suback.mqh>
 
-
 //+------------------------------------------------------------------+
-//|                                                                  |
+//| Script program start function                                    |
 //+------------------------------------------------------------------+
-class CPubrec : public IControlPacket
+void OnStart()
   {
-private:
-   bool              IsControlPacket() {return true;}
-public:
-                     CPubrec(uchar &inpkt[]);
-                    ~CPubrec();
-   static  bool      IsPubrec(uchar &inpkt[]);
-   uchar             ReadReasonCode(uchar &inpkt[], uint idx);
-   string            ReadReasonString(uchar &inpkt[], uint idx);
-  };
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-string CPubrec::ReadReasonString(uchar &inpkt[], uint idx)
-  {
-   return ReadUtf8String(inpkt, idx);
+   Print(TEST_IsSuback_NO());
+   Print(TEST_IsSuback_YES());
+   Print(TEST_ReadReasonString());
+   Print(TEST_ReadPayload());
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-uchar CPubrec::ReadReasonCode(uchar &inpkt[], uint idx)
+bool TEST_ReadPayload()
   {
-   return (uchar)inpkt[idx];
+   Print(__FUNCTION__);
+   uchar expected[] = {0, 1, 2};
+   uchar inpkt[] = {0x00, 0x01, 0x02};
+   uchar result[];
+   CSuback *cut = new CSuback();
+   cut.ReadPayload(inpkt,result);
+   bool istrue = AssertEqual(expected, result);
+   ZeroMemory(result);
+   delete(cut);
+   return istrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-static bool CPubrec::IsPubrec(uchar & inpkt[])
+bool TEST_ReadReasonString()
   {
-   return inpkt[0] == (PUBREC << 4) ? true : false;
+   Print(__FUNCTION__);
+   string expected = "reasonstr";
+   uchar inpkt[] = {31, 0, 9, 'r', 'e', 'a', 's', 'o', 'n', 's', 't', 'r'};
+   CSuback *cut = new CSuback();
+   string result = cut.ReadReasonString(inpkt, 1);
+   bool istrue = StringCompare(expected, result) == 0;
+   delete(cut);
+   ZeroMemory(result);
+   return istrue;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-CPubrec::CPubrec(uchar & inpkt[])
+bool TEST_IsSuback_YES()
   {
+   Print(__FUNCTION__);
+   bool expected = true;
+   uchar inpkt[] = {144};
+   bool result = CSuback().IsSuback(inpkt);
+   return expected == result;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-CPubrec::~CPubrec()
+bool TEST_IsSuback_NO()
   {
+   Print(__FUNCTION__);
+   bool expected = false;
+   uchar inpkt[] = {'n', 'o', 'a', 'c', 'k'};
+   bool result = CSuback().IsSuback(inpkt);
+   return expected == result;
   }
-//+------------------------------------------------------------------+
-
 //+------------------------------------------------------------------+

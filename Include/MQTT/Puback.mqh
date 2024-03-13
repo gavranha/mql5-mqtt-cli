@@ -46,7 +46,7 @@ public:
                      CPuback(void) {};
                     ~CPuback(void) {};
                      CPuback(uchar &inpkt[]);
-   bool              IsPuback(uchar &inpkt[]);
+   static bool       IsPuback(uchar &inpkt[]);
    ushort            ReadPacketIdentifier(uchar &pkt[], uint idx);
    uchar             ReadReasonCode(uchar &pkt[], uint idx);
    uint              ReadProperties(uchar &pkt[], uint props_len, uint idx);
@@ -62,7 +62,7 @@ string CPuback::ReadReasonString(uchar &inpkt[], uint idx)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool CPuback::IsPuback(uchar &inpkt[])
+static bool CPuback::IsPuback(uchar &inpkt[])
   {
    return inpkt[0] == (PUBACK << 4) ? true : false;
   }

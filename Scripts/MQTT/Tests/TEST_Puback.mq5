@@ -84,30 +84,22 @@ bool TEST_ReadPacketIdentifier()
 //+------------------------------------------------------------------+
 bool TEST_IsPuback_YES()
   {
-   Print( __FUNCTION__);
+    Print(__FUNCTION__);
    bool expected = true;
-   uchar inpkt[] = {64, 0};
-   CPuback *cut = new CPuback(inpkt);
-   bool result = cut.IsPuback(inpkt);
-   bool is_true = expected == result;
-   ZeroMemory(result);
-   delete(cut);
-   return is_true;
+   uchar inpkt[] = {64};
+   bool result = CPuback(inpkt).IsPuback(inpkt);
+   return expected == result;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 bool TEST_IsPuback_NO()
   {
-   Print( __FUNCTION__);
+   Print(__FUNCTION__);
    bool expected = false;
    uchar inpkt[] = {'n', 'o', 'a', 'c', 'k'};
-   CPuback *cut = new CPuback(inpkt);
-   bool result = cut.IsPuback(inpkt);
-   bool isfalse = expected == result;
-   ZeroMemory(result);
-   delete(cut);
-   return isfalse;
+   bool result = CPuback().IsPuback(inpkt);
+   return expected == result;
   }
 //+------------------------------------------------------------------+
 //|                          Ctor                                    |
