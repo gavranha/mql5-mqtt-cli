@@ -25,7 +25,7 @@ enum ENUM_PKT_TYPE
    UNSUBSCRIBE =  0x0A, // Unsubscribe request
    UNSUBACK    =  0x0B, // Unsubscribe acknowledgment
    PINGREQ     =  0x0C, // PING request
-   PINGRESP    =  0x0D, // PING response
+   PINGRESP    =  0xD, // PING response
    DISCONNECT  =  0x0E, // Disconnect notification
    AUTH        =  0x0F, // Authentication exchange
   };
