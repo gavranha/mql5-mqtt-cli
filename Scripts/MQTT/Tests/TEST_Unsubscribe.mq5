@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
 //|                                             TEST_Unsubscribe.mq5 |
-//|                                                                  |
-//|                                                                  |
+//|            ********* WORK IN PROGRESS **********                 |
+//| **** PART OF ARTICLE https://www.mql5.com/en/articles/14391 **** |
 //+------------------------------------------------------------------+
 #include "TestUtil.mqh"
 #include <MQTT\MQTT.mqh>
