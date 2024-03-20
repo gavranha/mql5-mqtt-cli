@@ -24,8 +24,8 @@ int OnStart()
    pkt[7] = 'T';
    pkt[8] = 5; // MQTT 5.0
    pkt[9] = 2; // clean start
-   pkt[10] = 0;
-   pkt[11] = 10; // keep alive 60sec
+   pkt[10] = 28;
+   pkt[11] = 2; // keep alive 7200sec
    pkt[12] = 0; // prop len
    pkt[13] = 0;
    pkt[14] = 3; // client ID
@@ -89,13 +89,40 @@ bool Subscribe(int skt)
      {
       Print("Not Subscribe acknowledgment");
      }
+   else
+     {
+      Print("Subscribed");
+     }
    if(rsp[5] > 2)  // Suback Reason Code (Granted QoS 2)
      {
       Print("Subscription Refused with error code %d ", rsp[4]);
       return false;
      }
+   for(;;)
+     {
+      do
+        {
+         uchar received_publish_pkt[];
+         string msg = "";
+         uint to_read = SocketIsReadable(skt);
+         if(to_read)
+           {
+            int published_len;
+            published_len = SocketRead(skt, received_publish_pkt, to_read, timeout);
+            printf("published len %d", published_len);
+            string tmp = CharArrayToString(received_publish_pkt);
+            StringAdd(msg, tmp);
+            Print("=== rcv pkt ===");
+            ArrayPrint(received_publish_pkt);
+            if(StringLen(msg) > 0)
+              {
+               printf("msg %s", msg);
+              }
+           }
+        }
+      while(SocketIsReadable(skt));
+     }
    SocketClose(skt);
-   Print("Subscribed");
    return true;
   }
 //+------------------------------------------------------------------+
