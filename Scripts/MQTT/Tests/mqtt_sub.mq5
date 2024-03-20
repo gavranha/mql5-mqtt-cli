@@ -10,9 +10,8 @@ int broker_port = 80;
 //+------------------------------------------------------------------+
 //| Script program start function                                    |
 //+------------------------------------------------------------------+
-void OnStart()
+int OnStart()
   {
-// 10 16 00 04 4d 51 54 54 05 01 00 10 05 17 00 00 00 10
    uchar pkt[];
    ArrayResize(pkt, 18);
    pkt[0] = 16;
@@ -35,54 +34,68 @@ void OnStart()
    pkt[17] = '5';
    ArrayPrint(pkt);
    int skt = SocketCreate();
-   if(Connect(skt, pkt))
+   if(!Connect(skt, pkt))
      {
-      Publish(skt);
+      return -1;
      }
+   if(!Subscribe(skt))
+     {
+      return -1;
+     }
+   return 0;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool Publish(int skt)
+bool Subscribe(int skt)
   {
+   Print(__FUNCTION__);
    uchar pkt[];
-   ArrayResize(pkt, 8);
-   pkt[0] = 48;
-   pkt[1] = 6;
-   pkt[2] = 0; // topic name
+   ArrayResize(pkt, 9);
+   pkt[0] = 0x82; // (130)
+   pkt[1] = 7;
+   pkt[2] = 0; // packet ID
    pkt[3] = 1;
-   pkt[4] = 't';
-   pkt[5] = 0; // props len
-   pkt[6] = 'm'; // payload
-   pkt[7] = '5';
+   pkt[4] = 0; // props len
+   pkt[5] = 0; // first topic name
+   pkt[6] = 1;
+   pkt[7] = 't';
+   pkt[8] = 0; // subscription options (max QoS 2)
    ArrayPrint(pkt);
-//pkt[5] = 0; // if QoS > 0 ==> packet ID
-//pkt[6] = 1;
-//pkt[7] = 2;
+//---
    if(SocketSend(skt, pkt, ArraySize(pkt)) < 0)
      {
-      Print("Failed sending publish ", GetLastError());
+      Print("Failed sending subscribe ", GetLastError());
+      SocketClose(skt);
       return false;
      }
 //---
    char rsp[];
-   uint len = SocketIsReadable(skt);
-   SocketRead(skt, rsp, 40, 1000);
+   uint timeout = 5000;
+   do
+     {
+      uint len = SocketIsReadable(skt);
+      if(len)
+        {
+         int rsp_len;
+         rsp_len = SocketRead(skt, rsp, len, timeout);
+         printf("response len %d", rsp_len);
+        }
+     }
+   while(SocketIsReadable(skt));
+//---
    ArrayPrint(rsp);
-   if(rsp[0] >> 4 != PUBACK)
+   if(((rsp[0] >> 4) & SUBACK) != SUBACK)
      {
-      Print("Not Publish acknowledgment");
+      Print("Not Subscribe acknowledgment");
+     }
+   if(rsp[5] > 2)  // Suback Reason Code (Granted QoS 2)
+     {
+      Print("Subscription Refused with error code %d ", rsp[4]);
       return false;
      }
-   if(rsp[3] != MQTT_REASON_CODE_SUCCESS)  // Publish Return code (Publication accepted)
-     {
-      Print("Publication Refused");
-      return false;
-     }
-   if(skt != INVALID_HANDLE)
-     {
-      SocketClose(skt);
-     }
+   SocketClose(skt);
+   Print("Subscribed");
    return true;
   }
 //+------------------------------------------------------------------+
@@ -90,6 +103,7 @@ bool Publish(int skt)
 //+------------------------------------------------------------------+
 bool Connect(int skt, uchar & pkt[])
   {
+   Print(__FUNCTION__);
    if(skt != INVALID_HANDLE)
      {
       if(SocketConnect(skt, broker_host, broker_port, 1000))
@@ -103,7 +117,6 @@ bool Connect(int skt, uchar & pkt[])
      }
 //---
    char rsp[];
-   uint len = SocketIsReadable(skt);
    SocketRead(skt, rsp, 4, 1000);
    if(rsp[0] >> 4 != CONNACK)
      {
@@ -118,6 +131,4 @@ bool Connect(int skt, uchar & pkt[])
    ArrayPrint(rsp);
    return true;
   }
-//+------------------------------------------------------------------+
-
 //+------------------------------------------------------------------+
