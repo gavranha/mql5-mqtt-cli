@@ -29,9 +29,9 @@ int OnStart()
    pkt[12] = 0; // prop len
    pkt[13] = 0;
    pkt[14] = 3; // client ID
-   pkt[15] = 'M';
-   pkt[16] = 'T';
-   pkt[17] = '5';
+   pkt[15] = 'S';
+   pkt[16] = 'U';
+   pkt[17] = 'B';
    ArrayPrint(pkt);
    int skt = SocketCreate();
    if(!Connect(skt, pkt))
@@ -102,15 +102,20 @@ bool Subscribe(int skt)
      {
       do
         {
+         ResetLastError();
          uchar inpkt[];
          string msg = "";
          int len;
-         if(!(len = (int)SocketIsReadable(skt))){Sleep(1000);}
+         if(!(len = (int)SocketIsReadable(skt)))
+           {
+            Sleep(1000);
+           }
          else
            {
             if((len = SocketRead(skt, inpkt, len, timeout)) > 0)
               {
                msg += CharArrayToString(inpkt, 6, -1, CP_UTF8);
+               //---
                printf("published len %d", inpkt.Size());
                Print("=== inpkt ===");
                ArrayPrint(inpkt);
@@ -118,7 +123,11 @@ bool Subscribe(int skt)
               }
            }
         }
-      while(SocketIsReadable(skt));
+      while(SocketIsReadable(skt) && !IsStopped() && !_LastError);
+     }
+   if(_LastError)
+     {
+      Print("Error reading msg: %d", GetLastError());
      }
    SocketClose(skt);
    return true;

@@ -29,9 +29,9 @@ int OnStart()
    pkt[12] = 0; // prop len
    pkt[13] = 0;
    pkt[14] = 3; // client ID
-   pkt[15] = 'M';
-   pkt[16] = 'T';
-   pkt[17] = '5';
+   pkt[15] = 'P';
+   pkt[16] = 'U';
+   pkt[17] = 'B';
    ArrayPrint(pkt);
    int skt = SocketCreate();
    if(skt != INVALID_HANDLE)
@@ -80,8 +80,8 @@ bool Publish(int skt)
    pkt[3] = 1;
    pkt[4] = 't';
    pkt[5] = 0; // props len
-   pkt[6] = 'p'; // payload
-   pkt[7] = '0';
+   pkt[6] = 'H'; // payload
+   pkt[7] = 'i';
    ArrayPrint(pkt);
 //pkt[5] = 0; // if QoS > 0 ==> packet ID
 //pkt[6] = 1;
