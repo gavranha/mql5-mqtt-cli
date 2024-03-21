@@ -102,20 +102,18 @@ bool Subscribe(int skt)
      {
       do
         {
-         uchar received_publish_pkt[];
+         uchar inpkt[];
          string msg = "";
-         uint to_read = SocketIsReadable(skt);
-         if(to_read)
+         int len;
+         if(!(len = (int)SocketIsReadable(skt))){Sleep(1000);}
+         else
            {
-            int published_len;
-            published_len = SocketRead(skt, received_publish_pkt, to_read, timeout);
-            printf("published len %d", published_len);
-            string tmp = CharArrayToString(received_publish_pkt);
-            StringAdd(msg, tmp);
-            Print("=== rcv pkt ===");
-            ArrayPrint(received_publish_pkt);
-            if(StringLen(msg) > 0)
+            if((len = SocketRead(skt, inpkt, len, timeout)) > 0)
               {
+               msg += CharArrayToString(inpkt, 6, -1, CP_UTF8);
+               printf("published len %d", inpkt.Size());
+               Print("=== inpkt ===");
+               ArrayPrint(inpkt);
                printf("msg %s", msg);
               }
            }
