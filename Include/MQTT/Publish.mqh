@@ -189,7 +189,7 @@ void CPublish::Build(uchar &pkt[]) // TODO break down this function
 // QoS > 0 require packet ID
    if((m_pubflags & 0x06) != 0)
      {
-      SetPacketID(pkt, pkt.Size());
+      SetPacketIdentifier(pkt, pkt.Size());
      }
 // properties length
    uchar buf[];

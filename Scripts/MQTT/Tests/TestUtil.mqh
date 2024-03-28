@@ -8,6 +8,28 @@
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+bool SendPublish(const string broker_host, const int broker_port, uchar &pkt[])
+  {
+   int skt = SocketCreate();
+   if(skt != INVALID_HANDLE)
+     {
+      if(SocketConnect(skt, broker_host, broker_port, 1000))
+        {
+         Print("Connected ", broker_host);
+        }
+     }
+   if(SocketSend(skt, pkt, ArraySize(pkt)) < 0)
+     {
+      Print("Failed sending publish ", GetLastError());
+      SocketClose(skt);
+      return false;
+     }
+   return true;
+  }
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 int SendConnect(const string broker_host, const int broker_port, uchar &pkt[])
   {
    int skt = SocketCreate();
