@@ -3,6 +3,44 @@
 //|            ********* WORK IN PROGRESS **********                 |
 //| **** PART OF ARTICLE https://www.mql5.com/en/articles/14391 **** |
 //+------------------------------------------------------------------+
+#include <MQTT\MQTT.mqh>
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+int SendConnect(const string broker_host, const int broker_port, uchar &pkt[])
+  {
+   int skt = SocketCreate();
+   if(skt != INVALID_HANDLE)
+     {
+      if(SocketConnect(skt, broker_host, broker_port, 1000))
+        {
+         Print("Connected ", broker_host);
+        }
+     }
+   if(SocketSend(skt, pkt, ArraySize(pkt)) < 0)
+     {
+      Print("Failed sending connect ", GetLastError());
+     }
+//---
+   char rsp[];
+   SocketRead(skt, rsp, 4, 1000);
+   if(rsp[0] >> 4 != CONNACK)
+     {
+      Print("Not Connect acknowledgment");
+      return -1;
+     }
+   if(rsp[3] != MQTT_REASON_CODE_SUCCESS)  // Connect Return code (Connection accepted)
+     {
+      Print("Connection Refused");
+      return -1;
+     }
+   ArrayPrint(rsp);
+   return 0;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 bool AssertEqual(ushort & expected[], ushort & result[])
   {
    if(!ArrayCompare(expected, result) == 0)
@@ -48,7 +86,7 @@ bool AssertNotEqual(uchar & expected[], uchar & result[])
      }
    return false;
   }
-  //+------------------------------------------------------------------+
+//+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 bool AssertEqual(string &expected[], string &result[])

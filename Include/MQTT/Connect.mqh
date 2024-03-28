@@ -60,6 +60,7 @@ protected:
    uchar             m_password[];
 public:
                      CConnect();
+                     CConnect(const string broker_host, const int broker_port = 1883, bool ssl_tls = false);
                     ~CConnect();
    //--- methods for setting Connect Flags
    void              SetCleanStart(const bool cleanStart);
@@ -114,7 +115,7 @@ void CConnect::SetUserName(const string username)
   {
    ArrayResize(m_user_name, StringLen(username) + 2);
    EncodeUTF8String(username, m_user_name);
-   ArrayCopy(m_payload,m_user_name,m_payload.Size());
+   ArrayCopy(m_payload, m_user_name, m_payload.Size());
    m_remlen += m_user_name.Size();
   }
 //+------------------------------------------------------------------+
@@ -124,7 +125,7 @@ void CConnect::SetWillPayload(const string will_payload)
   {
    ArrayResize(m_will_payload, StringLen(will_payload));
    StringToCharArray(will_payload, m_will_payload, 0, StringLen(will_payload));
-   ArrayCopy(m_payload, m_will_payload,m_payload.Size());
+   ArrayCopy(m_payload, m_will_payload, m_payload.Size());
    m_remlen += m_will_payload.Size();
   }
 //+------------------------------------------------------------------+
@@ -134,7 +135,7 @@ void CConnect::SetWillTopic(const string will_topic)
   {
    ArrayResize(m_will_topic, StringLen(will_topic) + 2);
    EncodeUTF8String(will_topic, m_will_topic);
-   ArrayCopy(m_payload,m_will_topic,m_payload.Size());
+   ArrayCopy(m_payload, m_will_topic, m_payload.Size());
    m_remlen += m_will_topic.Size();
   }
 //+------------------------------------------------------------------+
@@ -385,7 +386,7 @@ void CConnect::SetClientIdentifier(const string clientId)
   {
    ArrayResize(m_clientid, StringLen(clientId) + 2);
    EncodeUTF8String(clientId, m_clientid);
-   //m_payload_len += m_clientid.Size();
+//m_payload_len += m_clientid.Size();
    m_remlen += m_clientid.Size();
    uchar a = 0;
   }
@@ -396,6 +397,12 @@ void CConnect::Build(uchar & pkt[])
   {
    uchar fixhead[];
    uchar varint_remlen[];
+   // if we have no props the Remaining Length must 
+   // include one byte for Property Length equals 0
+   if(m_connprops.Size() == 0) 
+     {
+      m_remlen++; 
+     }
    EncodeVariableByteInteger(m_remlen, varint_remlen);
    ArrayResize(fixhead, varint_remlen.Size() + 1);
    fixhead[0] = CONNECT << 4;
@@ -409,7 +416,7 @@ void CConnect::Build(uchar & pkt[])
    varhead[3] = MQTT_PROTOCOL_NAME_BYTE_4;
    varhead[4] = MQTT_PROTOCOL_NAME_BYTE_5;
    varhead[5] = MQTT_PROTOCOL_NAME_BYTE_6;
-   varhead[6] = MQTT_PROTOCOL_VERSION_COMPAT;
+   varhead[6] = MQTT_PROTOCOL_VERSION;
    varhead[7] = m_connflags;
    varhead[8] = keepAlive.msb;
    varhead[9] = keepAlive.lsb;
@@ -418,10 +425,10 @@ void CConnect::Build(uchar & pkt[])
 //--- Variable Header
    ArrayCopy(pkt, varhead, pkt.Size());
 ////--- Connect Properties
-//   uchar varint_connprops_len[];
-//   EncodeVariableByteInteger(m_connprops_len, varint_connprops_len);
-//   ArrayCopy(pkt, varint_connprops_len, pkt.Size());
-//   ArrayCopy(pkt, m_connprops, pkt.Size());
+   uchar varint_connprops_len[];
+   EncodeVariableByteInteger(m_connprops_len, varint_connprops_len);
+   ArrayCopy(pkt, varint_connprops_len, pkt.Size());
+   ArrayCopy(pkt, m_connprops, pkt.Size());
 //--- Payload - Client Identifier
    ArrayCopy(pkt, m_clientid, pkt.Size());
 ////--- Payload - Will Properties
@@ -494,6 +501,13 @@ void CConnect::SetWillFlag(const bool willFlag)
 void CConnect::SetCleanStart(const bool cleanStart)
   {
    cleanStart ? m_connflags |= CLEAN_START : m_connflags &= ~CLEAN_START;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+CConnect::CConnect(const string broker_host, const int broker_port = 1883, bool ssl_tls = false)
+  {
+   m_remlen = 10;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
