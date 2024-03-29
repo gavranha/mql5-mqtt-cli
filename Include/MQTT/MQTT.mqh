@@ -486,7 +486,7 @@ uint GetVarintBytes(uint varint)
   {
    uint varint_bytes = 0;
 //
-   if(varint == 0 && varint <= VARINT_MAX_ONE_BYTE)
+   if(varint == 0 || varint <= VARINT_MAX_ONE_BYTE)
      {varint_bytes = 1;}
    if(varint >= VARINT_MIN_TWO_BYTES && varint <= VARINT_MAX_TWO_BYTES)
      {varint_bytes = 2;}
