@@ -17,20 +17,28 @@ private:
    uint              m_propslen;
    void              AddRemainingLength(uchar &pkt[], uint idx = 1);
    void              AddPropertyLength(uchar &pkt[]);
+protected:
+   uchar             m_topic_filter[];
+
 public:
                      CSubscribe();
                     ~CSubscribe();
    void              Build(uchar &pkt[]);
    void              SetSubscriptionIdentifier(uchar &dest_buf[]);
    void              SetUserProperty(const string key, const string val, uchar &dest_buf[]);
-   void              SetTopicFilter(const string topic_filter, uchar &dest_buf[]);
+   void              SetTopicFilter(const string topic_filter, uchar subopts_flags = 0);
   };
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void CSubscribe::SetTopicFilter(const string topic_filter, uchar &dest_buf[])
+void CSubscribe::SetTopicFilter(const string topic_filter, uchar subopts_flags = 0)
   {
-   EncodeUTF8String(topic_filter, dest_buf);
+   uchar aux[];
+   EncodeUTF8String(topic_filter, aux);
+   ArrayResize(aux, StringLen(topic_filter) + 3);
+   aux[aux.Size()-1] = subopts_flags;
+   ArrayCopy(m_topic_filter, aux);
+   m_remlen += ArraySize(m_topic_filter);
   }
 // TODO: it must allow for multiple User Properties
 void CSubscribe::SetUserProperty(const string key, const string val, uchar &dest_buf[])
@@ -89,7 +97,7 @@ void CSubscribe::AddRemainingLength(uchar &pkt[], uint idx = 1)
 //+------------------------------------------------------------------+
 void CSubscribe::Build(uchar &pkt[])
   {
-   ArrayResize(pkt, GetVarintBytes(m_remlen) + m_remlen);
+   ArrayResize(pkt, GetVarintBytes(m_remlen) + m_remlen + 2);
    pkt[0] = (SUBSCRIBE << 4) | 2;
    AddRemainingLength(pkt);
    SetPacketIdentifier(pkt, m_remlen_bytes + 1);
