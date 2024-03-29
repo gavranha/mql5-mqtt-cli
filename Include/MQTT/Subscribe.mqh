@@ -15,6 +15,7 @@ private:
    uint              m_remlen;
    uint              m_remlen_bytes;
    uint              m_propslen;
+   uint              m_propslen_bytes;
    void              AddRemainingLength(uchar &pkt[], uint idx = 1);
    void              AddPropertyLength(uchar &pkt[]);
 protected:
@@ -36,7 +37,7 @@ void CSubscribe::SetTopicFilter(const string topic_filter, uchar subopts_flags =
    uchar aux[];
    EncodeUTF8String(topic_filter, aux);
    ArrayResize(aux, StringLen(topic_filter) + 3);
-   aux[aux.Size()-1] = subopts_flags;
+   aux[aux.Size() - 1] = subopts_flags;
    ArrayCopy(m_topic_filter, aux);
    m_remlen += ArraySize(m_topic_filter);
   }
@@ -79,37 +80,40 @@ void CSubscribe::SetSubscriptionIdentifier(uchar &dest_buf[])
 //+------------------------------------------------------------------+
 void CSubscribe::AddPropertyLength(uchar &pkt[])
   {
-   uchar aux[] = {};
+   uchar aux[];
    EncodeVariableByteInteger(m_propslen, aux);
    ArrayCopy(pkt, aux, m_remlen_bytes + 3);
+   m_propslen_bytes = GetVarintBytes(m_propslen);
+   m_remlen += m_propslen_bytes;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 void CSubscribe::AddRemainingLength(uchar &pkt[], uint idx = 1)
   {
-   uchar aux[] = {};
+   uchar aux[];
    EncodeVariableByteInteger(m_remlen, aux);
-   ArrayCopy(pkt, aux, idx, 0, aux.Size());
+   ArrayCopy(pkt, aux, idx);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 void CSubscribe::Build(uchar &pkt[])
   {
-   ArrayResize(pkt, GetVarintBytes(m_remlen) + m_remlen + 2);
+   m_remlen_bytes = GetVarintBytes(m_remlen);
+   ArrayResize(pkt, 2 + m_remlen_bytes + m_remlen);
    pkt[0] = (SUBSCRIBE << 4) | 2;
-   AddRemainingLength(pkt);
    SetPacketIdentifier(pkt, m_remlen_bytes + 1);
+   m_remlen += 2;
    AddPropertyLength(pkt);
+   AddRemainingLength(pkt);
+   ArrayCopy(pkt, m_topic_filter, 1 + m_remlen_bytes + 2 + m_propslen_bytes); // pkt type + remlen bytes + pkt ID + props bytes
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 CSubscribe::CSubscribe()
   {
-   m_remlen = 4;
-   m_remlen_bytes = GetVarintBytes(m_remlen);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
