@@ -171,11 +171,11 @@ Digits  From                               To
 //+------------------------------------------------------------------+
 //|                 Subscription Options                             |
 //+------------------------------------------------------------------+
-#define MQTT_SUB_OPTS_QoS_0               = 0x00;
-#define MQTT_SUB_OPTS_QoS_1               = 0x01;
-#define MQTT_SUB_OPTS_QoS_2               = 0x02;
-#define MQTT_SUB_OPTS_NON_LOCAL           = 0x04;
-#define MQTT_SUB_OPTS_RETAIN_AS_PUBLISHED = 0x08;
-#define MQTT_SUB_OPTS_RETAIN_HANDLING_0   = 0x00;
-#define MQTT_SUB_OPTS_RETAIN_HANDLING_1   = 0x10;
-#define MQTT_SUB_OPTS_RETAIN_HANDLING_2   = 0x20;
+#define MQTT_SUB_OPTS_QoS_0               0x00
+#define MQTT_SUB_OPTS_QoS_1               0x01
+#define MQTT_SUB_OPTS_QoS_2               0x02
+#define MQTT_SUB_OPTS_NON_LOCAL           0x04
+#define MQTT_SUB_OPTS_RETAIN_AS_PUBLISHED 0x08
+#define MQTT_SUB_OPTS_RETAIN_HANDLING_0   0x00
+#define MQTT_SUB_OPTS_RETAIN_HANDLING_1   0x10
+#define MQTT_SUB_OPTS_RETAIN_HANDLING_2   0x20
