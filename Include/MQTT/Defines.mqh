@@ -167,3 +167,15 @@ Digits  From                               To
 #define MQTT_AUTH_REASON_CODE_SUCCESS                 0x00 // (0)
 #define MQTT_AUTH_REASON_CODE_CONTINUE_AUTHENTICATION 0x18 // (24)
 #define MQTT_AUTH_REASON_CODE_RE_AUTHENTICATE         0x19 // (25)
+
+//+------------------------------------------------------------------+
+//|                 Subscription Options                             |
+//+------------------------------------------------------------------+
+#define MQTT_SUB_OPTS_QoS_0               = 0x00;
+#define MQTT_SUB_OPTS_QoS_1               = 0x01;
+#define MQTT_SUB_OPTS_QoS_2               = 0x02;
+#define MQTT_SUB_OPTS_NON_LOCAL           = 0x04;
+#define MQTT_SUB_OPTS_RETAIN_AS_PUBLISHED = 0x08;
+#define MQTT_SUB_OPTS_RETAIN_HANDLING_0   = 0x00;
+#define MQTT_SUB_OPTS_RETAIN_HANDLING_1   = 0x10;
+#define MQTT_SUB_OPTS_RETAIN_HANDLING_2   = 0x20;
