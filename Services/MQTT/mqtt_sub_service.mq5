@@ -1,5 +1,5 @@
 //+------------------------------------------------------------------+
-//|                                                         MQTT.mq5 |
+//|                                             mqtt_sub_service.mq5 |
 //|                                                                  |
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -21,13 +21,13 @@ int skt;
 int OnStart()
   {
    Print(__FILE__ + " : " + __FUNCTION__);
-   Print("MQTT Service started");
+   Print("MQTT Subscribe Service started");
 //---
    uchar conn_pkt[];
    CConnect *conn = new CConnect(host, port);
    conn.SetCleanStart(true);
-   conn.SetKeepAlive(120);
-   conn.SetClientIdentifier("MT5");
+   conn.SetKeepAlive(3600);
+   conn.SetClientIdentifier("MT5_SUB");
    conn.Build(conn_pkt);
    ArrayPrint(conn_pkt);
 //---
@@ -104,6 +104,7 @@ bool SendSubscribe(uchar &pkt[])
             if((len = SocketRead(skt, inpkt, len, timeout)) > 0)
               {
                msg += CPublish().ReadMessage(inpkt);
+               WriteToChart(msg);
                //---
                printf("published len %d", inpkt.Size());
                Print("=== inpkt ===");
@@ -157,18 +158,20 @@ int SendConnect(const string h, const int p, uchar &pkt[])
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void WriteToChart(datetime t, double o, double l, double h, double c, long v, long m = 0)
+void WriteToChart(string new_rates)
   {
-   MqlRates r[1];
-   r[0].time = t;
-   r[0].open = o;
-   r[0].low = l;
-   r[0].high = h;
-   r[0].close = c;
-   r[0].tick_volume = v;
-   r[0].spread = 0;
-   r[0].real_volume = m;
-   if(CustomRatesUpdate("MyBITCOIN", r) < 1)
+   string new_rates_arr[];
+   StringSplit(new_rates, 45, new_rates_arr);
+   MqlRates rates[1];
+   rates[0].time = StringToTime(new_rates_arr[0]);
+   rates[0].open = StringToDouble(new_rates_arr[1]);
+   rates[0].high = StringToDouble(new_rates_arr[2]);
+   rates[0].low = StringToDouble(new_rates_arr[3]);
+   rates[0].close = StringToDouble(new_rates_arr[4]);
+   rates[0].tick_volume = StringToInteger(new_rates_arr[5]);
+   rates[0].spread = 0;
+   rates[0].real_volume = StringToInteger(new_rates_arr[6]);
+   if(CustomRatesUpdate("MyBITCOIN", rates) < 1)
      {
       Print("CustomRatesUpdate failed: ", _LastError);
      }
