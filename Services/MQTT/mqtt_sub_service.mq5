@@ -6,6 +6,7 @@
 #include <MQTT\MQTT.mqh>
 #include <MQTT\Connect.mqh>
 #include <MQTT\Subscribe.mqh>
+#include <MQTT\Publish.mqh>
 
 #property service
 
@@ -102,7 +103,7 @@ bool SendSubscribe(uchar &pkt[])
            {
             if((len = SocketRead(skt, inpkt, len, timeout)) > 0)
               {
-               msg += CharArrayToString(inpkt, 4, -1, CP_UTF8);
+               msg += CPublish().ReadMessage(inpkt);
                //---
                printf("published len %d", inpkt.Size());
                Print("=== inpkt ===");

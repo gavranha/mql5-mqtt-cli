@@ -50,7 +50,27 @@ public:
    void              SetPayload(const string payload);
    //--- method for building the final packet
    void              Build(uchar &result[]);
+   //--- static method for reading incoming packets
+   static string     ReadTopicName(uchar &inpkt[]);
+   static string     ReadMessage(uchar &inpkt[]);
   };
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+static string CPublish::ReadMessage(uchar &inpkt[])
+  {
+   string topic_name = ReadUtf8String(inpkt, 2);
+   string msg = CharArrayToString(inpkt, StringLen(topic_name) + 5, WHOLE_ARRAY, CP_UTF8);
+   return msg;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+static string CPublish::ReadTopicName(uchar &inpkt[])
+  {
+   string topic_name = ReadUtf8String(inpkt, 2);
+   return topic_name;
+  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+

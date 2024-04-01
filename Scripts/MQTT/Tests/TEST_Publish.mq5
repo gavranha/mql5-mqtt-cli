@@ -57,7 +57,31 @@ void OnStart()
 //   Print(TEST_Ctor_Retain_QoS2_Dup_TopicName5Char());
 ////--- Test Dev Environment
 //   Print(TEST_Server_Is_Reachable());
-   Print(TEST_Publish_QoS_0_NoProps());
+//Print(TEST_Publish_QoS_0_NoProps());
+   Print(TEST_Read_TopicName());
+   Print(TEST_Read_Message());
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_Read_Message()
+  {
+   Print(__FUNCTION__);
+   string expected = "quote";
+   uchar inpkt[] = {48, 17, 0, 9, 77, 121, 66, 73, 84, 67, 79, 73, 78, 0, 113, 117, 111, 116, 101};
+   string result = CPublish().ReadMessage(inpkt);
+   return StringCompare(expected, result) == 0;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_Read_TopicName()
+  {
+   Print(__FUNCTION__);
+   string expected = "MyBITCOIN";
+   uchar inpkt[] = {48, 17, 0, 9, 77, 121, 66, 73, 84, 67, 79, 73, 78, 0, 113, 117, 111, 116, 101};
+   string result = CPublish().ReadTopicName(inpkt);
+   return StringCompare(expected, result) == 0;
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -745,4 +769,7 @@ bool TEST_SetTopicName_Empty()
    ZeroMemory(result);
    return isTrue;
   }
+//+------------------------------------------------------------------+
+//+------------------------------------------------------------------+
+
 //+------------------------------------------------------------------+
