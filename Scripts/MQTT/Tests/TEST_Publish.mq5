@@ -33,7 +33,7 @@ void OnStart()
 //   Print(TEST_SetProps_SubscriptionIdentifier_ThreeBytes());
 //   Print(TEST_SetProps_SubscriptionIdentifier_FourBytes());
 //   Print(TEST_SetProps_ContentType());
-//   Print(TEST_SetPayload());
+//   Print(TEST_SetPayloadUTF8()); // why this is HERE? on Props?
 ////--- topic name
 //   Print(TEST_SetTopicName_OneChar());
 //   Print(TEST_SetTopicName_TwoChar());
@@ -58,9 +58,11 @@ void OnStart()
 ////--- Test Dev Environment
 //   Print(TEST_Server_Is_Reachable());
 //Print(TEST_Publish_QoS_0_NoProps());
-   Print(TEST_Read_TopicName());
-   Print(TEST_Read_Message());
+   //Print(TEST_Read_TopicName());
+   //Print(TEST_Read_Message());
+   Print(TEST_SetPayload_RawBytes()); // TODO failing!!!
   }
+
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -101,7 +103,7 @@ bool TEST_Publish_QoS_0_NoProps()
       ArrayResize(publish_pkt, 8);
       CPublish *cut = new CPublish();
       cut.SetTopicName("t");
-      cut.SetPayload("Hi2");
+      cut.SetPayloadUTF8("Hi2");
       cut.Build(publish_pkt);
       delete(cut);
       ArrayPrint(publish_pkt);
@@ -144,7 +146,29 @@ bool TEST_Server_Is_Reachable()
 //+------------------------------------------------------------------+
 //|                          payload                                 |
 //+------------------------------------------------------------------+
-bool TEST_SetPayload()
+bool TEST_SetPayload_RawBytes()
+  {
+   Print(__FUNCTION__);
+   static uchar expected[] =
+     {50, 17, 0, 1, 'a', 0, 1, 2, 1, 0, 0, 0, 'p', 'a', 'y', 'l', 'o', 'a', 'd'}; // QoS1 for pkt ID generation
+   uchar result[];
+   CPublish *cut = new CPublish();
+   cut.SetQoS_1(true);
+   cut.SetTopicName("a");
+   cut.SetPayloadFormatIndicator(RAW_BYTES);
+   cut.SetPayload("payload");
+   cut.Build(result);
+   bool isTrue = AssertEqual(expected, result);
+   delete cut;
+   ArrayPrint(expected);
+   ArrayPrint(result);
+   ZeroMemory(result);
+   return isTrue;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_SetPayloadUTF8()
   {
    Print(__FUNCTION__);
    static uchar expected[] =
@@ -154,7 +178,7 @@ bool TEST_SetPayload()
    cut.SetQoS_1(true);
    cut.SetTopicName("a");
    cut.SetPayloadFormatIndicator(UTF8);
-   cut.SetPayload("payload");
+   cut.SetPayloadUTF8("payload");
    cut.Build(result);
    bool isTrue = AssertEqual(expected, result);
    delete cut;

@@ -48,6 +48,7 @@ public:
    void              SetContentType(const string content_type);
    //--- method for setting the payload
    void              SetPayload(const string payload);
+   void              SetPayloadUTF8(const string payload);
    //--- method for building the final packet
    void              Build(uchar &result[]);
    //--- static method for reading incoming packets
@@ -77,8 +78,17 @@ static string CPublish::ReadTopicName(uchar &inpkt[])
 void CPublish::SetPayload(const string payload)
   {
    uchar aux[];
+   StringToCharArray(payload, aux);
+   ArrayCopy(m_payload, aux, m_props.Size());// TODO why m_props.Size()?
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CPublish::SetPayloadUTF8(const string payload)
+  {
+   uchar aux[];
    EncodeUTF8String(payload, aux);
-   ArrayCopy(m_payload, aux, m_props.Size());
+   ArrayCopy(m_payload, aux, m_props.Size());// TODO why m_props.Size()?
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
