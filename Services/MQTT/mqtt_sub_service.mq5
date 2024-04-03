@@ -103,9 +103,16 @@ bool SendSubscribe(uchar &pkt[])
            }
          else
            {
-            if((len = SocketRead(skt, inpkt, len, timeout)) > 0)
+            // printf("len: %d", len);
+            // TODO
+            // len > 0 should be enough. This is a workaround
+            // for a curious behavior where sometimes len is 1
+            // even when the inpkt array is full of data.
+            // We MUST check it.
+            if((len = SocketRead(skt, inpkt, len, timeout)) > 1)
               {
-               msg += CPublish().ReadMessage(inpkt);
+               ArrayPrint(inpkt);
+               msg += CPublish().ReadMessageRawBytes(inpkt);
                printf("New quote arrived for MySPX500: %s", msg);
                WriteToChart(msg);
               }

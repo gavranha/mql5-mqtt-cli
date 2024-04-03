@@ -69,7 +69,6 @@ string GetRates()
    int copied = CopyRates("#USSPX500", PERIOD_M1, 0, 1, rates);
    if(copied > 0)
      {
-      Print("Bars copied: " + (string)copied);
       string format = "%G-%G-%G-%G-%d-%d";
       string out;
       out = TimeToString(rates[0].time);
