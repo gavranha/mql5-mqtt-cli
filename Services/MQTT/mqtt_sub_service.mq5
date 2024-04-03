@@ -13,8 +13,10 @@
 //--- input parameters
 input string   host = "172.20.106.92";
 input int      port = 80;
-//---
+//--- global vars
 int skt;
+CConnect *conn;
+CSubscribe *sub;
 //+------------------------------------------------------------------+
 //| Service program start function                                   |
 //+------------------------------------------------------------------+
@@ -24,7 +26,7 @@ int OnStart()
    Print("MQTT Subscribe Service started");
 //---
    uchar conn_pkt[];
-   CConnect *conn = new CConnect(host, port);
+   conn = new CConnect(host, port);
    conn.SetCleanStart(true);
    conn.SetKeepAlive(3600);
    conn.SetClientIdentifier("MT5_SUB");
@@ -32,8 +34,8 @@ int OnStart()
    ArrayPrint(conn_pkt);
 //---
    uchar sub_pkt[];
-   CSubscribe *sub = new CSubscribe();
-   sub.SetTopicFilter("MyBITCOIN");
+   sub = new CSubscribe();
+   sub.SetTopicFilter("MySPX500");
    sub.Build(sub_pkt);
    ArrayPrint(sub_pkt);
 //---
@@ -54,8 +56,8 @@ bool SendSubscribe(uchar &pkt[])
   {
    if(SocketSend(skt, pkt, ArraySize(pkt)) < 0)
      {
-      Print("Failed sending subscribe ", GetLastError());
-      SocketClose(skt);
+      Print("Failed sending SUBSCRIBE ", GetLastError());
+      CleanUp();
       return false;
      }
 //---
@@ -79,14 +81,14 @@ bool SendSubscribe(uchar &pkt[])
       Print("Not Subscribe acknowledgment");
      }
    else
-     {
       Print("Subscribed");
-     }
    if(rsp[5] > 2)  // Suback Reason Code (Granted QoS 2)
      {
       Print("Subscription Refused with error code %d ", rsp[4]);
+      CleanUp();
       return false;
      }
+//---
    for(;;)
      {
       do
@@ -104,22 +106,19 @@ bool SendSubscribe(uchar &pkt[])
             if((len = SocketRead(skt, inpkt, len, timeout)) > 0)
               {
                msg += CPublish().ReadMessage(inpkt);
+               printf("New quote arrived for MySPX500: %s", msg);
                WriteToChart(msg);
-               //---
-               printf("published len %d", inpkt.Size());
-               Print("=== inpkt ===");
-               ArrayPrint(inpkt);
-               printf("msg %s", msg);
               }
            }
         }
       while(SocketIsReadable(skt) && !IsStopped() && !_LastError);
      }
+//---
    if(_LastError)
      {
       Print("Error reading msg: %d", GetLastError());
      }
-   SocketClose(skt);
+   CleanUp();
    return true;
   }
 //+------------------------------------------------------------------+
@@ -128,16 +127,14 @@ bool SendSubscribe(uchar &pkt[])
 int SendConnect(const string h, const int p, uchar &pkt[])
   {
    skt = SocketCreate();
-   if(skt != INVALID_HANDLE)
+   if(skt != INVALID_HANDLE && SocketConnect(skt, h, p, 1000))
      {
-      if(SocketConnect(skt, h, p, 1000))
-        {
-         Print("Socket Connected ", h);
-        }
+      Print("Socket Connected ", h);
      }
-   if(SocketSend(skt, pkt, ArraySize(pkt)) < 0)
+   if(!SocketSend(skt, pkt, ArraySize(pkt)) > 0)
      {
-      Print("Failed sending connect ", GetLastError());
+      Print("Failed sending CONNECT ", GetLastError());
+      CleanUp();
      }
 //---
    char rsp[];
@@ -145,11 +142,13 @@ int SendConnect(const string h, const int p, uchar &pkt[])
    if(rsp[0] >> 4 != CONNACK)
      {
       Print("Not Connect acknowledgment");
+      CleanUp();
       return -1;
      }
    if(rsp[3] != MQTT_REASON_CODE_SUCCESS)  // Connect Return code (Connection accepted)
      {
       Print("Connection Refused");
+      CleanUp();
       return -1;
      }
    ArrayPrint(rsp);
@@ -171,9 +170,18 @@ void WriteToChart(string new_rates)
    rates[0].tick_volume = StringToInteger(new_rates_arr[5]);
    rates[0].spread = 0;
    rates[0].real_volume = StringToInteger(new_rates_arr[6]);
-   if(CustomRatesUpdate("MyBITCOIN", rates) < 1)
+   if(CustomRatesUpdate("MySPX500", rates) < 1)
      {
       Print("CustomRatesUpdate failed: ", _LastError);
      }
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CleanUp()
+  {
+   delete sub;
+   delete conn;
+   SocketClose(skt);
   }
 //+------------------------------------------------------------------+
