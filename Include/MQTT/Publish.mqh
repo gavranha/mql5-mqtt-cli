@@ -47,6 +47,7 @@ public:
    void              SetSubscriptionIdentifier(uint subscript_id);
    void              SetContentType(const string content_type);
    //--- method for setting the payload
+   void              SetPayload(uchar &payload[]);
    void              SetPayload(const string payload);
    void              SetPayloadUTF8(const string payload);
    //--- method for building the final packet
@@ -81,6 +82,13 @@ static string CPublish::ReadTopicName(uchar &inpkt[])
   {
    string topic_name = ReadUtf8String(inpkt, 2);
    return topic_name;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CPublish::SetPayload(uchar &payload[])
+  {
+   ArrayCopy(m_payload, payload, m_props.Size());
   }
 //+------------------------------------------------------------------+
 //|                                                                  |

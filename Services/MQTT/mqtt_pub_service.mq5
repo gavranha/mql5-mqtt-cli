@@ -42,23 +42,59 @@ int OnStart()
       uchar pub_pkt[];
       pub = new CPublish();
       pub.SetTopicName("MySPX500");
-      string payload = GetRates();
+      //string payload = GetRates();
+      string payload = GetLastTick();
       pub.SetPayload(payload);
       pub.Build(pub_pkt);
       delete(pub);
-      ArrayPrint(pub_pkt);
+      //ArrayPrint(pub_pkt);
       if(!SendPublish(pub_pkt))
         {
          return -1;
          CleanUp();
         }
       ZeroMemory(pub_pkt);
-      Sleep(5000);
+      Sleep(500);
      }
    while(!IsStopped());
 //---
    CleanUp();
    return 0;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+string GetLastTick()
+  {
+   MqlTick last_tick;
+   if(SymbolInfoTick("#USSPX500", last_tick))
+     {
+      string format = "%G-%G-%G-%d-%I64d-%d-%G";
+      string out;
+      out = TimeToString(last_tick.time, TIME_SECONDS);
+      out += "-" + StringFormat(format,
+                                last_tick.bid, //double
+                                last_tick.ask, //double
+                                last_tick.last, //double
+                                last_tick.volume, //ulong
+                                last_tick.time_msc, //long
+                                last_tick.flags, //uint
+                                last_tick.volume_real);//double
+      Print(last_tick.time,
+            ": Bid = ", last_tick.bid,
+            " Ask = ", last_tick.ask,
+            " Last = ", last_tick.last,
+            " Volume = ", last_tick.volume,
+            " Time msc = ", last_tick.time_msc,
+            " Flags = ", last_tick.flags,
+            " Vol Real = ", last_tick.volume_real
+           );
+      Print(out);
+      return out;
+     }
+   else
+      Print("Failed to get rates for #USSPX500");
+   return "";
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -89,7 +125,7 @@ string GetRates()
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool SendPublish(uchar &pkt[])
+bool SendPublish(uchar & pkt[])
   {
    if(skt == INVALID_HANDLE || SocketSend(skt, pkt, ArraySize(pkt)) < 0)
      {
@@ -102,7 +138,7 @@ bool SendPublish(uchar &pkt[])
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-int SendConnect(const string h, const int p, uchar &pkt[])
+int SendConnect(const string h, const int p, uchar & pkt[])
   {
    skt = SocketCreate();
    if(skt != INVALID_HANDLE)
@@ -144,4 +180,6 @@ void CleanUp()
    delete conn;
    SocketClose(skt);
   }
+//+------------------------------------------------------------------+
+
 //+------------------------------------------------------------------+

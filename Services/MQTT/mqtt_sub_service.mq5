@@ -113,8 +113,10 @@ bool SendSubscribe(uchar &pkt[])
               {
                ArrayPrint(inpkt);
                msg += CPublish().ReadMessageRawBytes(inpkt);
-               printf("New quote arrived for MySPX500: %s", msg);
-               UpdateRates(msg);
+               //printf("New quote arrived for MySPX500: %s", msg);
+               //UpdateRates(msg);
+               printf("New tick arrived for MySPX500: %s", msg);
+               UpdateTicks(msg);
               }
            }
         }
@@ -164,22 +166,43 @@ int SendConnect(const string h, const int p, uchar &pkt[])
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+void UpdateTicks(string new_ticks)
+  {
+   string new_ticks_arr[];
+   StringSplit(new_ticks, 45, new_ticks_arr);
+   MqlTick last_tick[1];
+   last_tick[0].time          = StringToTime(new_ticks_arr[0]);
+   last_tick[0].bid           = StringToDouble(new_ticks_arr[1]);
+   last_tick[0].ask           = StringToDouble(new_ticks_arr[2]);
+   last_tick[0].last          = StringToDouble(new_ticks_arr[3]);
+   last_tick[0].volume        = StringToInteger(new_ticks_arr[4]);
+   last_tick[0].time_msc      = StringToInteger(new_ticks_arr[5]);
+   last_tick[0].flags         = (uint)StringToInteger(new_ticks_arr[6]);
+   last_tick[0].volume_real   = StringToDouble(new_ticks_arr[7]);
+   if(CustomTicksAdd("MySPX500", last_tick) < 1)
+     {
+      Print("Update ticks failed: ", _LastError);
+     }
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 void UpdateRates(string new_rates)
   {
    string new_rates_arr[];
    StringSplit(new_rates, 45, new_rates_arr);
    MqlRates rates[1];
-   rates[0].time = StringToTime(new_rates_arr[0]);
-   rates[0].open = StringToDouble(new_rates_arr[1]);
-   rates[0].high = StringToDouble(new_rates_arr[2]);
-   rates[0].low = StringToDouble(new_rates_arr[3]);
-   rates[0].close = StringToDouble(new_rates_arr[4]);
+   rates[0].time        = StringToTime(new_rates_arr[0]);
+   rates[0].open        = StringToDouble(new_rates_arr[1]);
+   rates[0].high        = StringToDouble(new_rates_arr[2]);
+   rates[0].low         = StringToDouble(new_rates_arr[3]);
+   rates[0].close       = StringToDouble(new_rates_arr[4]);
    rates[0].tick_volume = StringToInteger(new_rates_arr[5]);
-   rates[0].spread = 0;
+   rates[0].spread      = 0;
    rates[0].real_volume = StringToInteger(new_rates_arr[6]);
    if(CustomRatesUpdate("MySPX500", rates) < 1)
      {
-      Print("CustomRatesUpdate failed: ", _LastError);
+      Print("Update rates failed: ", _LastError);
      }
   }
 //+------------------------------------------------------------------+
