@@ -114,7 +114,7 @@ bool SendSubscribe(uchar &pkt[])
                ArrayPrint(inpkt);
                msg += CPublish().ReadMessageRawBytes(inpkt);
                printf("New quote arrived for MySPX500: %s", msg);
-               WriteToChart(msg);
+               UpdateRates(msg);
               }
            }
         }
@@ -164,7 +164,7 @@ int SendConnect(const string h, const int p, uchar &pkt[])
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void WriteToChart(string new_rates)
+void UpdateRates(string new_rates)
   {
    string new_rates_arr[];
    StringSplit(new_rates, 45, new_rates_arr);
