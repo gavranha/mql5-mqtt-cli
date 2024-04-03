@@ -53,12 +53,22 @@ public:
    void              Build(uchar &result[]);
    //--- static method for reading incoming packets
    static string     ReadTopicName(uchar &inpkt[]);
-   static string     ReadMessage(uchar &inpkt[]);
+   static string     ReadMessageUTF8(uchar &inpkt[]);
+   static string     ReadMessageRawBytes(uchar &inpkt[]);
   };
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-static string CPublish::ReadMessage(uchar &inpkt[])
+static string CPublish::ReadMessageRawBytes(uchar &inpkt[])
+  {
+   string topic_name = ReadUtf8String(inpkt, 2);
+   string msg = CharArrayToString(inpkt, StringLen(topic_name) + 5, WHOLE_ARRAY, CP_UTF8);
+   return msg;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+static string CPublish::ReadMessageUTF8(uchar &inpkt[])
   {
    string topic_name = ReadUtf8String(inpkt, 2);
    string msg = CharArrayToString(inpkt, StringLen(topic_name) + 5, WHOLE_ARRAY, CP_UTF8);
