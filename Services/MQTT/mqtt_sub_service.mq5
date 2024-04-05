@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
 //|                                             mqtt_sub_service.mq5 |
-//|                                                                  |
-//|                                                                  |
+//|            ********* WORK IN PROGRESS **********                 |
+//| **** PART OF ARTICLE https://www.mql5.com/en/articles/14677 **** |
 //+------------------------------------------------------------------+
 #include <MQTT\MQTT.mqh>
 #include <MQTT\Connect.mqh>

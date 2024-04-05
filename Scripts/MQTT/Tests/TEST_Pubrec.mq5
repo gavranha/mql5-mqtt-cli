@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
 //|                                                  TEST_Pubrec.mq5 |
 //|            ********* WORK IN PROGRESS **********                 |
-//| **** PART OF ARTICLE https://www.mql5.com/en/articles/14391 **** |
+//| **** PART OF ARTICLE https://www.mql5.com/en/articles/14677 **** |
 //+------------------------------------------------------------------+
 #include <MQTT\Pubrec.mqh>
 

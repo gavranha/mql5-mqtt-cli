@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
 //|                                                           DB.mqh |
 //|            ********* WORK IN PROGRESS **********                 |
-//| **** PART OF ARTICLE https://www.mql5.com/en/articles/14391 **** |
+//| **** PART OF ARTICLE https://www.mql5.com/en/articles/14677 **** |
 //+------------------------------------------------------------------+
 void GetPendingPublishIDs(ushort &result[])
   {

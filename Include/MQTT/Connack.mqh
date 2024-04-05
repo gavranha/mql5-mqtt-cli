@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
 //|                                                      Connack.mqh |
-//|                                                                  |
-//|                                                                  |
+//|            ********* WORK IN PROGRESS **********                 |
+//| **** PART OF ARTICLE https://www.mql5.com/en/articles/14677 **** |
 //+------------------------------------------------------------------+
 #include "IControlPacket.mqh"
 class CConnack : public IControlPacket
