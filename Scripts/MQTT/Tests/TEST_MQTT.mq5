@@ -492,7 +492,7 @@ bool TEST_SetPacketID_TopicName5Char()
    buf[6] = 'c';
    buf[7] = 'd';
    buf[8] = 'e';
-   SetPacketID(buf, 9);
+   SetPacketIdentifier(buf, 9);
    ArrayCopy(result, buf);
    bool is_true = AssertEqual(expected, result);
    if(!is_true)
@@ -517,7 +517,7 @@ bool TEST_SetPacketID_TopicName1Char()
    buf[2] = 0;
    buf[3] = 1;
    buf[4] = 'a';
-   SetPacketID(buf, 5);
+   SetPacketIdentifier(buf, 5);
    ArrayCopy(result, buf);
    bool is_true = AssertEqual(expected, result);
    if(!is_true)
