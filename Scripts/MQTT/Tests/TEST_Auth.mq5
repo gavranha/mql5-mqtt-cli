@@ -16,15 +16,16 @@ void OnStart()
    Print(TEST_SetAuthMethod());
    Print(TEST_SetAuthData());
   }
-  bool TEST_SetAuthData()
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool TEST_SetAuthData()
   {
-   Print( __FUNCTION__);
+   Print(__FUNCTION__);
    uchar expected[] = {22, 'b', 'i', 'n', 'd', 'a', 't', 'a'};
    CAuth *cut = new CAuth();
-   
    uchar result[];
-   cut.SetAuthData("bindata",result);
-
+   cut.SetAuthData("bindata", result);
    bool isTrue = AssertEqual(expected, result);
    ZeroMemory(result);
    delete cut;
@@ -35,13 +36,11 @@ void OnStart()
 //+------------------------------------------------------------------+
 bool TEST_SetAuthMethod()
   {
-   Print( __FUNCTION__);
+   Print(__FUNCTION__);
    uchar expected[] = {21, 0, 10, 'a', 'u', 't', 'h', 'm', 'e', 't', 'h', 'o', 'd'};
    CAuth *cut = new CAuth();
-   
    uchar result[];
-   cut.SetAuthMethod("authmethod",result);
-
+   cut.SetAuthMethod("authmethod", result);
    bool isTrue = AssertEqual(expected, result);
    ZeroMemory(result);
    delete cut;
@@ -78,7 +77,6 @@ bool TEST_IsAuth_YES()
 //+------------------------------------------------------------------+
 bool TEST_IsAuth_NO()
   {
-   Print(__FUNCTION__);
    Print(__FUNCTION__);
    bool expected = false;
    uchar inpkt[] = {'n', 'o', 'a', 'c', 'k'};

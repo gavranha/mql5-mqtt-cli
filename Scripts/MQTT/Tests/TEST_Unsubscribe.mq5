@@ -12,7 +12,7 @@
 //+------------------------------------------------------------------+
 void OnStart()
   {
-   Print(TEST_Build_PacketID_NoProps());
+   Print(TEST_Build_PacketID_NoProps());// TODO Failing test
    Print(TEST_SetPayload());
   }
 //+------------------------------------------------------------------+
@@ -35,7 +35,7 @@ bool TEST_SetPayload()
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_Build_PacketID_NoProps() // Failing test
+bool TEST_Build_PacketID_NoProps() // TODO Failing test
   {
    Print(__FUNCTION__);
    uchar expected[] = {162, 4, 0, 1, 0, 0}; // TODO check this last byte (0)

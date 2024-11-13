@@ -17,51 +17,51 @@ const int srv_ssl_port = 443;
 void OnStart()
   {
 //--- props
-//   Print(TEST_SetProps_PayloadFormatIndicator_UTF8());
-//   Print(TEST_SetProps_PayloadFormatIndicator_RawBytes());
-//   Print(TEST_SetProps_MessageExpiryInterval_OneByte());
-//   Print(TEST_SetProps_MessageExpiryInterval_TwoBytes());
-//   Print(TEST_SetProps_MessageExpiryInterval_ThreeBytes());
-//   Print(TEST_SetProps_MessageExpiryInterval_FourBytes());
-//   Print(TEST_SetProps_TopicAlias_TwoBytes());
-//   Print(TEST_SetProps_TopicAlias_OneByte());
-//   Print(TEST_SetProps_ResponseTopic());
-//   Print(TEST_SetProps_CorrelationData());
-//   Print(TEST_SetProps_UserProperty());
-//   Print(TEST_SetProps_SubscriptionIdentifier_OneByte());
-//   Print(TEST_SetProps_SubscriptionIdentifier_TwoBytes());
-//   Print(TEST_SetProps_SubscriptionIdentifier_ThreeBytes());
-//   Print(TEST_SetProps_SubscriptionIdentifier_FourBytes());
-//   Print(TEST_SetProps_ContentType());
-//   Print(TEST_SetPayloadUTF8()); // why this is HERE? on Props?
+   Print(TEST_SetProps_PayloadFormatIndicator_UTF8());
+   Print(TEST_SetProps_PayloadFormatIndicator_RawBytes());
+   Print(TEST_SetProps_MessageExpiryInterval_OneByte());
+   Print(TEST_SetProps_MessageExpiryInterval_TwoBytes());
+   Print(TEST_SetProps_MessageExpiryInterval_ThreeBytes());
+   Print(TEST_SetProps_MessageExpiryInterval_FourBytes());
+   Print(TEST_SetProps_TopicAlias_TwoBytes());
+   Print(TEST_SetProps_TopicAlias_OneByte());
+   Print(TEST_SetProps_ResponseTopic());
+   Print(TEST_SetProps_CorrelationData());
+   Print(TEST_SetProps_UserProperty());
+   Print(TEST_SetProps_SubscriptionIdentifier_OneByte());
+   Print(TEST_SetProps_SubscriptionIdentifier_TwoBytes());
+   Print(TEST_SetProps_SubscriptionIdentifier_ThreeBytes());
+   Print(TEST_SetProps_SubscriptionIdentifier_FourBytes());
+   Print(TEST_SetProps_ContentType());
+   Print(TEST_SetPayloadUTF8()); // why this is HERE? on Props?
 ////--- topic name
-//   Print(TEST_SetTopicName_OneChar());
-//   Print(TEST_SetTopicName_TwoChar());
-//   Print(TEST_SetTopicName_WildcardChar_NumberSign());
-//   Print(TEST_SetTopicName_WildcardChar_PlusSign());
-//   Print(TEST_SetTopicName_Empty());
+   Print(TEST_SetTopicName_OneChar());
+   Print(TEST_SetTopicName_TwoChar());
+   Print(TEST_SetTopicName_WildcardChar_NumberSign());
+   Print(TEST_SetTopicName_WildcardChar_PlusSign());
+   Print(TEST_SetTopicName_Empty());
 ////--- packet ID
-//   Print(TEST_SetPacketID_QoS1_TopicName1Char());
-//   Print(TEST_SetPacketID_QoS1_TopicName5Char());
-//   Print(TEST_SetPacketID_QoS2_TopicName1Char());
-//   Print(TEST_SetPacketID_QoS2_TopicName5Char());
+   Print(TEST_SetPacketID_QoS1_TopicName1Char());
+   Print(TEST_SetPacketID_QoS1_TopicName5Char());
+   Print(TEST_SetPacketID_QoS2_TopicName1Char());
+   Print(TEST_SetPacketID_QoS2_TopicName5Char());
 ////--- Ctor
-//   Print(TEST_Ctor_NoTopicName());
-//   Print(TEST_Ctor_NoFlags_TopicName1Char());
-//   Print(TEST_Ctor_NoFlags_TopicName2Char());
-//   Print(TEST_Ctor_NoFlags_TopicName5Char());
-//   Print(TEST_Ctor_Retain_TopicName1Char());
-//   Print(TEST_Ctor_Retain_QoS1_TopicName1Char());
-//   Print(TEST_Ctor_Retain_QoS1_Dup_TopicName1Char());
-//   Print(TEST_Ctor_Retain_QoS2_Dup_TopicName1Char());
-//   Print(TEST_Ctor_Retain_QoS2_Dup_TopicName5Char());
+   Print(TEST_Ctor_NoTopicName());
+   Print(TEST_Ctor_NoFlags_TopicName1Char());
+   Print(TEST_Ctor_NoFlags_TopicName2Char());
+   Print(TEST_Ctor_NoFlags_TopicName5Char());
+   Print(TEST_Ctor_Retain_TopicName1Char());
+   Print(TEST_Ctor_Retain_QoS1_TopicName1Char());
+   Print(TEST_Ctor_Retain_QoS1_Dup_TopicName1Char());
+   Print(TEST_Ctor_Retain_QoS2_Dup_TopicName1Char());
+   Print(TEST_Ctor_Retain_QoS2_Dup_TopicName5Char());
 ////--- Test Dev Environment
-//   Print(TEST_Server_Is_Reachable());
-//Print(TEST_Publish_QoS_0_NoProps());
-//Print(TEST_Read_TopicName());
-//Print(TEST_Read_Message());
-   //Print(TEST_SetPayload_RawBytes()); // TODO failing!!!
-   Print(TEST_Read_Message_RawBytes());
+   Print(TEST_Server_Is_Reachable());
+   Print(TEST_Publish_QoS_0_NoProps());
+   Print(TEST_Read_TopicName());
+   Print(TEST_Read_MessageUTF8());
+   Print(TEST_SetPayload_RawBytes()); // TODO failing!!!
+   Print(TEST_Read_Message_RawBytes()); // TODO failing!!!
   }
 //+------------------------------------------------------------------+
 //|                                                                  |

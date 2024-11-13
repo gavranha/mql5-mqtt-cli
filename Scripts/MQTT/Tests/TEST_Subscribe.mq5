@@ -15,14 +15,13 @@ void OnStart()
 //|test protected methods or public methods that set protected fields|
 //+------------------------------------------------------------------+
    CProtMembers *t = new CProtMembers();
-   //Print(t.TEST_SetTopicFilter_QoS_0_NoSubOpts());
-   //Print(t.TEST_SetTopicFilter_QoS_1());
-   //Print(t.TEST_SetTopicFilter_QoS_2_NonLocal());
-   //Print(t.TEST_SetTopicFilter_QoS_1_RetainAsPublished_RetainHandling_2());
-//Print(TEST_SetSubscriptionIdentifier_OneByte());
-//Print(TEST_SetUserProperty());
-//Print(TEST_SetTopicFilter());
-Print(TEST_Build_NoSubOpts_NoProps());
+   Print(t.TEST_SetTopicFilter_QoS_0_NoSubOpts());
+   Print(t.TEST_SetTopicFilter_QoS_1());
+   Print(t.TEST_SetTopicFilter_QoS_2_NonLocal());
+   Print(t.TEST_SetTopicFilter_QoS_1_RetainAsPublished_RetainHandling_2());
+   Print(TEST_SetSubscriptionIdentifier_OneByte());
+   Print(TEST_SetUserProperty());
+   Print(TEST_Build_NoSubOpts_NoProps());
    delete(t);
   }
 //+------------------------------------------------------------------+
