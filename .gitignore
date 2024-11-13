@@ -10,7 +10,7 @@
 /profiles
 /Scripts
 !/Scripts/MQTT
-/Shared
+/Shared*
 experts.dat
 mql5.content
 mql5.index
