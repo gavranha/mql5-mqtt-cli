@@ -62,9 +62,7 @@ public:
 //+------------------------------------------------------------------+
 static string CPublish::ReadMessageRawBytes(uchar &inpkt[])
   {
-   string topic_name = ReadUtf8String(inpkt, 2);
-   string msg = CharArrayToString(inpkt, StringLen(topic_name) + 5, WHOLE_ARRAY, CP_UTF8);
-   return msg;
+   return CharArrayToString(inpkt, 0, WHOLE_ARRAY, CP_UTF8);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |

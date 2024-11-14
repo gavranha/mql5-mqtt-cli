@@ -61,7 +61,7 @@ void OnStart()
    Print(TEST_Read_TopicName());
    Print(TEST_Read_MessageUTF8());
    Print(TEST_SetPayload_RawBytes());
-   Print(TEST_Read_Message_RawBytes()); // TODO failing!!!
+   Print(TEST_Read_Message_RawBytes());
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -72,6 +72,8 @@ bool TEST_Read_Message_RawBytes()
    string expected = "rawbytes";
    uchar inpkt[] = {'r', 'a', 'w', 'b', 'y', 't', 'e', 's'};
    string result = CPublish().ReadMessageRawBytes(inpkt);
+   ArrayPrint(inpkt);
+   Print(result);
    return StringCompare(expected, result) == 0;
   }
 //+------------------------------------------------------------------+
