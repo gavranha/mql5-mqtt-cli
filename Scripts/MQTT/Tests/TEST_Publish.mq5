@@ -60,7 +60,7 @@ void OnStart()
    Print(TEST_Publish_QoS_0_NoProps());
    Print(TEST_Read_TopicName());
    Print(TEST_Read_MessageUTF8());
-   Print(TEST_SetPayload_RawBytes()); // TODO failing!!!
+   Print(TEST_SetPayload_RawBytes());
    Print(TEST_Read_Message_RawBytes()); // TODO failing!!!
   }
 //+------------------------------------------------------------------+
@@ -167,7 +167,8 @@ bool TEST_SetPayload_RawBytes()
    cut.SetQoS_1(true);
    cut.SetTopicName("a");
    cut.SetPayloadFormatIndicator(RAW_BYTES);
-   cut.SetPayload("payload");
+   uchar payload_bytes[] = {'p', 'a', 'y', 'l', 'o', 'a', 'd'};
+   cut.SetPayload(payload_bytes);
    cut.Build(result);
    bool isTrue = AssertEqual(expected, result);
    delete cut;
