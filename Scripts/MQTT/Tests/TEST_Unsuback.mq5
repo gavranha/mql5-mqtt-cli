@@ -1,7 +1,5 @@
 //+------------------------------------------------------------------+
 //|                                                TEST_Unsuback.mq5 |
-//|            ********* WORK IN PROGRESS **********                 |
-//| **** PART OF ARTICLE https://www.mql5.com/en/articles/14677 **** |
 //+------------------------------------------------------------------+
 #include <MQTT\Unsuback.mqh>
 #include <MQTT\IControlPacket.mqh>
