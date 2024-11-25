@@ -12,7 +12,7 @@
 //+------------------------------------------------------------------+
 void OnStart()
   {
-   Print(TEST_Build_PacketID_NoProps());// TODO Failing test
+   Print(TEST_Build_PacketID_NoProps());
    Print(TEST_SetPayload());
   }
 //+------------------------------------------------------------------+
@@ -35,12 +35,13 @@ bool TEST_SetPayload()
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool TEST_Build_PacketID_NoProps() // TODO Failing test
+bool TEST_Build_PacketID_NoProps() // TODO failing test
   {
    Print(__FUNCTION__);
-   uchar expected[] = {162, 4, 0, 1, 0, 0}; // TODO check this last byte (0)
+   uchar expected[] = {162, 8, 0, 1, 0, 0, 3, 'a', '/', 'b'};
    uchar result[];
    CUnsubscribe *cut = new CUnsubscribe();
+   cut.SetPayload("a/b",result);
    cut.Build(result);
    bool istrue = AssertEqual(expected, result);
    ZeroMemory(result);
