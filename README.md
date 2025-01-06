@@ -1,3 +1,11 @@
+# Update on January 6th, 2025
+
+As the saying goes, the best open-source code starts by itching your own itch. This was the case here.
+
+But it turns out that we've eventually found a better solution for our itch, so we are no longer working on this code.
+
+If you think it can be useful as a starting point — or want to learn from our mistakes — just fork it and use it at will.
+
 # A native MQTT client for MQL5
 
 This code started as a companion for a series of articles about the MQTT 5.0 protocol we wrote for [mql5.com](https://mql5.com) website.
